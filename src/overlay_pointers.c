@@ -71,7 +71,7 @@ void func_level_99_8007B194();
 
 // Level 10
 void func_level_10_80088620();
-Moby *func_level_10_800857CC();
+Moby *artisans_SpawnMoby();
 void func_level_10_8007D9C8();
 void func_level_10_800873E0();
 void func_level_10_80086134();
@@ -497,7 +497,7 @@ void func_8005A470(void) {
     break;
   case 10:
     D_800785D8.m_CopyBuf = func_level_10_80088620; // g_CopyBufferPointer
-    D_800758CC = func_level_10_800857CC;           // g_SpawnMoby
+    D_800758CC = artisans_SpawnMoby;               // g_SpawnMoby
     D_80075734 = func_level_10_8007D9C8;           // g_UpdateMoby
     D_800758E4 = func_level_10_800873E0;           // g_SpawnParticle
     D_800756BC = func_level_10_80086134;           // g_UpdateParticle

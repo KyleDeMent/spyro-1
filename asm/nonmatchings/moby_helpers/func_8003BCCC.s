@@ -127,7 +127,7 @@ glabel func_8003BCCC
 .L8003BE8C:
 /* 2C68C 8003BE8C C05D000C */  jal        VecCopy
 /* 2C690 8003BE90 3800A527 */   addiu     $a1, $sp, 0x38
-/* 2C694 8003BE94 F44C010C */  jal        func_800533D0
+/* 2C694 8003BE94 F44C010C */  jal        MobyUpdateShadow
 /* 2C698 8003BE98 21204002 */   addu      $a0, $s2, $zero
 /* 2C69C 8003BE9C 21204002 */  addu       $a0, $s2, $zero
 /* 2C6A0 8003BEA0 794A010C */  jal        func_800529E4

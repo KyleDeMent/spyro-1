@@ -187,7 +187,7 @@ void func_80038458(Moby *pMoby) {
 
   pMoby->m_Position.z = floorZ + pMoby->m_FloorDistance;
 
-  func_800533D0(pMoby);
+  MobyUpdateShadow(pMoby);
 }
 
 inline static int SavedMobyIsDead(int mobyIndex) {
@@ -391,7 +391,7 @@ INCLUDE_ASM_REORDER_HACK("asm/nonmatchings/moby_helpers", func_8003A16C);
 
 INCLUDE_ASM_REORDER_HACK("asm/nonmatchings/moby_helpers", func_8003A420);
 
-void func_8003A720(Moby *pMoby) {
+void MobyInitialize(Moby *pMoby) {
   pMoby->m_RenderRadius = 16;
   pMoby->m_UpdateDistance = 0xff;
   pMoby->m_DepthOffset = 4;
@@ -817,7 +817,7 @@ void func_8003C358(Moby *pMoby, int pIsLevelName) {
       }
 
       char_moby = (*D_800758CC)(char_moby_class, pMoby);
-      setMobyLetterProps((MobyLetterProps *)char_moby->m_Props, pMoby, i,
+      setMobyLetterProps((MobyPropsLetter *)char_moby->m_Props, pMoby, i,
                          string_len);
       pos = &char_moby->m_Position;
       setXYZ(pos, vec1.x * Cos(textBowAngle << 4),

@@ -29,7 +29,10 @@
 
 // This ABS macro makes GCC really shit the bed when it comes to optimizations!
 // Holy fuck!
+// This is the same ABS that's in psyq, so only add it if we need it
+#ifndef ABS
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
+#endif
 
 // because why not have this one too!
 #define ABS2(x) ((x) > 0 ? (x) : -(x))

@@ -88,7 +88,7 @@ void HudReset(int pArg) {
   int i;
   Memset(g_Hud.m_Mobys, 0, sizeof(g_Hud.m_Mobys));
   for (i = 0; i < 12; ++i) {
-    func_800529CC(&g_Hud.m_Mobys[i]);
+    MobyCollisionDisable(&g_Hud.m_Mobys[i]);
     VecCopy(&g_Hud.m_Mobys[i].m_Position, &g_HudMobyTargetPos[i]);
     g_Hud.m_Mobys[i].m_DepthOffset = 32;
     g_Hud.m_Mobys[i].m_RenderRadius = 0xFF;
@@ -438,7 +438,7 @@ void GenerateGemCollectMobys(int pGemValue, Moby *pGemPos) {
          Sin(g_Camera.m_Rotation.z - 0x400) >> 8, 128);
 
   for (; pGemValue != 0; pGemValue /= 10, i *= 10) {
-    MobyNumberProps *props;
+    MobyPropsDigit *props;
     int rem = (pGemValue % 10);
     Moby *pMoby = (*D_800758CC)(rem + MOBYCLASS_NUMBER_0, nullptr);
     setXYZ(&pMoby->m_Position, moby_x, moby_y, pGemPos->m_Position.z);

@@ -374,7 +374,7 @@ void func_80014564(void) {
                           D_800785D8.m_LevelLayoutSize);
 
     for (j = 0; j < D_80075680->m_MobyCount; ++j) {
-      func_8003A720(&D_80075828[j]);
+      MobyInitialize(&D_80075828[j]);
 
       // Set the class and render radius, the class is sequential in cutscenes
       D_80075828[j].m_Class = j + 1;

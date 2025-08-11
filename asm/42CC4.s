@@ -151,7 +151,7 @@ glabel func_80052568
 .size func_80052568, . - func_80052568
 
 /* Handwritten function */
-glabel func_800526A8
+glabel MobyCollisionEnable
 /* 42EA8 800526A8 36008194 */  lhu        $at, 0x36($a0)
 /* 42EAC 800526AC 0780023C */  lui        $v0, %hi(D_80076378)
 /* 42EB0 800526B0 78634224 */  addiu      $v0, $v0, %lo(D_80076378)
@@ -358,17 +358,17 @@ glabel func_800526A8
 /* 431C0 800529C0 3000EEAD */  sw         $t6, 0x30($t7)
 /* 431C4 800529C4 0800E003 */  jr         $ra
 /* 431C8 800529C8 00000000 */   nop
-.size func_800526A8, . - func_800526A8
+.size MobyCollisionEnable, . - MobyCollisionEnable
 
 /* Handwritten function */
-glabel func_800529CC
+glabel MobyCollisionDisable
 /* 431CC 800529CC 4B0080A0 */  sb         $zero, 0x4B($a0)
 /* 431D0 800529D0 410080A0 */  sb         $zero, 0x41($a0)
 /* 431D4 800529D4 080080AC */  sw         $zero, 0x8($a0)
 /* 431D8 800529D8 FFFF0120 */  addi       $at, $zero, -0x1 /* handwritten instruction */
 /* 431DC 800529DC 0800E003 */  jr         $ra
 /* 431E0 800529E0 340081A4 */   sh        $at, 0x34($a0)
-.size func_800529CC, . - func_800529CC
+.size MobyCollisionDisable, . - MobyCollisionDisable
 
 /* Handwritten function */
 glabel func_800529E4
@@ -1042,7 +1042,7 @@ glabel func_800530C0
 .size func_800530C0, . - func_800530C0
 
 /* Handwritten function */
-glabel func_800533D0
+glabel MobyUpdateShadow
 /* 43BD0 800533D0 0780033C */  lui        $v1, %hi(D_80077368)
 /* 43BD4 800533D4 68736324 */  addiu      $v1, $v1, %lo(D_80077368)
 /* 43BD8 800533D8 0000618C */  lw         $at, 0x0($v1)
@@ -1158,4 +1158,4 @@ glabel func_800533D0
 .L80053568:
 /* 43D68 80053568 0800E003 */  jr         $ra
 /* 43D6C 8005356C 1C0087AC */   sw        $a3, 0x1C($a0)
-.size func_800533D0, . - func_800533D0
+.size MobyUpdateShadow, . - MobyUpdateShadow

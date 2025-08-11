@@ -98,7 +98,7 @@ glabel func_80039910
 /* 2A26C 80039A6C 140023AE */  sw         $v1, 0x14($s1)
 /* 2A270 80039A70 03001324 */  addiu      $s3, $zero, 0x3
 .L80039A74:
-/* 2A274 80039A74 F44C010C */  jal        func_800533D0
+/* 2A274 80039A74 F44C010C */  jal        MobyUpdateShadow
 /* 2A278 80039A78 21202002 */   addu      $a0, $s1, $zero
 .L80039A7C:
 /* 2A27C 80039A7C 21106002 */  addu       $v0, $s3, $zero

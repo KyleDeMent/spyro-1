@@ -141,7 +141,7 @@ glabel func_8003A16C
 /* 2AB60 8003A360 2000B027 */  addiu      $s0, $sp, 0x20
 /* 2AB64 8003A364 C05D000C */  jal        VecCopy
 /* 2AB68 8003A368 21280002 */   addu      $a1, $s0, $zero
-/* 2AB6C 8003A36C F44C010C */  jal        func_800533D0
+/* 2AB6C 8003A36C F44C010C */  jal        MobyUpdateShadow
 /* 2AB70 8003A370 21208002 */   addu      $a0, $s4, $zero
 /* 2AB74 8003A374 21208002 */  addu       $a0, $s4, $zero
 /* 2AB78 8003A378 794A010C */  jal        func_800529E4

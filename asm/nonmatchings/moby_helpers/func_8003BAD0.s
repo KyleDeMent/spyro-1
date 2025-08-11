@@ -122,7 +122,7 @@ glabel func_8003BAD0
 /* 2C484 8003BC84 02000524 */   addiu     $a1, $zero, 0x2
 /* 2C488 8003BC88 D0E0000C */  jal        func_80038340
 /* 2C48C 8003BC8C 21204002 */   addu      $a0, $s2, $zero
-/* 2C490 8003BC90 F44C010C */  jal        func_800533D0
+/* 2C490 8003BC90 F44C010C */  jal        MobyUpdateShadow
 /* 2C494 8003BC94 21204002 */   addu      $a0, $s2, $zero
 /* 2C498 8003BC98 2110A002 */  addu       $v0, $s5, $zero
 /* 2C49C 8003BC9C 6800BF8F */  lw         $ra, 0x68($sp)

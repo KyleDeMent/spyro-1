@@ -164,7 +164,7 @@ glabel func_80039688
 .L800398D0:
 /* 2A0D0 800398D0 04004010 */  beqz       $v0, .L800398E4
 /* 2A0D4 800398D4 21200002 */   addu      $a0, $s0, $zero
-/* 2A0D8 800398D8 F44C010C */  jal        func_800533D0
+/* 2A0D8 800398D8 F44C010C */  jal        MobyUpdateShadow
 /* 2A0DC 800398DC 21200002 */   addu      $a0, $s0, $zero
 /* 2A0E0 800398E0 21200002 */  addu       $a0, $s0, $zero
 .L800398E4:

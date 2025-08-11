@@ -5490,7 +5490,7 @@ glabel func_level_33_8007B7A8
 /* 2F60368 8007FDA0 02000924 */   addiu     $t1, $zero, 0x2
 /* 2F6036C 8007FDA4 16E1000C */  jal        func_80038458
 /* 2F60370 8007FDA8 21206002 */   addu      $a0, $s3, $zero
-/* 2F60374 8007FDAC F44C010C */  jal        func_800533D0
+/* 2F60374 8007FDAC F44C010C */  jal        MobyUpdateShadow
 /* 2F60378 8007FDB0 21206002 */   addu      $a0, $s3, $zero
 /* 2F6037C 8007FDB4 36006286 */  lh         $v0, 0x36($s3)
 /* 2F60380 8007FDB8 00000000 */  nop
@@ -5566,7 +5566,7 @@ glabel func_level_33_8007B7A8
 /* 2F60494 8007FECC 140062AE */   sw        $v0, 0x14($s3)
 /* 2F60498 8007FED0 16E1000C */  jal        func_80038458
 /* 2F6049C 8007FED4 21206002 */   addu      $a0, $s3, $zero
-/* 2F604A0 8007FED8 F44C010C */  jal        func_800533D0
+/* 2F604A0 8007FED8 F44C010C */  jal        MobyUpdateShadow
 /* 2F604A4 8007FEDC 21206002 */   addu      $a0, $s3, $zero
 /* 2F604A8 8007FEE0 D1FF0108 */  j          .Llevel_33_8007FF44
 /* 2F604AC 8007FEE4 9A05A22A */   slti      $v0, $s5, 0x59A
@@ -5766,7 +5766,7 @@ glabel func_level_33_8007B7A8
 /* 2F6078C 800801C4 00000000 */   nop
 /* 2F60790 800801C8 460060A2 */  sb         $zero, 0x46($s3)
 .Llevel_33_800801CC:
-/* 2F60794 800801CC F44C010C */  jal        func_800533D0
+/* 2F60794 800801CC F44C010C */  jal        MobyUpdateShadow
 /* 2F60798 800801D0 21206002 */   addu      $a0, $s3, $zero
 /* 2F6079C 800801D4 7B000208 */  j          .Llevel_33_800801EC
 /* 2F607A0 800801D8 00000000 */   nop
@@ -5842,7 +5842,7 @@ glabel func_level_33_8007B7A8
 /* 2F608A8 800802E0 21200002 */  addu       $a0, $s0, $zero
 /* 2F608AC 800802E4 7B35010C */  jal        func_8004D5EC
 /* 2F608B0 800802E8 0100053C */   lui       $a1, (0x10000 >> 16)
-/* 2F608B4 800802EC F44C010C */  jal        func_800533D0
+/* 2F608B4 800802EC F44C010C */  jal        MobyUpdateShadow
 /* 2F608B8 800802F0 21206002 */   addu      $a0, $s3, $zero
 .Llevel_33_800802F4:
 /* 2F608BC 800802F4 9A05A22A */  slti       $v0, $s5, 0x59A
@@ -6287,7 +6287,7 @@ glabel func_level_33_8007B7A8
 /* 2F60F30 80080968 21200002 */  addu       $a0, $s0, $zero
 /* 2F60F34 8008096C 7B35010C */  jal        func_8004D5EC
 /* 2F60F38 80080970 00100524 */   addiu     $a1, $zero, 0x1000
-/* 2F60F3C 80080974 F44C010C */  jal        func_800533D0
+/* 2F60F3C 80080974 F44C010C */  jal        MobyUpdateShadow
 /* 2F60F40 80080978 21206002 */   addu      $a0, $s3, $zero
 /* 2F60F44 8008097C 1C00628E */  lw         $v0, 0x1C($s3)
 /* 2F60F48 80080980 0080033C */  lui        $v1, (0x80000000 >> 16)
@@ -6638,7 +6638,7 @@ glabel func_level_33_8007B7A8
 /* 2F61444 80080E7C 2130C200 */  addu       $a2, $a2, $v0
 /* 2F61448 80080E80 7B35010C */  jal        func_8004D5EC
 /* 2F6144C 80080E84 100066AE */   sw        $a2, 0x10($s3)
-/* 2F61450 80080E88 F44C010C */  jal        func_800533D0
+/* 2F61450 80080E88 F44C010C */  jal        MobyUpdateShadow
 /* 2F61454 80080E8C 21206002 */   addu      $a0, $s3, $zero
 /* 2F61458 80080E90 2000828E */  lw         $v0, 0x20($s4)
 /* 2F6145C 80080E94 10000924 */  addiu      $t1, $zero, 0x10
@@ -11269,7 +11269,7 @@ glabel func_level_33_8007B7A8
 /* 2F65850 80085288 0000658E */  lw         $a1, 0x0($s3)
 /* 2F65854 8008528C C05D000C */  jal        VecCopy
 /* 2F65858 80085290 0C006426 */   addiu     $a0, $s3, 0xC
-/* 2F6585C 80085294 AA49010C */  jal        func_800526A8
+/* 2F6585C 80085294 AA49010C */  jal        MobyCollisionEnable
 /* 2F65860 80085298 21206002 */   addu      $a0, $s3, $zero
 /* 2F65864 8008529C FBFF0392 */  lbu        $v1, -0x5($s0)
 /* 2F65868 800852A0 F7FF0286 */  lh         $v0, -0x9($s0)
@@ -12564,7 +12564,7 @@ glabel func_level_33_8007B7A8
 /* 2F66B3C 80086574 00000000 */   nop
 /* 2F66B40 80086578 16E1000C */  jal        func_80038458
 /* 2F66B44 8008657C 21206002 */   addu      $a0, $s3, $zero
-/* 2F66B48 80086580 F44C010C */  jal        func_800533D0
+/* 2F66B48 80086580 F44C010C */  jal        MobyUpdateShadow
 /* 2F66B4C 80086584 21206002 */   addu      $a0, $s3, $zero
 .Llevel_33_80086588:
 /* 2F66B50 80086588 48006292 */  lbu        $v0, 0x48($s3)

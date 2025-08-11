@@ -553,7 +553,7 @@ glabel func_level_64_8007AD4C
 /* 5AEB248 8007B480 0400C38C */  lw         $v1, 0x4($a2)
 /* 5AEB24C 8007B484 0000E2AC */  sw         $v0, 0x0($a3)
 /* 5AEB250 8007B488 0400E3AC */  sw         $v1, 0x4($a3)
-/* 5AEB254 8007B48C AA49010C */  jal        func_800526A8
+/* 5AEB254 8007B48C AA49010C */  jal        MobyCollisionEnable
 /* 5AEB258 8007B490 21206002 */   addu      $a0, $s3, $zero
 /* 5AEB25C 8007B494 01000224 */  addiu      $v0, $zero, 0x1
 /* 5AEB260 8007B498 510062A2 */  sb         $v0, 0x51($s3)
@@ -1908,7 +1908,7 @@ glabel func_level_64_8007AD4C
 /* 5AEC658 8007C890 02000924 */   addiu     $t1, $zero, 0x2
 /* 5AEC65C 8007C894 16E1000C */  jal        func_80038458
 /* 5AEC660 8007C898 21206002 */   addu      $a0, $s3, $zero
-/* 5AEC664 8007C89C F44C010C */  jal        func_800533D0
+/* 5AEC664 8007C89C F44C010C */  jal        MobyUpdateShadow
 /* 5AEC668 8007C8A0 21206002 */   addu      $a0, $s3, $zero
 /* 5AEC66C 8007C8A4 36006286 */  lh         $v0, 0x36($s3)
 /* 5AEC670 8007C8A8 00000000 */  nop
@@ -1984,7 +1984,7 @@ glabel func_level_64_8007AD4C
 /* 5AEC784 8007C9BC 140062AE */   sw        $v0, 0x14($s3)
 /* 5AEC788 8007C9C0 16E1000C */  jal        func_80038458
 /* 5AEC78C 8007C9C4 21206002 */   addu      $a0, $s3, $zero
-/* 5AEC790 8007C9C8 F44C010C */  jal        func_800533D0
+/* 5AEC790 8007C9C8 F44C010C */  jal        MobyUpdateShadow
 /* 5AEC794 8007C9CC 21206002 */   addu      $a0, $s3, $zero
 /* 5AEC798 8007C9D0 8DF20108 */  j          .Llevel_64_8007CA34
 /* 5AEC79C 8007C9D4 9A05A22A */   slti      $v0, $s5, 0x59A
@@ -2193,7 +2193,7 @@ glabel func_level_64_8007AD4C
 /* 5AECAA4 8007CCDC 00000000 */   nop
 /* 5AECAA8 8007CCE0 460060A2 */  sb         $zero, 0x46($s3)
 .Llevel_64_8007CCE4:
-/* 5AECAAC 8007CCE4 F44C010C */  jal        func_800533D0
+/* 5AECAAC 8007CCE4 F44C010C */  jal        MobyUpdateShadow
 /* 5AECAB0 8007CCE8 21206002 */   addu      $a0, $s3, $zero
 /* 5AECAB4 8007CCEC 41F30108 */  j          .Llevel_64_8007CD04
 /* 5AECAB8 8007CCF0 00000000 */   nop
@@ -2269,7 +2269,7 @@ glabel func_level_64_8007AD4C
 /* 5AECBC0 8007CDF8 21200002 */  addu       $a0, $s0, $zero
 /* 5AECBC4 8007CDFC 7B35010C */  jal        func_8004D5EC
 /* 5AECBC8 8007CE00 0100053C */   lui       $a1, (0x10000 >> 16)
-/* 5AECBCC 8007CE04 F44C010C */  jal        func_800533D0
+/* 5AECBCC 8007CE04 F44C010C */  jal        MobyUpdateShadow
 /* 5AECBD0 8007CE08 21206002 */   addu      $a0, $s3, $zero
 .Llevel_64_8007CE0C:
 /* 5AECBD4 8007CE0C 9A05A22A */  slti       $v0, $s5, 0x59A

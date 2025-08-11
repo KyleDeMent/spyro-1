@@ -43,4 +43,6 @@ typedef struct {
 
 extern CutsceneLayout *D_80075680;
 
+extern int D_80077058; // Dragon cutscene stage
+
 #endif

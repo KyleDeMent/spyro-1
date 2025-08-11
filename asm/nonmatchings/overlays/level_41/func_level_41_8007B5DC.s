@@ -950,7 +950,7 @@ glabel func_level_41_8007B5DC
 /* 37F38B0 8007BAE8 0400C38C */  lw         $v1, 0x4($a2)
 /* 37F38B4 8007BAEC 0000E2AC */  sw         $v0, 0x0($a3)
 /* 37F38B8 8007BAF0 0400E3AC */  sw         $v1, 0x4($a3)
-/* 37F38BC 8007BAF4 AA49010C */  jal        func_800526A8
+/* 37F38BC 8007BAF4 AA49010C */  jal        MobyCollisionEnable
 /* 37F38C0 8007BAF8 21208002 */   addu      $a0, $s4, $zero
 /* 37F38C4 8007BAFC 01000224 */  addiu      $v0, $zero, 0x1
 /* 37F38C8 8007BB00 510082A2 */  sb         $v0, 0x51($s4)
@@ -2988,7 +2988,7 @@ glabel func_level_41_8007B5DC
 /* 37F56BC 8007D8F4 02000C24 */   addiu     $t4, $zero, 0x2
 /* 37F56C0 8007D8F8 16E1000C */  jal        func_80038458
 /* 37F56C4 8007D8FC 21208002 */   addu      $a0, $s4, $zero
-/* 37F56C8 8007D900 F44C010C */  jal        func_800533D0
+/* 37F56C8 8007D900 F44C010C */  jal        MobyUpdateShadow
 /* 37F56CC 8007D904 21208002 */   addu      $a0, $s4, $zero
 /* 37F56D0 8007D908 36008286 */  lh         $v0, 0x36($s4)
 /* 37F56D4 8007D90C 00000000 */  nop
@@ -3064,7 +3064,7 @@ glabel func_level_41_8007B5DC
 /* 37F57E8 8007DA20 140082AE */   sw        $v0, 0x14($s4)
 /* 37F57EC 8007DA24 16E1000C */  jal        func_80038458
 /* 37F57F0 8007DA28 21208002 */   addu      $a0, $s4, $zero
-/* 37F57F4 8007DA2C F44C010C */  jal        func_800533D0
+/* 37F57F4 8007DA2C F44C010C */  jal        MobyUpdateShadow
 /* 37F57F8 8007DA30 21208002 */   addu      $a0, $s4, $zero
 /* 37F57FC 8007DA34 A6F60108 */  j          .Llevel_41_8007DA98
 /* 37F5800 8007DA38 9A05A22A */   slti      $v0, $s5, 0x59A
@@ -3273,7 +3273,7 @@ glabel func_level_41_8007B5DC
 /* 37F5B08 8007DD40 00000000 */   nop
 /* 37F5B0C 8007DD44 460080A2 */  sb         $zero, 0x46($s4)
 .Llevel_41_8007DD48:
-/* 37F5B10 8007DD48 F44C010C */  jal        func_800533D0
+/* 37F5B10 8007DD48 F44C010C */  jal        MobyUpdateShadow
 /* 37F5B14 8007DD4C 21208002 */   addu      $a0, $s4, $zero
 /* 37F5B18 8007DD50 5AF70108 */  j          .Llevel_41_8007DD68
 /* 37F5B1C 8007DD54 00000000 */   nop
@@ -3349,7 +3349,7 @@ glabel func_level_41_8007B5DC
 /* 37F5C24 8007DE5C 21200002 */  addu       $a0, $s0, $zero
 /* 37F5C28 8007DE60 7B35010C */  jal        func_8004D5EC
 /* 37F5C2C 8007DE64 0100053C */   lui       $a1, (0x10000 >> 16)
-/* 37F5C30 8007DE68 F44C010C */  jal        func_800533D0
+/* 37F5C30 8007DE68 F44C010C */  jal        MobyUpdateShadow
 /* 37F5C34 8007DE6C 21208002 */   addu      $a0, $s4, $zero
 .Llevel_41_8007DE70:
 /* 37F5C38 8007DE70 9A05A22A */  slti       $v0, $s5, 0x59A
@@ -3797,7 +3797,7 @@ glabel func_level_41_8007B5DC
 /* 37F62B4 8007E4EC 21200002 */  addu       $a0, $s0, $zero
 /* 37F62B8 8007E4F0 7B35010C */  jal        func_8004D5EC
 /* 37F62BC 8007E4F4 00100524 */   addiu     $a1, $zero, 0x1000
-/* 37F62C0 8007E4F8 F44C010C */  jal        func_800533D0
+/* 37F62C0 8007E4F8 F44C010C */  jal        MobyUpdateShadow
 /* 37F62C4 8007E4FC 21208002 */   addu      $a0, $s4, $zero
 /* 37F62C8 8007E500 1C00828E */  lw         $v0, 0x1C($s4)
 /* 37F62CC 8007E504 0080033C */  lui        $v1, (0x80000000 >> 16)
@@ -4146,7 +4146,7 @@ glabel func_level_41_8007B5DC
 /* 37F67C0 8007E9F8 2130C200 */  addu       $a2, $a2, $v0
 /* 37F67C4 8007E9FC 7B35010C */  jal        func_8004D5EC
 /* 37F67C8 8007EA00 100086AE */   sw        $a2, 0x10($s4)
-/* 37F67CC 8007EA04 F44C010C */  jal        func_800533D0
+/* 37F67CC 8007EA04 F44C010C */  jal        MobyUpdateShadow
 /* 37F67D0 8007EA08 21208002 */   addu      $a0, $s4, $zero
 /* 37F67D4 8007EA0C 2000628E */  lw         $v0, 0x20($s3)
 /* 37F67D8 8007EA10 10000C24 */  addiu      $t4, $zero, 0x10
@@ -8159,7 +8159,7 @@ glabel func_level_41_8007B5DC
 /* 37FA2CC 80082504 00000000 */   nop
 /* 37FA2D0 80082508 16E1000C */  jal        func_80038458
 /* 37FA2D4 8008250C 21208002 */   addu      $a0, $s4, $zero
-/* 37FA2D8 80082510 F44C010C */  jal        func_800533D0
+/* 37FA2D8 80082510 F44C010C */  jal        MobyUpdateShadow
 /* 37FA2DC 80082514 21208002 */   addu      $a0, $s4, $zero
 .Llevel_41_80082518:
 /* 37FA2E0 80082518 48008292 */  lbu        $v0, 0x48($s4)

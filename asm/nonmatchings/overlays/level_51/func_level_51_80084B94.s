@@ -148,7 +148,7 @@ glabel func_level_51_80084B94
 /* 468436C 80084DA4 00000000 */   nop
 .Llevel_51_80084DA8:
 /* 4684370 80084DA8 0000708E */  lw         $s0, 0x0($s3)
-/* 4684374 80084DAC C8E9000C */  jal        func_8003A720
+/* 4684374 80084DAC C8E9000C */  jal        MobyInitialize
 /* 4684378 80084DB0 21206002 */   addu      $a0, $s3, $zero
 /* 468437C 80084DB4 8C000224 */  addiu      $v0, $zero, 0x8C
 /* 4684380 80084DB8 080002AE */  sw         $v0, 0x8($s0)
@@ -178,7 +178,7 @@ glabel func_level_51_80084B94
 /* 46843E0 80084E18 C05D000C */  jal        VecCopy
 /* 46843E4 80084E1C 0C00A526 */   addiu     $a1, $s5, 0xC
 .Llevel_51_80084E20:
-/* 46843E8 80084E20 AA49010C */  jal        func_800526A8
+/* 46843E8 80084E20 AA49010C */  jal        MobyCollisionEnable
 /* 46843EC 80084E24 21206002 */   addu      $a0, $s3, $zero
 /* 46843F0 80084E28 4B006292 */  lbu        $v0, 0x4B($s3)
 /* 46843F4 80084E2C 01000324 */  addiu      $v1, $zero, 0x1
@@ -189,9 +189,9 @@ glabel func_level_51_80084B94
 /* 4684408 80084E40 4F0063A2 */   sb        $v1, 0x4F($s3)
 .Llevel_51_80084E44:
 /* 468440C 80084E44 0000718E */  lw         $s1, 0x0($s3)
-/* 4684410 80084E48 C8E9000C */  jal        func_8003A720
+/* 4684410 80084E48 C8E9000C */  jal        MobyInitialize
 /* 4684414 80084E4C 21206002 */   addu      $a0, $s3, $zero
-/* 4684418 80084E50 AA49010C */  jal        func_800526A8
+/* 4684418 80084E50 AA49010C */  jal        MobyCollisionEnable
 /* 468441C 80084E54 21206002 */   addu      $a0, $s3, $zero
 /* 4684420 80084E58 0C007026 */  addiu      $s0, $s3, 0xC
 /* 4684424 80084E5C 21200002 */  addu       $a0, $s0, $zero
@@ -209,7 +209,7 @@ glabel func_level_51_80084B94
 /* 4684454 80084E8C F4150208 */  j          .Llevel_51_800857D0
 /* 4684458 80084E90 140022A6 */   sh        $v0, 0x14($s1)
 .Llevel_51_80084E94:
-/* 468445C 80084E94 C8E9000C */  jal        func_8003A720
+/* 468445C 80084E94 C8E9000C */  jal        MobyInitialize
 /* 4684460 80084E98 21206002 */   addu      $a0, $s3, $zero
 /* 4684464 80084E9C 20000224 */  addiu      $v0, $zero, 0x20
 /* 4684468 80084EA0 500062A2 */  sb         $v0, 0x50($s3)
@@ -220,13 +220,13 @@ glabel func_level_51_80084B94
 /* 468447C 80084EB4 C05D000C */  jal        VecCopy
 /* 4684480 80084EB8 0C00A526 */   addiu     $a1, $s5, 0xC
 .Llevel_51_80084EBC:
-/* 4684484 80084EBC 734A010C */  jal        func_800529CC
+/* 4684484 80084EBC 734A010C */  jal        MobyCollisionDisable
 /* 4684488 80084EC0 21206002 */   addu      $a0, $s3, $zero
 /* 468448C 80084EC4 F5150208 */  j          .Llevel_51_800857D4
 /* 4684490 80084EC8 21106002 */   addu      $v0, $s3, $zero
 .Llevel_51_80084ECC:
 /* 4684494 80084ECC 0000718E */  lw         $s1, 0x0($s3)
-/* 4684498 80084ED0 C8E9000C */  jal        func_8003A720
+/* 4684498 80084ED0 C8E9000C */  jal        MobyInitialize
 /* 468449C 80084ED4 21206002 */   addu      $a0, $s3, $zero
 /* 46844A0 80084ED8 2120A002 */  addu       $a0, $s5, $zero
 /* 46844A4 80084EDC 21280000 */  addu       $a1, $zero, $zero
@@ -272,14 +272,14 @@ glabel func_level_51_80084B94
 /* 4684538 80084F70 AD5A000C */  jal        Atan2
 /* 468453C 80084F74 23284500 */   subu      $a1, $v0, $a1
 /* 4684540 80084F78 21206002 */  addu       $a0, $s3, $zero
-/* 4684544 80084F7C AA49010C */  jal        func_800526A8
+/* 4684544 80084F7C AA49010C */  jal        MobyCollisionEnable
 /* 4684548 80084F80 460062A2 */   sb        $v0, 0x46($s3)
 /* 468454C 80084F84 8C000224 */  addiu      $v0, $zero, 0x8C
 /* 4684550 80084F88 F4150208 */  j          .Llevel_51_800857D0
 /* 4684554 80084F8C 000022AE */   sw        $v0, 0x0($s1)
 .Llevel_51_80084F90:
 /* 4684558 80084F90 0000718E */  lw         $s1, 0x0($s3)
-/* 468455C 80084F94 C8E9000C */  jal        func_8003A720
+/* 468455C 80084F94 C8E9000C */  jal        MobyInitialize
 /* 4684560 80084F98 21206002 */   addu      $a0, $s3, $zero
 /* 4684564 80084F9C 2120A002 */  addu       $a0, $s5, $zero
 /* 4684568 80084FA0 21280000 */  addu       $a1, $zero, $zero
@@ -329,7 +329,7 @@ glabel func_level_51_80084B94
 /* 468460C 80085044 460062A2 */   sb        $v0, 0x46($s3)
 .Llevel_51_80085048:
 /* 4684610 80085048 0000718E */  lw         $s1, 0x0($s3)
-/* 4684614 8008504C C8E9000C */  jal        func_8003A720
+/* 4684614 8008504C C8E9000C */  jal        MobyInitialize
 /* 4684618 80085050 21206002 */   addu      $a0, $s3, $zero
 /* 468461C 80085054 8C000224 */  addiu      $v0, $zero, 0x8C
 /* 4684620 80085058 000020AE */  sw         $zero, 0x0($s1)
@@ -363,7 +363,7 @@ glabel func_level_51_80084B94
 /* 468468C 800850C4 450060A2 */  sb         $zero, 0x45($s3)
 /* 4684690 800850C8 C05D000C */  jal        VecCopy
 /* 4684694 800850CC 460060A2 */   sb        $zero, 0x46($s3)
-/* 4684698 800850D0 734A010C */  jal        func_800529CC
+/* 4684698 800850D0 734A010C */  jal        MobyCollisionDisable
 /* 468469C 800850D4 21206002 */   addu      $a0, $s3, $zero
 /* 46846A0 800850D8 1000A427 */  addiu      $a0, $sp, 0x10
 /* 46846A4 800850DC 21280002 */  addu       $a1, $s0, $zero
@@ -376,7 +376,7 @@ glabel func_level_51_80084B94
 /* 46846C0 800850F8 00044224 */  addiu      $v0, $v0, 0x400
 /* 46846C4 800850FC 7B35010C */  jal        func_8004D5EC
 /* 46846C8 80085100 1800A2AF */   sw        $v0, 0x18($sp)
-/* 46846CC 80085104 F44C010C */  jal        func_800533D0
+/* 46846CC 80085104 F44C010C */  jal        MobyUpdateShadow
 /* 46846D0 80085108 21206002 */   addu      $a0, $s3, $zero
 /* 46846D4 8008510C 36006386 */  lh         $v1, 0x36($s3)
 /* 46846D8 80085110 0E000224 */  addiu      $v0, $zero, 0xE
@@ -422,9 +422,9 @@ glabel func_level_51_80084B94
 /* 4684764 8008519C 4F0062A2 */   sb        $v0, 0x4F($s3)
 .Llevel_51_800851A0:
 /* 4684768 800851A0 0000708E */  lw         $s0, 0x0($s3)
-/* 468476C 800851A4 C8E9000C */  jal        func_8003A720
+/* 468476C 800851A4 C8E9000C */  jal        MobyInitialize
 /* 4684770 800851A8 21206002 */   addu      $a0, $s3, $zero
-/* 4684774 800851AC AA49010C */  jal        func_800526A8
+/* 4684774 800851AC AA49010C */  jal        MobyCollisionEnable
 /* 4684778 800851B0 21206002 */   addu      $a0, $s3, $zero
 /* 468477C 800851B4 490060A2 */  sb         $zero, 0x49($s3)
 /* 4684780 800851B8 000000AE */  sw         $zero, 0x0($s0)
@@ -441,7 +441,7 @@ glabel func_level_51_80084B94
 /* 46847AC 800851E4 21106002 */   addu      $v0, $s3, $zero
 .Llevel_51_800851E8:
 /* 46847B0 800851E8 0000708E */  lw         $s0, 0x0($s3)
-/* 46847B4 800851EC C8E9000C */  jal        func_8003A720
+/* 46847B4 800851EC C8E9000C */  jal        MobyInitialize
 /* 46847B8 800851F0 21206002 */   addu      $a0, $s3, $zero
 /* 46847BC 800851F4 0C006426 */  addiu      $a0, $s3, 0xC
 /* 46847C0 800851F8 C05D000C */  jal        VecCopy
@@ -456,13 +456,13 @@ glabel func_level_51_80084B94
 /* 46847E4 8008521C F2150208 */  j          .Llevel_51_800857C8
 /* 46847E8 80085220 000015AE */   sw        $s5, 0x0($s0)
 .Llevel_51_80085224:
-/* 46847EC 80085224 C8E9000C */  jal        func_8003A720
+/* 46847EC 80085224 C8E9000C */  jal        MobyInitialize
 /* 46847F0 80085228 21206002 */   addu      $a0, $s3, $zero
 /* 46847F4 8008522C 21206002 */  addu       $a0, $s3, $zero
 /* 46847F8 80085230 20000224 */  addiu      $v0, $zero, 0x20
 /* 46847FC 80085234 500062A2 */  sb         $v0, 0x50($s3)
 /* 4684800 80085238 FF000224 */  addiu      $v0, $zero, 0xFF
-/* 4684804 8008523C 734A010C */  jal        func_800529CC
+/* 4684804 8008523C 734A010C */  jal        MobyCollisionDisable
 /* 4684808 80085240 520062A2 */   sb        $v0, 0x52($s3)
 /* 468480C 80085244 0D000224 */  addiu      $v0, $zero, 0xD
 /* 4684810 80085248 4C0060A2 */  sb         $zero, 0x4C($s3)
@@ -472,7 +472,7 @@ glabel func_level_51_80084B94
 /* 4684820 80085258 4F0062A2 */   sb        $v0, 0x4F($s3)
 .Llevel_51_8008525C:
 /* 4684824 8008525C 0000718E */  lw         $s1, 0x0($s3)
-/* 4684828 80085260 C8E9000C */  jal        func_8003A720
+/* 4684828 80085260 C8E9000C */  jal        MobyInitialize
 /* 468482C 80085264 21206002 */   addu      $a0, $s3, $zero
 /* 4684830 80085268 2120A002 */  addu       $a0, $s5, $zero
 /* 4684834 8008526C 21280000 */  addu       $a1, $zero, $zero
@@ -538,21 +538,21 @@ glabel func_level_51_80084B94
 .Llevel_51_80085348:
 /* 4684910 80085348 21206002 */  addu       $a0, $s3, $zero
 .Llevel_51_8008534C:
-/* 4684914 8008534C AA49010C */  jal        func_800526A8
+/* 4684914 8008534C AA49010C */  jal        MobyCollisionEnable
 /* 4684918 80085350 00000000 */   nop
 /* 468491C 80085354 F0000224 */  addiu      $v0, $zero, 0xF0
 /* 4684920 80085358 F4150208 */  j          .Llevel_51_800857D0
 /* 4684924 8008535C 000022AE */   sw        $v0, 0x0($s1)
 .Llevel_51_80085360:
 /* 4684928 80085360 0000748E */  lw         $s4, 0x0($s3)
-/* 468492C 80085364 C8E9000C */  jal        func_8003A720
+/* 468492C 80085364 C8E9000C */  jal        MobyInitialize
 /* 4684930 80085368 21206002 */   addu      $a0, $s3, $zero
 /* 4684934 8008536C 0C006426 */  addiu      $a0, $s3, 0xC
 /* 4684938 80085370 0C00A526 */  addiu      $a1, $s5, 0xC
 /* 468493C 80085374 20000224 */  addiu      $v0, $zero, 0x20
 /* 4684940 80085378 C05D000C */  jal        VecCopy
 /* 4684944 8008537C 500062A2 */   sb        $v0, 0x50($s3)
-/* 4684948 80085380 AA49010C */  jal        func_800526A8
+/* 4684948 80085380 AA49010C */  jal        MobyCollisionEnable
 /* 468494C 80085384 21206002 */   addu      $a0, $s3, $zero
 /* 4684950 80085388 CB89010C */  jal        rand
 /* 4684954 8008538C 00000000 */   nop
@@ -655,13 +655,13 @@ glabel func_level_51_80084B94
 /* 4684AD0 80085508 4B0062A2 */   sb        $v0, 0x4B($s3)
 .Llevel_51_8008550C:
 /* 4684AD4 8008550C 0000718E */  lw         $s1, 0x0($s3)
-/* 4684AD8 80085510 C8E9000C */  jal        func_8003A720
+/* 4684AD8 80085510 C8E9000C */  jal        MobyInitialize
 /* 4684ADC 80085514 21206002 */   addu      $a0, $s3, $zero
 /* 4684AE0 80085518 21206002 */  addu       $a0, $s3, $zero
 /* 4684AE4 8008551C 20000224 */  addiu      $v0, $zero, 0x20
 /* 4684AE8 80085520 500062A2 */  sb         $v0, 0x50($s3)
 /* 4684AEC 80085524 FF000224 */  addiu      $v0, $zero, 0xFF
-/* 4684AF0 80085528 734A010C */  jal        func_800529CC
+/* 4684AF0 80085528 734A010C */  jal        MobyCollisionDisable
 /* 4684AF4 8008552C 520062A2 */   sb        $v0, 0x52($s3)
 /* 4684AF8 80085530 0E000224 */  addiu      $v0, $zero, 0xE
 /* 4684AFC 80085534 4C0060A2 */  sb         $zero, 0x4C($s3)
@@ -771,9 +771,9 @@ glabel func_level_51_80084B94
 /* 4684C90 800856C8 130022A2 */   sb        $v0, 0x13($s1)
 .Llevel_51_800856CC:
 /* 4684C94 800856CC 0000708E */  lw         $s0, 0x0($s3)
-/* 4684C98 800856D0 C8E9000C */  jal        func_8003A720
+/* 4684C98 800856D0 C8E9000C */  jal        MobyInitialize
 /* 4684C9C 800856D4 21206002 */   addu      $a0, $s3, $zero
-/* 4684CA0 800856D8 734A010C */  jal        func_800529CC
+/* 4684CA0 800856D8 734A010C */  jal        MobyCollisionDisable
 /* 4684CA4 800856DC 21206002 */   addu      $a0, $s3, $zero
 /* 4684CA8 800856E0 02000224 */  addiu      $v0, $zero, 0x2
 /* 4684CAC 800856E4 4F0062A2 */  sb         $v0, 0x4F($s3)
@@ -784,7 +784,7 @@ glabel func_level_51_80084B94
 /* 4684CC0 800856F8 F4150208 */  j          .Llevel_51_800857D0
 /* 4684CC4 800856FC 000002AE */   sw        $v0, 0x0($s0)
 .Llevel_51_80085700:
-/* 4684CC8 80085700 C8E9000C */  jal        func_8003A720
+/* 4684CC8 80085700 C8E9000C */  jal        MobyInitialize
 /* 4684CCC 80085704 21206002 */   addu      $a0, $s3, $zero
 /* 4684CD0 80085708 0300A012 */  beqz       $s5, .Llevel_51_80085718
 /* 4684CD4 8008570C 0C006426 */   addiu     $a0, $s3, 0xC
@@ -818,18 +818,18 @@ glabel func_level_51_80084B94
 /* 4684D34 8008576C F1150208 */  j          .Llevel_51_800857C4
 /* 4684D38 80085770 140062AE */   sw        $v0, 0x14($s3)
 .Llevel_51_80085774:
-/* 4684D3C 80085774 C8E9000C */  jal        func_8003A720
+/* 4684D3C 80085774 C8E9000C */  jal        MobyInitialize
 /* 4684D40 80085778 21206002 */   addu      $a0, $s3, $zero
 /* 4684D44 8008577C 21206002 */  addu       $a0, $s3, $zero
 /* 4684D48 80085780 20000224 */  addiu      $v0, $zero, 0x20
 /* 4684D4C 80085784 500062A2 */  sb         $v0, 0x50($s3)
 /* 4684D50 80085788 FF000224 */  addiu      $v0, $zero, 0xFF
-/* 4684D54 8008578C 734A010C */  jal        func_800529CC
+/* 4684D54 8008578C 734A010C */  jal        MobyCollisionDisable
 /* 4684D58 80085790 520062A2 */   sb        $v0, 0x52($s3)
 /* 4684D5C 80085794 F5150208 */  j          .Llevel_51_800857D4
 /* 4684D60 80085798 21106002 */   addu      $v0, $s3, $zero
 .Llevel_51_8008579C:
-/* 4684D64 8008579C C8E9000C */  jal        func_8003A720
+/* 4684D64 8008579C C8E9000C */  jal        MobyInitialize
 /* 4684D68 800857A0 21206002 */   addu      $a0, $s3, $zero
 /* 4684D6C 800857A4 0300A012 */  beqz       $s5, .Llevel_51_800857B4
 /* 4684D70 800857A8 0C006426 */   addiu     $a0, $s3, 0xC
@@ -844,7 +844,7 @@ glabel func_level_51_80084B94
 .Llevel_51_800857C4:
 /* 4684D8C 800857C4 21206002 */  addu       $a0, $s3, $zero
 .Llevel_51_800857C8:
-/* 4684D90 800857C8 AA49010C */  jal        func_800526A8
+/* 4684D90 800857C8 AA49010C */  jal        MobyCollisionEnable
 /* 4684D94 800857CC 00000000 */   nop
 .Llevel_51_800857D0:
 /* 4684D98 800857D0 21106002 */  addu       $v0, $s3, $zero

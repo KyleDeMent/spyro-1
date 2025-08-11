@@ -971,7 +971,7 @@ glabel func_level_30_8007E398
 /* 272ACB4 8007E6EC 0400C38C */  lw         $v1, 0x4($a2)
 /* 272ACB8 8007E6F0 0000E2AC */  sw         $v0, 0x0($a3)
 /* 272ACBC 8007E6F4 0400E3AC */  sw         $v1, 0x4($a3)
-/* 272ACC0 8007E6F8 AA49010C */  jal        func_800526A8
+/* 272ACC0 8007E6F8 AA49010C */  jal        MobyCollisionEnable
 /* 272ACC4 8007E6FC 21206002 */   addu      $a0, $s3, $zero
 /* 272ACC8 8007E700 01000224 */  addiu      $v0, $zero, 0x1
 /* 272ACCC 8007E704 510062A2 */  sb         $v0, 0x51($s3)
@@ -4863,7 +4863,7 @@ glabel func_level_30_8007E398
 /* 272E5E4 8008201C 02000924 */   addiu     $t1, $zero, 0x2
 /* 272E5E8 80082020 16E1000C */  jal        func_80038458
 /* 272E5EC 80082024 21206002 */   addu      $a0, $s3, $zero
-/* 272E5F0 80082028 F44C010C */  jal        func_800533D0
+/* 272E5F0 80082028 F44C010C */  jal        MobyUpdateShadow
 /* 272E5F4 8008202C 21206002 */   addu      $a0, $s3, $zero
 /* 272E5F8 80082030 36006286 */  lh         $v0, 0x36($s3)
 /* 272E5FC 80082034 00000000 */  nop
@@ -4939,7 +4939,7 @@ glabel func_level_30_8007E398
 /* 272E710 80082148 140062AE */   sw        $v0, 0x14($s3)
 /* 272E714 8008214C 16E1000C */  jal        func_80038458
 /* 272E718 80082150 21206002 */   addu      $a0, $s3, $zero
-/* 272E71C 80082154 F44C010C */  jal        func_800533D0
+/* 272E71C 80082154 F44C010C */  jal        MobyUpdateShadow
 /* 272E720 80082158 21206002 */   addu      $a0, $s3, $zero
 /* 272E724 8008215C 70080208 */  j          .Llevel_30_800821C0
 /* 272E728 80082160 9A05A22A */   slti      $v0, $s5, 0x59A
@@ -5139,7 +5139,7 @@ glabel func_level_30_8007E398
 /* 272EA08 80082440 00000000 */   nop
 /* 272EA0C 80082444 460060A2 */  sb         $zero, 0x46($s3)
 .Llevel_30_80082448:
-/* 272EA10 80082448 F44C010C */  jal        func_800533D0
+/* 272EA10 80082448 F44C010C */  jal        MobyUpdateShadow
 /* 272EA14 8008244C 21206002 */   addu      $a0, $s3, $zero
 /* 272EA18 80082450 1A090208 */  j          .Llevel_30_80082468
 /* 272EA1C 80082454 00000000 */   nop
@@ -5215,7 +5215,7 @@ glabel func_level_30_8007E398
 /* 272EB24 8008255C 21200002 */  addu       $a0, $s0, $zero
 /* 272EB28 80082560 7B35010C */  jal        func_8004D5EC
 /* 272EB2C 80082564 0100053C */   lui       $a1, (0x10000 >> 16)
-/* 272EB30 80082568 F44C010C */  jal        func_800533D0
+/* 272EB30 80082568 F44C010C */  jal        MobyUpdateShadow
 /* 272EB34 8008256C 21206002 */   addu      $a0, $s3, $zero
 .Llevel_30_80082570:
 /* 272EB38 80082570 9A05A22A */  slti       $v0, $s5, 0x59A
@@ -5667,7 +5667,7 @@ glabel func_level_30_8007E398
 /* 272F1C8 80082C00 21200002 */  addu       $a0, $s0, $zero
 /* 272F1CC 80082C04 7B35010C */  jal        func_8004D5EC
 /* 272F1D0 80082C08 00100524 */   addiu     $a1, $zero, 0x1000
-/* 272F1D4 80082C0C F44C010C */  jal        func_800533D0
+/* 272F1D4 80082C0C F44C010C */  jal        MobyUpdateShadow
 /* 272F1D8 80082C10 21206002 */   addu      $a0, $s3, $zero
 /* 272F1DC 80082C14 1C00628E */  lw         $v0, 0x1C($s3)
 /* 272F1E0 80082C18 0080033C */  lui        $v1, (0x80000000 >> 16)
@@ -6009,7 +6009,7 @@ glabel func_level_30_8007E398
 /* 272F6C0 800830F8 2130C200 */  addu       $a2, $a2, $v0
 /* 272F6C4 800830FC 7B35010C */  jal        func_8004D5EC
 /* 272F6C8 80083100 100066AE */   sw        $a2, 0x10($s3)
-/* 272F6CC 80083104 F44C010C */  jal        func_800533D0
+/* 272F6CC 80083104 F44C010C */  jal        MobyUpdateShadow
 /* 272F6D0 80083108 21206002 */   addu      $a0, $s3, $zero
 /* 272F6D4 8008310C 2000828E */  lw         $v0, 0x20($s4)
 /* 272F6D8 80083110 10000924 */  addiu      $t1, $zero, 0x10
@@ -14271,7 +14271,7 @@ glabel func_level_30_8007E398
 /* 273702C 8008AA64 00000000 */   nop
 /* 2737030 8008AA68 16E1000C */  jal        func_80038458
 /* 2737034 8008AA6C 21206002 */   addu      $a0, $s3, $zero
-/* 2737038 8008AA70 F44C010C */  jal        func_800533D0
+/* 2737038 8008AA70 F44C010C */  jal        MobyUpdateShadow
 /* 273703C 8008AA74 21206002 */   addu      $a0, $s3, $zero
 .Llevel_30_8008AA78:
 /* 2737040 8008AA78 48006292 */  lbu        $v0, 0x48($s3)

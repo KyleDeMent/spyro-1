@@ -11,9 +11,12 @@ Moby *func_800524C4(void);
 /// @param pMoby The Moby to free
 void func_80052568(Moby *pMoby);
 
+/// @brief Initialize Moby collision
+void MobyCollisionEnable(Moby *pMoby);
+
 /// @brief Disables collision for a Moby
 /// @param pMoby The Moby to disable collision for
-void func_800529CC(Moby *pMoby);
+void MobyCollisionDisable(Moby *pMoby);
 
 enum MobyPropUpdateFlags {
   // Update the collision data based on frame data
@@ -31,7 +34,7 @@ void func_800529E4(Moby *pMoby, int pFlags);
 
 /// @brief Updates a Moby's shadow
 /// @param pMoby The Moby to update
-void func_800533D0(Moby *pMoby);
+void MobyUpdateShadow(Moby *pMoby);
 
 /// @brief Creates the death sparks and poofs
 void func_800530C0(Moby *pMoby, int pSomething);

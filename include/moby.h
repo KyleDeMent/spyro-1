@@ -243,13 +243,19 @@ typedef enum {
   MOBYCLASS_PORTAL = 1,
 
   MOBYCLASS_EXIT_VORTEX = 9,
+  MOBYCLASS_FODDER_SHEEP = 10,
 
   MOBYCLASS_GEM_SPAWNER = 13,
 
+  MOBYCLASS_EXTRA_LIFE = 14,
   MOBYCLASS_LIFE_ORB = 15,
   MOBYCLASS_BUTTERFLY = 16,
 
+  MOBYCLASS_ARTISANS_LAKE_PLATFORM = 18,
+
   MOBYCLASS_HUD_SPYRO_HEAD = 58,
+
+  MOBYCLASS_SPYRO = 67,
 
   MOBYCLASS_LETTER_APOSTROPHE = 76,
 
@@ -259,9 +265,15 @@ typedef enum {
   MOBYCLASS_GEM_10 = 86,
   MOBYCLASS_GEM_25 = 87,
 
+  MOBYCLASS_FAIRY = 110,
+
+  MOBYCLASS_ENEMY_GOON = 114,
+
   MOBYCLASS_SPARX = 120, // Gets spawned in load layout
 
   MOBYCLASS_HUD_KEY = 173,
+
+  MOBYCLASS_GEM_CHEST = 194,
 
   MOBYCLASS_CRYSTAL_DRAGON = 250,
   MOBYCLASS_CRYSTAL_DRAGON_FRAGMENT = 251,
@@ -276,6 +288,16 @@ typedef enum {
   MOBYCLASS_NUMBER_7,
   MOBYCLASS_NUMBER_8,
   MOBYCLASS_NUMBER_9, // 269
+
+  MOBYCLASS_DRAGON_PEDESTAL = 331,
+  MOBYCLASS_PINK_FLOWERS_1 = 336,
+  MOBYCLASS_ENEMY_GEM_THIEF = 339,
+  MOBYCLASS_PINK_FLOWERS_3 = 342,
+  MOBYCLASS_TREE_1 = 354,
+  MOBYCLASS_TREE_2 = 355,
+  MOBYCLASS_TREE_3 = 356,
+
+  MOBYCLASS_LIFE_CHEST = 421,
 
   MOBYCLASS_LETTER_A = 426,
   MOBYCLASS_LETTER_B,
@@ -305,6 +327,9 @@ typedef enum {
   MOBYCLASS_LETTER_Z, // 451
 
   MOBYCLASS_HUD_GEM_CHEST = 471,
+
+  MOBYCLASS_STATIC_TALL_GRASS = 501,
+
   MOBYCLASS_HUD_DRAGON = 506,
 
   // These are the last two classes
@@ -332,7 +357,7 @@ typedef struct {
   Moby *m_Parent;
   short m_Len;
   short m_Index;
-} MobyLetterProps;
+} MobyPropsLetter;
 
 typedef struct {
   int unk_0x0;
@@ -340,7 +365,60 @@ typedef struct {
   // "5"
   int unk_0x4;
   Vector3D unk_0x8;
-} MobyNumberProps;
+} MobyPropsDigit;
+
+typedef struct {
+  int unk_0x0;
+  int unk_0x4;
+  int unk_0x8;
+  char unk_0xC;
+  char unk_0xD;
+  char unk_0xE;
+  char unk_0xF;
+  char unk_0x10;
+  char unk_0x11;
+  char unk_0x12;
+  char unk_0x13;
+  u_char unk_0x14;
+} MobyPropsCollectable;
+
+typedef struct {
+  Vector3D vec_0x0;
+  int unk_0xC;
+  char unk_0x10;
+  char unk_0x11;
+  char unk_0x12;
+  char unk_0x13;
+} MobyPropsDragonFragment;
+
+typedef struct {
+  int unk_0x0;
+  short unk_0x4;
+  short unk_0x6;
+  short unk_0x8;
+  int unk_0xC;
+  int unk_0x10;
+} MobyPropsSparx;
+
+typedef struct {
+  short unk_0x0;
+  short unk_0x2;
+  short unk_0x4;
+  ushort unk_0x6;
+  ushort unk_0x8;
+  ushort unk_0xA;
+  uint unk_0xC;
+  int unk_0x10;
+} MobyProps255;
+
+typedef struct {
+  int unk_0x0;
+  Vector3D vec_0x4;
+  short unk_0x10;
+  char unk_0x12;
+  char unk_0x13;
+  short unk_0x14;
+} MobyPropsButterfly;
 
 typedef struct {
   Vector3D m_CameraPosition;
