@@ -8,6 +8,6 @@ void func_80051FEC(void);
 void func_800521C0(void);
 
 /// @brief Updates the Mobys' animations
-void func_800522C0(void);
+void func_800522C0(void* pBuf, int pUnk);
 
 #endif // __MOBY_LISTS_H

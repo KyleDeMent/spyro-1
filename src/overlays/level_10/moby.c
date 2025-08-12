@@ -6,13 +6,126 @@
 #include "loaders.h"
 #include "math.h"
 #include "moby_helpers.h"
+#include "moby_lists.h"
 #include "spyro.h"
+#include "rand.h"
 
 // From psyq
 extern int rand(void);
 extern void srand(unsigned int);
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_10", func_level_10_8007D9C8);
+
+extern struct {
+  u_char m_Buf[0x1c00];
+  u_int m_WorldNearQueued[256];
+  u_int m_WorldFarQueued[256];
+  Moby *m_ShadedMobys[256];
+  char unk_0x2800[2464];
+} g_SonyImage;
+
+extern int D_80075794;
+extern int D_800757F4;
+
+typedef struct {
+  int unk_0x0;
+  int unk_0x4;
+  int unk_0x8;
+  u_char* unk_0xC;
+  //...
+  int unk_0x1C;
+  int unk_0x20;
+} MobyProps10;
+
+typedef struct {
+  int unk_0x0;
+  int unk_0x4;
+  int unk_0x8;
+  u_char* unk_0xC;
+  //...
+  int unk_0x30;
+} SubProps;
+
+void func_level_10_8007D9C8(void) {
+  Moby **lst;
+  Moby *list_moby;
+  Moby *pod_moby;
+  MobyProps10 *props10;
+
+  func_80051FEC(); //build moby-needs-update list
+  func_800522C0(g_SonyImage.m_Buf + 0x400, 0); //update moby anims
+  if(g_DeltaTime > 2) {
+    func_800522C0(g_SonyImage.m_Buf + 0x400, g_DeltaTime == 3 ? 0x80000001 : 0x80000000); //update moby anims
+  }
+
+  lst = (Moby**)(g_SonyImage.m_Buf + 0x400);
+  for(list_moby = *lst; list_moby; ++list_moby)
+  {
+    if(list_moby->m_State >= 0x80)
+      continue;
+
+    D_80075794 = list_moby->m_AnimationState.m_AnimationFlags & 2;
+    D_800757F4 = list_moby->m_AnimationState.m_AnimationFlags & 1;
+    D_800756C4 = g_DeltaTime;
+
+    switch (list_moby->m_Class)
+    {
+    case 10: //0xA
+      props10 = list_moby->m_Props;
+      if ((list_moby->m_DamageFlags & 0xB0000) && list_moby->m_State != 3) {
+        list_moby->m_DamageFlags = 0;
+        props10->unk_0x1C = Atan2(list_moby->m_Position.x - g_Spyro.m_Position.x, list_moby->m_Position.y - g_Spyro.m_Position.y, 0);
+        props10->unk_0x20 = (list_moby->m_DamageFlags & 0x10000) ? 400 : 200;
+        func_8003ABC0(list_moby, 3, 0, 0);
+        func_8003B7C0(list_moby);  // Mark moby killed
+        list_moby->m_State = 3;
+        list_moby->m_AnimationState.m_FrameProgress = 0;
+        list_moby->m_AnimationState.m_Animation = 3;
+        list_moby->m_AnimationState.m_NextAnimation = 3;
+        list_moby->m_AnimationState.m_Frame = 0;
+        list_moby->m_AnimationState.m_NextFrame = 1;
+        list_moby->m_AnimationState.m_PerFrameProgress = D_80076378[list_moby->m_Class]->m_Animations[3]->m_ProgressPerTick;
+      } else {
+        switch (list_moby->m_State) {
+        case 0:
+          func_80038458(list_moby);
+          if (OctDistance(&list_moby->m_Position, &g_Spyro.m_Position) >= 0x1400) {
+            if (list_moby->m_AnimationState.m_NextAnimation != 0) {
+              D_80075794 = 0;
+              list_moby->m_AnimationState.m_Animation = list_moby->m_AnimationState.m_NextAnimation;
+              list_moby->m_AnimationState.m_Frame = list_moby->m_AnimationState.m_NextFrame;
+              list_moby->m_AnimationState.m_FrameProgress = 16;
+              list_moby->m_AnimationState.m_PerFrameProgress = 16;
+              list_moby->m_AnimationState.m_NextAnimation = 0;
+              list_moby->m_AnimationState.m_NextFrame = 0;
+              func_80037E98(list_moby);
+            } else {
+              func_800529E4(list_moby, UPDATE_PROP_CHAIN);
+            }
+          } else {
+            if (ABS(list_moby->m_Position.z - g_Spyro.m_Position.z) < 0x400 && list_moby->m_Pod != 0xFF) {
+              for(pod_moby = *lst; pod_moby; ++pod_moby) {
+                SubProps *sub_props = pod_moby->m_Props;
+                if (pod_moby->m_Pod == list_moby->m_Pod && pod_moby->m_State == 0 && sub_props->unk_0xC[1] == props10->unk_0xC[1]) {
+                  pod_moby->m_State = 1;
+                  sub_props->unk_0x30 = RandRange(6, 40);
+                }
+              }
+            }
+            list_moby->m_State = 1;
+          }
+          break;
+        case 1:
+          uv22 = Atan2(g_Spyro.m_Position.x - (list_moby->m_Position).x, g_Spyro.m_Position.y - (list_moby->m_Position).y, 0);
+          uint uv20 = props10->unk_0xC[0];
+          uv36 = (props10->unk_0xC[1] + 1) % uv20;
+          iv11 = (props10->unk_0xC[1] - 1 + uv20) % uv20;
+          break;
+        }
+      }
+      break;
+    }
+  }
+}
 
 Moby *artisans_SpawnMoby(int pClass, Moby *pParent) {
   Vector3D tmp_vec;

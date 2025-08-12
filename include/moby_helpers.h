@@ -3,6 +3,8 @@
 
 #include "moby.h"
 
+void func_80037E98(Moby *pMoby);
+
 /// @brief Function that ticks a timer
 /// @param pTimer The timer to update
 /// @param pTimerType The type of timer, equal to the size of the type
@@ -21,11 +23,22 @@ int func_80038074(int p1, int p2);
 /// @return The normalized difference
 int func_800381BC(int p1, int p2);
 
+/// @brief
+/// TODO
+void func_80038458(Moby *pMoby);
+
 /// @brief Plays a sound from a Moby
 void func_8003851C(Moby *pMoby, int pSoundIndex, u_char *pChannel);
 
 /// @brief Initialize a Moby
 void MobyInitialize(Moby *pMoby);
+
+/// @brief
+/// TODO
+void func_8003ABC0(Moby *pMoby, int, int, int);
+
+/// @brief Mark a moby as killed
+void func_8003B7C0(Moby *pMoby);
 
 /// @brief Persist a collected gem to checkpoint / global collected mask
 void func_8003B854(int pGemValue, Moby* pMoby);
