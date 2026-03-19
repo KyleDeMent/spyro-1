@@ -1,7 +1,7 @@
 .set noat      /* allow manual use of $at */
 .set noreorder /* don't insert nops after branches */
 
-glabel func_credits_8007BFD0
+glabel CreditsDraw
 /* 5C98D98 8007BFD0 D0FFBD27 */  addiu      $sp, $sp, -0x30
 /* 5C98D9C 8007BFD4 0780033C */  lui        $v1, %hi(g_CreditsStage)
 /* 5C98DA0 8007BFD8 0457638C */  lw         $v1, %lo(g_CreditsStage)($v1)
@@ -45,8 +45,8 @@ glabel func_credits_8007BFD0
 /* 5C98E30 8007C068 518A6390 */  lbu        $v1, %lo(g_Cyclorama + 0x11)($v1)
 /* 5C98E34 8007C06C 0880043C */  lui        $a0, %hi(g_Cyclorama + 0x12)
 /* 5C98E38 8007C070 528A8490 */  lbu        $a0, %lo(g_Cyclorama + 0x12)($a0)
-/* 5C98E3C 8007C074 0780053C */  lui        $a1, %hi(D_800756E4)
-/* 5C98E40 8007C078 E456A58C */  lw         $a1, %lo(D_800756E4)($a1)
+/* 5C98E3C 8007C074 0780053C */  lui        $a1, %hi(g_CreditsMobyCount)
+/* 5C98E40 8007C078 E456A58C */  lw         $a1, %lo(g_CreditsMobyCount)($a1)
 /* 5C98E44 8007C07C 0780013C */  lui        $at, %hi(g_DB + 0x19)
 /* 5C98E48 8007C080 F96E22A0 */  sb         $v0, %lo(g_DB + 0x19)($at)
 /* 5C98E4C 8007C084 0780013C */  lui        $at, %hi(g_DB + 0x1A)
@@ -67,8 +67,8 @@ glabel func_credits_8007BFD0
 /* 5C98E84 8007C0BC 58000624 */  addiu      $a2, $zero, 0x58
 /* 5C98E88 8007C0C0 0780043C */  lui        $a0, %hi(g_HudMobys)
 /* 5C98E8C 8007C0C4 1057848C */  lw         $a0, %lo(g_HudMobys)($a0)
-/* 5C98E90 8007C0C8 0780023C */  lui        $v0, %hi(D_8007589C)
-/* 5C98E94 8007C0CC 9C58428C */  lw         $v0, %lo(D_8007589C)($v0)
+/* 5C98E90 8007C0C8 0780023C */  lui        $v0, %hi(g_CreditsMobys)
+/* 5C98E94 8007C0CC 9C58428C */  lw         $v0, %lo(g_CreditsMobys)($v0)
 /* 5C98E98 8007C0D0 A8FF8424 */  addiu      $a0, $a0, -0x58
 /* 5C98E9C 8007C0D4 0780013C */  lui        $at, %hi(g_HudMobys)
 /* 5C98EA0 8007C0D8 105724AC */  sw         $a0, %lo(g_HudMobys)($at)
@@ -129,8 +129,8 @@ glabel func_credits_8007BFD0
 /* 5C98F78 8007C1B0 1057638C */  lw         $v1, %lo(g_HudMobys)($v1)
 /* 5C98F7C 8007C1B4 7F000224 */  addiu      $v0, $zero, 0x7F
 /* 5C98F80 8007C1B8 470062A0 */  sb         $v0, 0x47($v1)
-/* 5C98F84 8007C1BC 0780023C */  lui        $v0, %hi(D_800756E4)
-/* 5C98F88 8007C1C0 E456428C */  lw         $v0, %lo(D_800756E4)($v0)
+/* 5C98F84 8007C1BC 0780023C */  lui        $v0, %hi(g_CreditsMobyCount)
+/* 5C98F88 8007C1C0 E456428C */  lw         $v0, %lo(g_CreditsMobyCount)($v0)
 /* 5C98F8C 8007C1C4 01003126 */  addiu      $s1, $s1, 0x1
 /* 5C98F90 8007C1C8 2A102202 */  slt        $v0, $s1, $v0
 /* 5C98F94 8007C1CC BAFF4014 */  bnez       $v0, .Lcredits_8007C0B8
@@ -230,4 +230,4 @@ glabel func_credits_8007BFD0
 /* 5C990F4 8007C32C 3000BD27 */  addiu      $sp, $sp, 0x30
 /* 5C990F8 8007C330 0800E003 */  jr         $ra
 /* 5C990FC 8007C334 00000000 */   nop
-.size func_credits_8007BFD0, . - func_credits_8007BFD0
+.size CreditsDraw, . - CreditsDraw

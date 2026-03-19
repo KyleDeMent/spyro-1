@@ -26,6 +26,19 @@ typedef struct {
   CutsceneMobyData *m_MobyData[1]; // Variable length array, size m_MobyCount
 } CutsceneLayout;
 
+typedef struct {
+  Vector3D m_Position;
+  Vector3D m_Rotation;
+} CreditsCamData;
+
+typedef struct {
+  int m_Tick;
+  int m_StringsDataOffset;
+  int m_CamDataCount;
+
+  CreditsCamData m_CamData[1]; // Variable length, size m_
+} CreditsData;
+
 /// Pointer to the current cutscene layout data.
 /// Contains playback state (m_CurrentTick), duration, and animation data
 /// for camera and mobys. Loaded from level data in LoadCutscene().
@@ -67,12 +80,12 @@ extern int g_CreditsTotalEntries;
 
 /// Pointer to the current credits data structure.
 /// Accessed at offsets 0x0 and 0x4 during credits rendering.
-extern int g_CreditsDataPtr;
+extern CreditsData *g_CreditsStringsPtr;
 
 /// Buffer pointer for credits rendering.
 /// Set to overlay space + 0x2800 during credits initialization.
 /// Used for Memcpy operations and image data during credits display.
-extern int g_CreditsBuffer;
+extern void *g_CreditsBuffer;
 
 /// Timer that accumulates delta time during credits.
 /// Used for fade transitions (stored to g_Fade) and HUD moby animation.

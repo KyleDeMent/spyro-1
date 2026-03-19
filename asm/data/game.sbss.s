@@ -97,7 +97,7 @@ dlabel D_800756DC
 dlabel g_CDMaxReadTime
 /* 65EB8 800756E0 */ .space 0x04
 
-dlabel D_800756E4
+dlabel g_CreditsMobyCount
 /* 65EBC 800756E4 */ .space 0x04
 
 dlabel g_DynMobySpaceEnd
@@ -121,7 +121,7 @@ dlabel D_80075700
 dlabel g_CreditsStage
 /* 65EDC 80075704 */ .space 0x04
 
-dlabel D_80075708
+dlabel g_CreditsStringEntries
 /* 65EE0 80075708 */ .space 0x04
 
 dlabel g_ScreenBorderEnabled
@@ -254,7 +254,7 @@ dlabel g_MobyPodCount
 dlabel g_DemoIndex
 /* 65F90 800757B8 */ .space 0x04
 
-dlabel g_CreditsDataPtr
+dlabel g_CreditsStringsPtr
 /* 65F94 800757BC */ .space 0x04
 
 dlabel g_FlightResultsUpdate
@@ -291,7 +291,7 @@ dlabel D_800757E4
 dlabel g_PreviousLevelId
 /* 65FC0 800757E8 */ .space 0x04
 
-dlabel D_800757EC
+dlabel g_CreditsStrings
 /* 65FC4 800757EC */ .space 0x04
 
 dlabel D_800757F0
@@ -420,7 +420,7 @@ dlabel D_80075894
 dlabel g_Sparx
 /* 66070 80075898 */ .space 0x04
 
-dlabel D_8007589C
+dlabel g_CreditsMobys
 /* 66074 8007589C */ .space 0x04
 
 dlabel D_800758A0

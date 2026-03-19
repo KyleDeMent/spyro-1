@@ -203,6 +203,7 @@ void TitlescreenPlaySound(int pSoundId);
 void TitlescreenUpdate(void);
 void TitlescreenDrawSprite(int pX, int pY, int pSprite, int pColorId);
 void TitlescreenDraw(void);
+void func_titlescreen_8007DDE8(void);
 
 /// @brief Array of level IDs used for titlescreen demo playback
 extern int g_DemoLevelIds[];

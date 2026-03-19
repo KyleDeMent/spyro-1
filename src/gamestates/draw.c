@@ -2655,7 +2655,7 @@ void func_8001EB80(void) {
   DrawOTag(func_80016784(0x800));
 }
 
-void func_credits_8007BFD0(void); // Overlay functions
+void CreditsDraw(void); // Overlay functions
 
 /// @brief Gamestate draw function
 void GamestateDraw(void) {
@@ -2714,7 +2714,7 @@ void GamestateDraw(void) {
       func_8001E9C8();
     } else if (g_Gamestate == GS_Credits) {
       if (g_CreditsStage < 99) {
-        func_credits_8007BFD0(); // Overlay function
+        CreditsDraw(); // Overlay function
       } else {
         func_8001EB80();
       }

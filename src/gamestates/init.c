@@ -558,7 +558,7 @@ void InitCreditsSequence(int pLoadSharedModels) {
   g_CreditsEntryIndex = 0;
   g_CreditsDisplayedCount = 0;
   g_CreditsTotalEntries = 0;
-  g_CreditsDataPtr = 0;
+  g_CreditsStringsPtr = 0;
   g_CreditsBuffer = 0;
   g_CreditsTimer = 0;
 

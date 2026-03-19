@@ -1069,7 +1069,7 @@ glabel func_level_22_8007E240
 /* 1E05E4C 8007E884 00000000 */  nop
 /* 1E05E50 8007E888 49004010 */  beqz       $v0, .Llevel_22_8007E9B0
 /* 1E05E54 8007E88C 1C002426 */   addiu     $a0, $s1, 0x1C
-/* 1E05E58 8007E890 E4DF000C */  jal        func_80037F90
+/* 1E05E58 8007E890 E4DF000C */  jal        TimerTick
 /* 1E05E5C 8007E894 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E05E60 8007E898 A8284010 */  beqz       $v0, .Llevel_22_80088B3C
 /* 1E05E64 8007E89C 00000000 */   nop
@@ -1327,7 +1327,7 @@ glabel func_level_22_8007E240
 /* 1E0620C 8007EC44 CF220208 */  j          .Llevel_22_80088B3C
 /* 1E06210 8007EC48 00000000 */   nop
 .Llevel_22_8007EC4C:
-/* 1E06214 8007EC4C E4DF000C */  jal        func_80037F90
+/* 1E06214 8007EC4C E4DF000C */  jal        TimerTick
 /* 1E06218 8007EC50 02000524 */   addiu     $a1, $zero, 0x2
 /* 1E0621C 8007EC54 05004010 */  beqz       $v0, .Llevel_22_8007EC6C
 /* 1E06220 8007EC58 12002426 */   addiu     $a0, $s1, 0x12
@@ -1336,7 +1336,7 @@ glabel func_level_22_8007E240
 /* 1E0622C 8007EC64 B2274010 */  beqz       $v0, .Llevel_22_80088B30
 /* 1E06230 8007EC68 00000000 */   nop
 .Llevel_22_8007EC6C:
-/* 1E06234 8007EC6C E4DF000C */  jal        func_80037F90
+/* 1E06234 8007EC6C E4DF000C */  jal        TimerTick
 /* 1E06238 8007EC70 01000524 */   addiu     $a1, $zero, 0x1
 /* 1E0623C 8007EC74 11004010 */  beqz       $v0, .Llevel_22_8007ECBC
 /* 1E06240 8007EC78 1E000424 */   addiu     $a0, $zero, 0x1E
@@ -1359,7 +1359,7 @@ glabel func_level_22_8007E240
 /* 1E06280 8007ECB8 120022A2 */  sb         $v0, 0x12($s1)
 .Llevel_22_8007ECBC:
 /* 1E06284 8007ECBC 13002426 */  addiu      $a0, $s1, 0x13
-/* 1E06288 8007ECC0 E4DF000C */  jal        func_80037F90
+/* 1E06288 8007ECC0 E4DF000C */  jal        TimerTick
 /* 1E0628C 8007ECC4 01000524 */   addiu     $a1, $zero, 0x1
 /* 1E06290 8007ECC8 08004010 */  beqz       $v0, .Llevel_22_8007ECEC
 /* 1E06294 8007ECCC 0A000424 */   addiu     $a0, $zero, 0xA
@@ -1500,7 +1500,7 @@ glabel func_level_22_8007E240
 /* 1E06490 8007EEC8 63000224 */  addiu      $v0, $zero, 0x63
 /* 1E06494 8007EECC 2A066210 */  beq        $v1, $v0, .Llevel_22_80080778
 /* 1E06498 8007EED0 13002426 */   addiu     $a0, $s1, 0x13
-/* 1E0649C 8007EED4 E4DF000C */  jal        func_80037F90
+/* 1E0649C 8007EED4 E4DF000C */  jal        TimerTick
 /* 1E064A0 8007EED8 01000524 */   addiu     $a1, $zero, 0x1
 /* 1E064A4 8007EEDC 08004010 */  beqz       $v0, .Llevel_22_8007EF00
 /* 1E064A8 8007EEE0 05000424 */   addiu     $a0, $zero, 0x5
@@ -1631,7 +1631,7 @@ glabel func_level_22_8007E240
 .Llevel_22_8007F0B8:
 /* 1E06680 8007F0B8 3C004426 */  addiu      $a0, $s2, 0x3C
 .Llevel_22_8007F0BC:
-/* 1E06684 8007F0BC E4DF000C */  jal        func_80037F90
+/* 1E06684 8007F0BC E4DF000C */  jal        TimerTick
 /* 1E06688 8007F0C0 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0668C 8007F0C4 35004010 */  beqz       $v0, .Llevel_22_8007F19C
 /* 1E06690 8007F0C8 00000000 */   nop
@@ -6001,7 +6001,7 @@ glabel func_level_22_8007E240
 /* 1E0A6D8 80083110 31002016 */  bnez       $s1, .Llevel_22_800831D8
 /* 1E0A6DC 80083114 21804000 */   addu      $s0, $v0, $zero
 /* 1E0A6E0 80083118 21204002 */  addu       $a0, $s2, $zero
-/* 1E0A6E4 8008311C E4DF000C */  jal        func_80037F90
+/* 1E0A6E4 8008311C E4DF000C */  jal        TimerTick
 /* 1E0A6E8 80083120 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0A6EC 80083124 19004014 */  bnez       $v0, .Llevel_22_8008318C
 /* 1E0A6F0 80083128 00000000 */   nop
@@ -7070,7 +7070,7 @@ glabel func_level_22_8007E240
 .Llevel_22_800840B0:
 /* 1E0B678 800840B0 49006426 */  addiu      $a0, $s3, 0x49
 .Llevel_22_800840B4:
-/* 1E0B67C 800840B4 E4DF000C */  jal        func_80037F90
+/* 1E0B67C 800840B4 E4DF000C */  jal        TimerTick
 /* 1E0B680 800840B8 01000524 */   addiu     $a1, $zero, 0x1
 /* 1E0B684 800840BC 02000924 */  addiu      $t1, $zero, 0x2
 /* 1E0B688 800840C0 9E124914 */  bne        $v0, $t1, .Llevel_22_80088B3C
@@ -7410,7 +7410,7 @@ glabel func_level_22_8007E240
 /* 1E0BB74 800845AC 70E3000C */  jal        RotateMobyToSpyro
 /* 1E0BB78 800845B0 21380000 */   addu      $a3, $zero, $zero
 /* 1E0BB7C 800845B4 18000426 */  addiu      $a0, $s0, 0x18
-/* 1E0BB80 800845B8 E4DF000C */  jal        func_80037F90
+/* 1E0BB80 800845B8 E4DF000C */  jal        TimerTick
 /* 1E0BB84 800845BC 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0BB88 800845C0 77074010 */  beqz       $v0, .Llevel_22_800863A0
 /* 1E0BB8C 800845C4 4C04222A */   slti      $v0, $s1, 0x44C
@@ -7741,7 +7741,7 @@ glabel func_level_22_8007E240
 /* 1E0C060 80084A98 3D0086A0 */   sb        $a2, 0x3D($a0)
 .Llevel_22_80084A9C:
 /* 1E0C064 80084A9C 1C004426 */  addiu      $a0, $s2, 0x1C
-/* 1E0C068 80084AA0 E4DF000C */  jal        func_80037F90
+/* 1E0C068 80084AA0 E4DF000C */  jal        TimerTick
 /* 1E0C06C 80084AA4 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0C070 80084AA8 04004014 */  bnez       $v0, .Llevel_22_80084ABC
 /* 1E0C074 80084AAC 0080023C */   lui       $v0, (0x80002047 >> 16)
@@ -7755,7 +7755,7 @@ glabel func_level_22_8007E240
 /* 1E0C090 80084AC8 10004230 */  andi       $v0, $v0, 0x10
 /* 1E0C094 80084ACC 39004014 */  bnez       $v0, .Llevel_22_80084BB4
 /* 1E0C098 80084AD0 20004426 */   addiu     $a0, $s2, 0x20
-/* 1E0C09C 80084AD4 E4DF000C */  jal        func_80037F90
+/* 1E0C09C 80084AD4 E4DF000C */  jal        TimerTick
 /* 1E0C0A0 80084AD8 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0C0A4 80084ADC 35004014 */  bnez       $v0, .Llevel_22_80084BB4
 /* 1E0C0A8 80084AE0 0C006426 */   addiu     $a0, $s3, 0xC
@@ -8668,7 +8668,7 @@ glabel func_level_22_8007E240
 /* 1E0CDFC 80085834 21202002 */   addu      $a0, $s1, $zero
 /* 1E0CE00 80085838 2B004010 */  beqz       $v0, .Llevel_22_800858E8
 /* 1E0CE04 8008583C 18000426 */   addiu     $a0, $s0, 0x18
-/* 1E0CE08 80085840 E4DF000C */  jal        func_80037F90
+/* 1E0CE08 80085840 E4DF000C */  jal        TimerTick
 /* 1E0CE0C 80085844 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0CE10 80085848 22024010 */  beqz       $v0, .Llevel_22_800860D4
 /* 1E0CE14 8008584C FFFF0224 */   addiu     $v0, $zero, -0x1
@@ -10007,7 +10007,7 @@ glabel func_level_22_8007E240
 /* 1E0E168 80086BA0 06001124 */   addiu     $s1, $zero, 0x6
 .L80086BA4_:
 /* 1E0E16C 80086BA4 0C000426 */  addiu      $a0, $s0, 0xC
-/* 1E0E170 80086BA8 E4DF000C */  jal        func_80037F90
+/* 1E0E170 80086BA8 E4DF000C */  jal        TimerTick
 /* 1E0E174 80086BAC 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0E178 80086BB0 E4004010 */  beqz       $v0, .Llevel_22_80086F44
 /* 1E0E17C 80086BB4 00000000 */   nop
@@ -10031,7 +10031,7 @@ glabel func_level_22_8007E240
 /* 1E0E1C0 80086BF8 D11B0208 */  j          .Llevel_22_80086F44
 /* 1E0E1C4 80086BFC 00000000 */   nop
 .Llevel_22_80086C00:
-/* 1E0E1C8 80086C00 E4DF000C */  jal        func_80037F90
+/* 1E0E1C8 80086C00 E4DF000C */  jal        TimerTick
 /* 1E0E1CC 80086C04 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0E1D0 80086C08 CE004010 */  beqz       $v0, .Llevel_22_80086F44
 /* 1E0E1D4 80086C0C 00000000 */   nop
@@ -10210,7 +10210,7 @@ glabel func_level_22_8007E240
 /* 1E0E454 80086E8C 0E001124 */   addiu     $s1, $zero, 0xE
 .L80086E90_:
 /* 1E0E458 80086E90 0C000426 */  addiu      $a0, $s0, 0xC
-/* 1E0E45C 80086E94 E4DF000C */  jal        func_80037F90
+/* 1E0E45C 80086E94 E4DF000C */  jal        TimerTick
 /* 1E0E460 80086E98 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0E464 80086E9C 29004010 */  beqz       $v0, .Llevel_22_80086F44
 /* 1E0E468 80086EA0 00000000 */   nop
@@ -10226,7 +10226,7 @@ glabel func_level_22_8007E240
 /* 1E0E490 80086EC8 0F005124 */   addiu     $s1, $v0, 0xF
 .L80086ECC_:
 /* 1E0E494 80086ECC 0C000426 */  addiu      $a0, $s0, 0xC
-/* 1E0E498 80086ED0 E4DF000C */  jal        func_80037F90
+/* 1E0E498 80086ED0 E4DF000C */  jal        TimerTick
 /* 1E0E49C 80086ED4 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0E4A0 80086ED8 1A004010 */  beqz       $v0, .Llevel_22_80086F44
 /* 1E0E4A4 80086EDC 00000000 */   nop
@@ -10453,7 +10453,7 @@ glabel func_level_22_8007E240
 /* 1E0E7C0 800871F8 00000000 */  nop
 /* 1E0E7C4 800871FC 0B004010 */  beqz       $v0, .Llevel_22_8008722C
 /* 1E0E7C8 80087200 0C002426 */   addiu     $a0, $s1, 0xC
-/* 1E0E7CC 80087204 E4DF000C */  jal        func_80037F90
+/* 1E0E7CC 80087204 E4DF000C */  jal        TimerTick
 /* 1E0E7D0 80087208 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0E7D4 8008720C 4B064010 */  beqz       $v0, .Llevel_22_80088B3C
 /* 1E0E7D8 80087210 FDFF0324 */   addiu     $v1, $zero, -0x3
@@ -10633,7 +10633,7 @@ glabel func_level_22_8007E240
 /* 1E0EA68 800874A0 00000000 */  nop
 /* 1E0EA6C 800874A4 A5054010 */  beqz       $v0, .Llevel_22_80088B3C
 /* 1E0EA70 800874A8 0C002426 */   addiu     $a0, $s1, 0xC
-/* 1E0EA74 800874AC E4DF000C */  jal        func_80037F90
+/* 1E0EA74 800874AC E4DF000C */  jal        TimerTick
 /* 1E0EA78 800874B0 04000524 */   addiu     $a1, $zero, 0x4
 /* 1E0EA7C 800874B4 A1054010 */  beqz       $v0, .Llevel_22_80088B3C
 /* 1E0EA80 800874B8 FBFF0324 */   addiu     $v1, $zero, -0x5
@@ -10884,7 +10884,7 @@ glabel func_level_22_8007E240
 /* 1E0EE30 80087868 C05D000C */  jal        VecCopy
 /* 1E0EE34 8008786C 0C006426 */   addiu     $a0, $s3, 0xC
 /* 1E0EE38 80087870 04000524 */  addiu      $a1, $zero, 0x4
-/* 1E0EE3C 80087874 E4DF000C */  jal        func_80037F90
+/* 1E0EE3C 80087874 E4DF000C */  jal        TimerTick
 /* 1E0EE40 80087878 04002426 */   addiu     $a0, $s1, 0x4
 /* 1E0EE44 8008787C AF044010 */  beqz       $v0, .Llevel_22_80088B3C
 /* 1E0EE48 80087880 00000000 */   nop

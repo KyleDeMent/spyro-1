@@ -724,7 +724,7 @@ void GamestateUpdate(void) {
       if (g_CreditsStage > 98) {
         func_800333DC(); // Credits cleanup/level load
       } else {
-        func_credits_8007AA50(); // Credits update (overlay)
+        CreditsUpdate(); // Credits update (overlay)
       }
     }
 
