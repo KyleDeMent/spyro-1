@@ -1545,8 +1545,68 @@ void func_800495D8(int pDeltaTime) {
   }
 }
 
+extern u_char D_80075264[2][2];
+extern u_char D_80075268[4];
+
 /// @brief Update the head animation
-INCLUDE_ASM_REORDER_HACK("asm/nonmatchings/pete", func_80049660);
+void func_80049660(void) {
+  switch (g_Spyro.unk_0x60) {
+  case 0: {
+    if (g_Spyro.unk_0x198 == g_Spyro.unk_0x68) {
+      if (!g_Spyro.unk_0x198) {
+        g_Spyro.m_headAnimation = g_Spyro.m_bodyAnimation;
+        g_Spyro.m_headAnimationFrame = g_Spyro.m_bodyAnimationFrame;
+        g_Spyro.m_nextHeadAnimation = g_Spyro.m_nextBodyAnimation;
+        g_Spyro.m_nextHeadAnimationFrame = g_Spyro.m_nextBodyAnimationFrame;
+        g_Spyro.m_headFrameProgress = g_Spyro.m_bodyFrameProgress;
+      } else {
+        func_800495D8(g_Spyro.m_headAnimationSpeed); // tick head frame
+      }
+    } else {
+      switch (D_80075264[g_Spyro.unk_0x68][g_Spyro.unk_0x198]) {
+      case 2: {
+        g_Spyro.unk_0x60 = D_80075264[g_Spyro.unk_0x68][g_Spyro.unk_0x198];
+        g_Spyro.m_headAnimation = g_Spyro.m_nextHeadAnimation;
+        g_Spyro.m_headAnimationFrame = g_Spyro.m_nextHeadAnimationFrame;
+
+        g_Spyro.m_nextHeadAnimation = D_80075268[g_Spyro.unk_0x198];
+        g_Spyro.m_nextHeadAnimationFrame = '\0';
+        g_Spyro.m_headFrameProgress = '\x04';
+        g_Spyro.unk_0x68 = g_Spyro.unk_0x198;
+        break;
+      }
+      case 1: {
+        g_Spyro.unk_0x60 = D_80075264[g_Spyro.unk_0x68][g_Spyro.unk_0x198];
+        g_Spyro.m_headAnimation = g_Spyro.m_nextHeadAnimation;
+        g_Spyro.m_headAnimationFrame = g_Spyro.m_nextHeadAnimationFrame;
+        g_Spyro.m_nextHeadAnimation = g_Spyro.m_nextBodyAnimation;
+        g_Spyro.m_nextHeadAnimationFrame = g_Spyro.m_nextBodyAnimationFrame;
+        g_Spyro.m_headFrameProgress = 2;
+        g_Spyro.unk_0x68 = g_Spyro.unk_0x198;
+        break;
+      }
+      }
+    }
+    break;
+  }
+  case 2: {
+    g_Spyro.m_headFrameProgress += 4;
+    if (0xf < g_Spyro.m_headFrameProgress) {
+      func_800495D8(0); // tick head frame
+      g_Spyro.unk_0x60 = 0;
+    }
+    break;
+  }
+  case 1: {
+    g_Spyro.m_headFrameProgress += 2;
+    if (0xf < g_Spyro.m_headFrameProgress) {
+      func_800495D8(0); // tick head frame
+      g_Spyro.unk_0x60 = 0;
+    }
+    break;
+  }
+  }
+}
 
 /// @brief Eases Spyro's head rotation toward m_HeadLookTarget using a per-axis
 /// spring-damper. The smoothed result is written to the real head rotation,
