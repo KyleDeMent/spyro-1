@@ -66,14 +66,15 @@ typedef struct {
 
   /// @brief The rotation of the body
   Vector3D8 m_bodyRotation;
+  u_char pad_0xf;
 
   /// @brief The rotation of the head
   Vector3D8 m_headRotation;
+  u_char pad_0x13;
 
   /// @brief The rotation of the tail
   Vector3D8 m_tailRotation;
-
-  Vector3D8 unk_0x15; // No idea, no XREFs
+  u_char pad_0x17;
 
   /// @brief The animation the body is playing
   u_char m_bodyAnimation;
