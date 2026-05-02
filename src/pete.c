@@ -1529,7 +1529,51 @@ void func_80049F3C(void) {
   }
 }
 
-INCLUDE_ASM_REORDER_HACK("asm/nonmatchings/pete", func_80049FAC);
+extern int D_8006E9A4[TOTAL_LEVEL_COUNT];
+extern Vector3D D_8006E2A8[8];
+
+void func_80049FAC(int pArg) {
+  Vector3D v;
+  int z;
+
+  setXYZ(&v, 0, 0, -356);
+  VecRotateByMatrix(&g_Spyro.m_RotationMatrix, &v, &v);
+  VecAdd(&v, &v, &g_Spyro.m_Position);
+  VecCopy(&D_8007AA10.m_Position, &v);
+
+  D_8007AA10.m_Position.z = g_Spyro.m_surfaceBelowSpyro;
+  if (g_Spyro.m_sortingDepth < 127)
+    g_Spyro.m_sortingDepth = 5;
+
+  D_8007AA10.unk_1c = 3;
+  if (g_Spyro.m_Position.z - g_Spyro.m_surfaceBelowSpyro > 868)
+    D_8007AA10.unk_1c = 5;
+
+  D_8007AA10.m_IsSpyroOverWater = 0;
+  if (g_Spyro.m_surfaceBelowSpyro <= D_8006E9A4[g_LevelIndex] || g_Spyro.m_SurfaceProximityState)
+    D_8007AA10.m_IsSpyroOverWater = 1;
+
+  D_8007AA10.unk_20 = (D_8007AA10.unk_20 + 1) & 7;
+  if (pArg) {
+    VecRotateByMatrix(&g_Spyro.m_RotationMatrix, &D_8006E2A8[D_8007AA10.unk_20], &v);
+    VecAdd(&v, &v, &g_Spyro.m_Position);
+
+    v.z += 512;
+    z = func_8004D5EC(&v, 1024);
+    v.z -= 512;
+
+    if ((v.z - z) + 128 >= 256u) {
+      D_8007AA10.unk_08[D_8007AA10.unk_20] = 1;
+      D_8007AA10.unk_00[D_8007AA10.unk_20] = 0;
+    } else {
+      D_8007AA10.unk_08[D_8007AA10.unk_20] = 0;
+      D_8007AA10.unk_00[D_8007AA10.unk_20] = (D_8007AA10.m_Position.z - z) * 194 / 512;
+    }
+  } else {
+    D_8007AA10.unk_08[D_8007AA10.unk_20] = 0;
+    D_8007AA10.unk_00[D_8007AA10.unk_20] = 0;
+  }
+}
 
 INCLUDE_ASM_REORDER_HACK("asm/nonmatchings/pete", func_8004A200);
 
