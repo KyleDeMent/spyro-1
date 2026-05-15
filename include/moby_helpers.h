@@ -24,6 +24,9 @@ int func_800381BC(int p1, int p2);
 /// @brief Plays a sound from a Moby
 void func_8003851C(Moby *pMoby, int pSoundIndex, u_char *pChannel);
 
+int RotateMobyToAngle(Moby *pMoby, int targetAngle, int rotSpeed,
+                      int withinAngle, int continueRotation);
+
 /**
  * @brief Moves a moby along a 3D path with rotation toward waypoints
  * @param pMoby The moby to move along the path
@@ -62,6 +65,8 @@ extern short D_8006CBCC[];
 /// @param pOffset The offset vector to rotate by the moby's rotation matrix
 /// @return The slot index, or -1 if no slot available
 int SpawnMobySparkle(Moby *pMoby, Vector3D *pOffset);
+
+void func_8003ABC0(Moby *pMoby, int pFlags, int pArg3, Vector3D *pPosition);
 
 /// @brief Persist a collected gem to checkpoint / global collected mask
 void func_8003B854(int pGemValue, Moby *pMoby);

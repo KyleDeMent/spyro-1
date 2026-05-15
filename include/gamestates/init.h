@@ -27,6 +27,9 @@ void func_8002C714(int pEnteringFromGameplay);
 /// @brief Exits level
 void func_8002C618(void);
 
+/// @brief Reset gamestate to 0
+void func_8002C8A4(void);
+
 /// @brief Empty, proto dragon dialogue update calls this for some reason
 void func_8002C91C(void);
 

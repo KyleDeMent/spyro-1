@@ -383,6 +383,15 @@ extern SpyroShadow D_8007AA10;
 /// @brief Resets Spyro
 void func_8004AC24(int pKeepPosition);
 
+/// @brief Increments the body animation
+void func_8003CB24(int pDeltaTime);
+
+/// @brief Update the head animation
+void func_80049660();
+
+/// @brief Update the tail animation
+void func_80049E8C();
+
 /// @brief Forces state to and resets animation
 void func_8003FDC8(int pNewState);
 

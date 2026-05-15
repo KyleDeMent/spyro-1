@@ -38,12 +38,12 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
 
     func_8003A720(moby); // Reset the Moby first
 
-    lifeOrbProps->m_InitPos.x = 0;
-    lifeOrbProps->m_InitPos.y = 0;
-    lifeOrbProps->m_InitPos.z = 140;
+    lifeOrbProps->m_VelocityOrPickupPos.x = 0;
+    lifeOrbProps->m_VelocityOrPickupPos.y = 0;
+    lifeOrbProps->m_VelocityOrPickupPos.z = 140;
     lifeOrbProps->m_SpawnState = 0;
     lifeOrbProps->m_Ticks = 0;
-    lifeOrbProps->m_RotX = 3;
+    lifeOrbProps->m_BounceCount = 3;
     lifeOrbProps->m_RotY = 0;
     lifeOrbProps->m_RotZ = 0;
     lifeOrbProps->m_RotationTicks = 0;
@@ -79,11 +79,11 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
     VecCopy(&moby->m_Position, &pParent->m_Position);
 
     moby->m_Position.z += 512;
-    VecCopy(&butterflyProps->unk_0x04, &moby->m_Position);
+    VecCopy(&butterflyProps->m_AnchorPosition, &moby->m_Position);
 
-    butterflyProps->unk_0x13 = 0;
-    butterflyProps->unk_0x12 = 0;
-    butterflyProps->unk_0x14 = 1800;
+    butterflyProps->m_VerticalSpeedTimer = 0;
+    butterflyProps->m_TurnRetargetTimer = 0;
+    butterflyProps->m_unk_14 = 1800;
     break;
   }
 #ifdef HAS_MOBY_17
@@ -140,9 +140,9 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
 
     func_8003A720(moby); // Reset the Moby first
 
-    gemProps->m_InitPos.x = 0;
-    gemProps->m_InitPos.y = 0;
-    gemProps->m_InitPos.z = 140; // Uh
+    gemProps->m_VelocityOrPickupPos.x = 0;
+    gemProps->m_VelocityOrPickupPos.y = 0;
+    gemProps->m_VelocityOrPickupPos.z = 140; // Uh
 
     gemProps->m_SpawnState = 0;
     gemProps->m_Ticks = 0;
@@ -154,9 +154,9 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
 
     // Not sure about that
     if (pParent->m_Class == 13) {
-      gemProps->m_RotX = 2;
+      gemProps->m_BounceCount = 2;
     } else {
-      gemProps->m_RotX = 3;
+      gemProps->m_BounceCount = 3;
     }
 
     gemProps->m_SparkleHandle = -1; // Unset the sparkle handle
@@ -222,12 +222,12 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
 
     moby->m_Substate = 0;
 
-    sparxProps->unk_0x00 = 0;
-    sparxProps->unk_0x08 = 0;
-    sparxProps->unk_0x06 = 0;
-    sparxProps->unk_0x04 = 0;
+    sparxProps->m_Timer = 0;
+    sparxProps->m_IdleOffset.z = 0;
+    sparxProps->m_IdleOffset.y = 0;
+    sparxProps->m_IdleOffset.x = 0;
     sparxProps->glow = 0;
-    sparxProps->unk_0x10 = 0;
+    sparxProps->m_MobyPickingUp = nullptr;
 
     if (pParent) {
       VecCopy(&moby->m_Position, &pParent->m_Position);

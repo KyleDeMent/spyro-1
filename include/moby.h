@@ -377,13 +377,14 @@ typedef struct {
 } MobyPortalPathProps;
 
 typedef struct {
-  int unk_0x00;
-  Vector3D unk_0x04;
-  char unk_0x10;
-  char unk_0x11;
-  char unk_0x12;
-  char unk_0x13;
-  short unk_0x14;
+  int m_SparxApproachSide;
+  Vector3D m_AnchorPosition;
+  char m_VerticalSpeed;  //
+  char m_TargetAngle;  // angle
+  char m_TurnRetargetTimer;  // Char timer
+  char m_VerticalSpeedTimer;  // Char timer
+  short m_unk_14; // short timer
+  short m_unk_16; // ?
 } MobyButterflyProps;
 
 typedef struct {
@@ -393,12 +394,10 @@ typedef struct {
 } MobyLetterProps;
 
 typedef struct {
-  int unk_0x00;
-  short unk_0x04;
-  short unk_0x06;
-  short unk_0x08;
+  int m_Timer;
+  Vector3D16 m_IdleOffset;
   Glow *glow;
-  int unk_0x10;
+  Moby* m_MobyPickingUp;
 } MobySparxProps;
 
 extern Moby *g_Sparx;
@@ -440,11 +439,11 @@ typedef struct {
 } MobyDragonFragmentProps;
 
 typedef struct {
-  Vector3D m_InitPos;
+  Vector3D m_VelocityOrPickupPos;
   short m_CollisionIndex;
   u_char m_SpawnState;
   u_char m_Ticks;
-  u_char m_RotX;
+  u_char m_BounceCount;
   u_char m_RotY;
   u_char m_RotZ;
   u_char m_RotationTicks;
@@ -467,6 +466,112 @@ typedef struct {
   Vector3D m_AngleStorage; // Used in moby code
   int m_PosZStorage;       // Used in moby code
 } RescuedDragonMobyProps;
+
+typedef struct {
+  int m_Initialized; /* 0x00 - one-time init flag */
+} MobyHomeworldDoorProps;
+typedef struct {
+  int m_unk_0x00;
+  int m_unk_0x04; /* Some flag for func_80038458 */
+} MobyWoodenChestProps;
+typedef struct {
+  int m_HitTimer;   /* 0x00 - flash/recovery timer */
+  int m_StoredRotX; /* 0x04 */
+  int m_StoredRotY; /* 0x08 */
+  int m_StoredPosZ; /* 0x0C */
+  int m_unk_0x10;   /* 0x10 - check for func_80038458 trigger */
+  int m_FlameTimer; /* 0x14 - flame heat tracker */
+  int m_unk_0x18;
+} MobyMetalChestProps;
+typedef struct {
+  int m_unk_0x00;
+  int m_unk_0x04;
+  int m_unk_0x08;
+  int m_unk_0x0C;
+  int m_unk_0x10;
+  int m_unk_0x14;
+  int m_unk_0x18;
+  int m_unk_0x1C;
+  int m_unk_0x20;    /* 0x20 - countdown / power level */
+  int m_TargetAngle; /* 0x24 - aim angle */
+  int m_unk_0x28;
+  int m_RetargetTimer; /* 0x2C - retarget delay */
+} MobyEnemyTurretProps;
+typedef struct {
+  int m_DragonId; /* 0x00 - dragon entry id */
+  int m_unk_0x04;
+  int m_unk_0x08;
+  int m_unk_0x0C;
+  int m_unk_0x10;
+  int m_unk_0x14;
+  int m_DragonIndex;   /* 0x18 */
+  int m_DialogueId;    /* 0x1C - speech bubble id */
+  int m_PadMobyIdx;    /* 0x20 - linked pad moby index */
+  int m_DragonNameIdx; /* 0x24 - dragon name id */
+  int m_unk_0x28;
+  int m_unk_0x2C;
+  int m_unk_0x30;
+  int m_unk_0x34;
+  int m_unk_0x38;
+  int m_unk_0x3C;
+  int m_unk_0x40;
+  int m_HitTimer;   /* 0x44 - active hit/break animation timer */
+  int m_StoredRotX; /* 0x48 */
+  int m_StoredRotY; /* 0x4C */
+  int m_StoredPosZ; /* 0x50 */
+} MobyCrystalDragonProps;
+typedef struct {
+  int m_State; /* 0x00 - sub-state machine */
+  int m_unk_0x04;
+  PathData *m_PathPoints; /* 0x08 - per-state data array */
+  int m_StateTimer;       /* 0x0C - timer driving state transitions */
+  int m_PathState;        /* 0x10 - 0/1 idle/moving along path */
+  int m_unk_0x14;
+  int m_unk_0x18;  /* 0x18 - velocity component */
+  int m_unk_0x1C;  /* 0x1C - velocity component */
+  int m_unk_0x20;  /* 0x20 - velocity component */
+  int m_PathTimer; /* 0x24 - countdown along path segment */
+} MobyAmbientPathProps;
+
+typedef struct {
+  int m_ParentIndex;   // 0x00
+  Vector3D m_Position; // 0x04 - x, y, z (z is at 0x0C)
+  int m_InitDone;      // 0x10
+  int m_HasParent;     // 0x14
+  int m_RelativeMode;  // 0x18
+  int m_SpawnTimer;    // 0x1C
+  int m_PitchOffset;   // 0x20
+  int m_GroundFlag;    // 0x24
+} MobyGemSpawnerProps;
+typedef struct {
+  short m_VelocityX;
+  short m_VelocityY;
+  short m_VelocityZ;
+  short m_AngularVelocityX;
+  short m_AngularVelocityY;
+  short m_AngularVelocityZ;
+  int m_Lifetime;
+  int m_KillBelowZ;
+} MobyPhysicsProps;
+typedef struct {
+  int m_TargetClass;     /* 0x00 - which class to respawn */
+  int m_RespawnTimer;    /* 0x04 - countdown */
+  int m_RespawnInterval; /* 0x08 - reset value */
+} MobyRespawnerProps;
+typedef struct {
+  PathData *m_Path;       /* 0x00 */
+  Vector3D m_FlyInOffset; /* 0x04 - 0x10 */
+  int m_TargetLevelId;    /* 0x10 - which level to enter */
+  int m_FlyInPresetIdx;   /* 0x14 - which fly-in preset */
+  int unk_0x18;
+} MobyExitVortexProps;
+typedef struct {
+  int m_Timer;     /* 0x00: Remaining lifetime frames */
+  int m_Unused04;  /* 0x04 */
+  int m_VelocityX; /* 0x08 */
+  int m_VelocityY; /* 0x0C */
+  int m_VelocityZ; /* 0x10 */
+} MobyProjectileProps;
 
 // static_assert(sizeof(Moby) == 0x58, "Incorrect Moby size");
 
