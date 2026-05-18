@@ -42,7 +42,7 @@ extern int D_8006E490;
 extern int D_8006E494;
 // Fix
 extern int D_8006E330;
-extern SphericalCoordsOffset D_8006CA24[6];
+extern SphericalCoordsOffset D_8006CA24[];
 extern int g_KeyFlag;
 extern int g_ScreenBorderEnabled; // Is the screen border enabled
 extern unsigned char D_800758D0[8];
@@ -55,23 +55,16 @@ void func_level_60_8007D938(void) {
   Moby **mobyList;
   Moby *moby;
   Vector3D vec_38;
-  Vector3D vec_48;
-  Vector3D vec_58;
+  Vector3D eggInterpStartPos;
+  Vector3D eggInterpDelta;
   Vector3D vec_68;
-  Vector3D vec_78;
+  Vector3D eggCameraEffectPos;
   Vector3D vec_88;
-  Vector3D vec_98[3];
-  Vector3D vec_c0;
-  Vector3D vec_d0;
-  Vector3D vec_e0;
-  Vector3D vec_f0;
-  Vector3D vec_100;
-  Vector3D vec_110;
-  Vector3D vec_120;
-  Vector3D vec_130;
-  Vector3D vec_140;
-  Vector3D vec_150;
-  Vector3D vec_160;
+  Vector3D collectableCollVerts[3];
+  Vector3D collectableMovePos;
+  Vector3D collectableSurfaceNormal;
+  Vector3D collectablePickupDelta;
+  Vector3D sparxChaseDelta;
 
   // Generate the moby update list (which looks at things such as the state and
   // distance)
@@ -154,19 +147,19 @@ void func_level_60_8007D938(void) {
 
     case 13: {
       Moby *parent;
-      MobyGemSpawnerProps *props;
-      props = (MobyGemSpawnerProps *)moby->m_Props;
-      parent = &g_LevelMobys[props->m_ParentIndex];
+      MobyGemSpawnerProps *spawnerProps;
+      spawnerProps = (MobyGemSpawnerProps *)moby->m_Props;
+      parent = &g_LevelMobys[spawnerProps->m_ParentIndex];
 
-      if (props->m_InitDone == 0) {
-        if (props->m_RelativeMode != 0) {
-          VecSub(&props->m_Position, &props->m_Position, &parent->m_Position);
+      if (spawnerProps->m_InitDone == 0) {
+        if (spawnerProps->m_RelativeMode != 0) {
+          VecSub(&spawnerProps->m_Position, &spawnerProps->m_Position, &parent->m_Position);
           moby->m_UpdateDistance = 0xFF;
         } else {
           moby->m_UpdateDistance = 0x20;
         }
 
-        if (props->m_HasParent != 0 && (parent->m_State >= 0x80 || (parent->m_DropMoby & 0x80))) {
+        if (spawnerProps->m_HasParent != 0 && (parent->m_State >= 0x80 || (parent->m_DropMoby & 0x80))) {
           Moby *dst;
           Moby *src;
           int newIndex;
@@ -194,7 +187,7 @@ void func_level_60_8007D938(void) {
             if (parent->m_Class != MOBYCLASS_GEM_SPAWNER)
               continue;
             mp = (MobyGemSpawnerProps *)parent->m_Props;
-            if (mp->m_ParentIndex == props->m_ParentIndex) {
+            if (mp->m_ParentIndex == spawnerProps->m_ParentIndex) {
               mp->m_ParentIndex = newIndex;
             }
           }
@@ -209,44 +202,44 @@ void func_level_60_8007D938(void) {
           moby->m_AnimationState.m_NextFrame = 1;
           break;
         } else {
-          props->m_InitDone = 1;
+          spawnerProps->m_InitDone = 1;
         }
       }
 
-      if (props->m_RelativeMode != 0) {
+      if (spawnerProps->m_RelativeMode != 0) {
         VecCopy(&moby->m_Position, &parent->m_Position);
       }
 
-      if (props->m_SpawnTimer != 0) {
-        if (func_80037F90(&props->m_SpawnTimer, 4) != 0) {
-          if (props->m_RelativeMode != 0) {
-            VecAdd(&props->m_Position, &props->m_Position, &moby->m_Position);
+      if (spawnerProps->m_SpawnTimer != 0) {
+        if (func_80037F90(&spawnerProps->m_SpawnTimer, 4) != 0) {
+          if (spawnerProps->m_RelativeMode != 0) {
+            VecAdd(&spawnerProps->m_Position, &spawnerProps->m_Position, &moby->m_Position);
           } else {
             VecCopy(&moby->m_Position, &parent->m_Position);
           }
 
-          props->m_Position.z += 0x400;
+          spawnerProps->m_Position.z += 0x400;
 
-          if (props->m_GroundFlag != 0) {
+          if (spawnerProps->m_GroundFlag != 0) {
             func_8003ABC0(moby, 4, 0, nullptr);
-          } else if (func_8004D5EC(&props->m_Position, 0x1400) != 0) {
-            props->m_Position.z -= 0x400;
-            func_8003ABC0(moby, 2, 0, &props->m_Position);
+          } else if (func_8004D5EC(&spawnerProps->m_Position, 0x1400) != 0) {
+            spawnerProps->m_Position.z -= 0x400;
+            func_8003ABC0(moby, 2, 0, &spawnerProps->m_Position);
           } else {
             func_8003ABC0(moby, 1, 0, nullptr);
           }
 
           func_8003B7C0(moby);
 
-          props->m_PitchOffset <<= 7;
+          spawnerProps->m_PitchOffset <<= 7;
           g_Spu.m_NextSoundOverrideFlags = 2;
-          g_Spu.m_PitchOverride = g_Spu.m_SoundDefinitions[g_Spu.m_SoundTable->titlescreenMove].m_Pitch + props->m_PitchOffset;
+          g_Spu.m_PitchOverride = g_Spu.m_SoundDefinitions[g_Spu.m_SoundTable->titlescreenMove].m_Pitch + spawnerProps->m_PitchOffset;
           PlaySound(g_Spu.m_SoundTable->titlescreenMove, moby, 8, &moby->m_SoundChannel);
           func_80052568(moby);
         }
       } else if (moby->m_Substate != 0 || parent->m_State >= 0x80) {
-        props->m_SpawnTimer = 9;
-        props->m_PitchOffset = 1;
+        spawnerProps->m_SpawnTimer = 9;
+        spawnerProps->m_PitchOffset = 1;
 
         for (parent = g_LevelMobys; parent < moby; parent++) {
           MobyGemSpawnerProps *mp;
@@ -255,13 +248,13 @@ void func_level_60_8007D938(void) {
           if (parent->m_Class != MOBYCLASS_GEM_SPAWNER)
             continue;
           mp = (MobyGemSpawnerProps *) parent->m_Props;
-          if (mp->m_ParentIndex == props->m_ParentIndex) {
-            props->m_SpawnTimer += 9;
-            props->m_PitchOffset += 1;
+          if (mp->m_ParentIndex == spawnerProps->m_ParentIndex) {
+            spawnerProps->m_SpawnTimer += 9;
+            spawnerProps->m_PitchOffset += 1;
           }
         }
 
-        if (props->m_PitchOffset == 1) {
+        if (spawnerProps->m_PitchOffset == 1) {
           g_Spu.m_NextSoundOverrideFlags = 2;
           g_Spu.m_PitchOverride = g_Spu.m_SoundDefinitions[g_Spu.m_SoundTable->titlescreenMove].m_Pitch;
           PlaySound(g_Spu.m_SoundTable->titlescreenMove, moby, 8, &moby->m_SoundChannel);
@@ -525,17 +518,18 @@ void func_level_60_8007D938(void) {
         eggProps->m_Timer += g_DeltaTime;
         if (eggProps->m_Timer < 64) {
 
-          func_80017C24(&vec_48, &eggProps->m_StartPosition);
-          func_80017C24(&vec_58, &eggProps->m_TargetPosition);
+          func_80017C24(&eggInterpStartPos, &eggProps->m_StartPosition);
+          func_80017C24(&eggInterpDelta, &eggProps->m_TargetPosition);
 
           // Interpolate between start and target
-          VecSub(&vec_58, &vec_58, &vec_48);
-          VecMult(&vec_58, &vec_58, eggProps->m_Timer);
-          VecShiftRight(&vec_58, 6); // Divide by 64 for smooth interpolation
-          VecAdd(&moby->m_Position, &vec_48, &vec_58);
+          VecSub(&eggInterpDelta, &eggInterpDelta, &eggInterpStartPos);
+          VecMult(&eggInterpDelta, &eggInterpDelta, eggProps->m_Timer);
+          VecShiftRight(&eggInterpDelta, 6); // Divide by 64 for smooth interpolation
+          VecAdd(&moby->m_Position, &eggInterpStartPos, &eggInterpDelta);
 
           moby->m_Rotation.z += g_DeltaTime * 4;
         } else {
+
           VecCopy(&vec_68, &g_Spyro.m_Position);
 
           vec_68.x += Cos(g_Spyro.m_bodyRotation.z * 0x10) >> 3;
@@ -586,9 +580,9 @@ void func_level_60_8007D938(void) {
       case 5: {
 
         // Get position relative to camera for particle effect
-        VecSub(&vec_78, &moby->m_Position, &g_Camera.m_Position);
-        VecRotateByCam(&vec_78, &vec_78);
-        D_800758E4(0x10, 0x4D, &vec_78, nullptr);
+        VecSub(&eggCameraEffectPos, &moby->m_Position, &g_Camera.m_Position);
+        VecRotateByCam(&eggCameraEffectPos, &eggCameraEffectPos);
+        D_800758E4(0x10, 0x4D, &eggCameraEffectPos, nullptr);
 
         g_ScreenBorderEnabled = 0;
         VecNull(&g_Spyro.m_HeadLookTarget);
@@ -613,7 +607,7 @@ void func_level_60_8007D938(void) {
 
     case 255:
     case 256: {
-      MobyPhysicsProps *physicsProps = moby->m_Props;
+      MobyFragmentPhysicsProps *physicsProps = moby->m_Props;
 
       if (physicsProps->m_Lifetime > 0 && moby->m_WasDrawn) {
         if (func_8004BE4C(&moby->m_Position, 0x100, 0x100)) {
@@ -639,6 +633,7 @@ void func_level_60_8007D938(void) {
         moby->m_Rotation.y += physicsProps->m_AngularVelocityY;
         moby->m_Rotation.z += physicsProps->m_AngularVelocityZ;
         if ((physicsProps->m_Lifetime & 3) == 0) {
+
           vec_68.x = rand() & 3;
           vec_68.y = rand() & 3;
           vec_68.z = 0x14;
@@ -653,7 +648,7 @@ void func_level_60_8007D938(void) {
     }
 
     case 257: {
-      MobyPhysicsProps *physicsProps = moby->m_Props;
+      MobyFragmentPhysicsProps *physicsProps = moby->m_Props;
 
       if (physicsProps->m_Lifetime != 0 && moby->m_WasDrawn && moby->m_Position.z > physicsProps->m_KillBelowZ) {
         // Apply velocity to position
@@ -731,15 +726,16 @@ void func_level_60_8007D938(void) {
 
       switch (moby->m_Substate) {
       case 0: {
+
         // Initialize
         VecCopy(&vec_38, &moby->m_Position);
         vec_38.z += 0x400;
         func_8004D5EC(&vec_38, 0x10000);
-        collectableProps->m_RotY = -Atan2Fast(func_80017A38((g_CollisionNormal.x * g_CollisionNormal.x) + (g_CollisionNormal.z * g_CollisionNormal.z)), g_CollisionNormal.y);
-        collectableProps->m_RotZ = -Atan2Fast(g_CollisionNormal.z, g_CollisionNormal.x);
+        collectableProps->m_RotX = -Atan2Fast(func_80017A38((g_CollisionNormal.x * g_CollisionNormal.x) + (g_CollisionNormal.z * g_CollisionNormal.z)), g_CollisionNormal.y);
+        collectableProps->m_RotY = -Atan2Fast(g_CollisionNormal.z, g_CollisionNormal.x);
 
         // Smart compiler c:
-        if (collectableProps->m_RotY != 0 || collectableProps->m_RotZ != 0) {
+        if (collectableProps->m_RotX != 0 || collectableProps->m_RotY != 0) {
           moby->m_Rotation.z = 0;
         }
 
@@ -747,29 +743,30 @@ void func_level_60_8007D938(void) {
         break;
       }
       case 1: {
+
         if (collectableProps->m_SpawnState != 0) {
 
           if (collectableProps->m_SpawnState == 1) {
             func_80038458(moby); // Place on floor
             func_800533D0(moby); // Set shadow
             if (moby->m_Class >= 83) {
-              collectableProps->m_RotY = -Atan2Fast(func_80017A38((g_CollisionNormal.x * g_CollisionNormal.x) + (g_CollisionNormal.z * g_CollisionNormal.z)), g_CollisionNormal.y);
-              collectableProps->m_RotZ = -Atan2Fast(g_CollisionNormal.z, g_CollisionNormal.x);
+              collectableProps->m_RotX = -Atan2Fast(func_80017A38((g_CollisionNormal.x * g_CollisionNormal.x) + (g_CollisionNormal.z * g_CollisionNormal.z)), g_CollisionNormal.y);
+              collectableProps->m_RotY = -Atan2Fast(g_CollisionNormal.z, g_CollisionNormal.x);
             }
 
           } else if (collectableProps->m_SpawnState == 2) {
 
             // Get a collision polygon, unpack it
-            ColTriUnpack(collectableProps->m_CollisionIndex, vec_98);
+            ColTriUnpack(collectableProps->m_CollisionIndex, collectableCollVerts);
 
             // Sum the entire thing together
-            VecAdd(&vec_98[0], &vec_98[0], &vec_98[1]);
-            VecAdd(&vec_98[0], &vec_98[0], &vec_98[2]);
+            VecAdd(&collectableCollVerts[0], &collectableCollVerts[0], &collectableCollVerts[1]);
+            VecAdd(&collectableCollVerts[0], &collectableCollVerts[0], &collectableCollVerts[2]);
 
             // Set the moby's position to the average of that collision polygon
-            moby->m_Position.x = vec_98[0].x / 3;
-            moby->m_Position.y = vec_98[0].y / 3;
-            moby->m_Position.z = vec_98[0].z / 3;
+            moby->m_Position.x = collectableCollVerts[0].x / 3;
+            moby->m_Position.y = collectableCollVerts[0].y / 3;
+            moby->m_Position.z = collectableCollVerts[0].z / 3;
 
             func_800529E4(moby, UPDATE_PROP_CHAIN);
             func_80038458(moby); // Place on floor
@@ -832,23 +829,24 @@ void func_level_60_8007D938(void) {
       }
       case 2: {
         int speed;
-        VecMult(&vec_c0, &collectableProps->m_VelocityOrPickupPos, g_DeltaTime);
-        VecShiftRight(&vec_c0, 1);
 
-        speed = VecMagnitude(&vec_c0, 1);
+        VecMult(&collectableMovePos, &collectableProps->m_VelocityOrPickupPos, g_DeltaTime);
+        VecShiftRight(&collectableMovePos, 1);
+
+        speed = VecMagnitude(&collectableMovePos, 1);
 
         if (220 < speed) {
-          VecScaleToLength(&vec_c0, speed, 220);
+          VecScaleToLength(&collectableMovePos, speed, 220);
         }
 
-        VecAdd(&vec_c0, &moby->m_Position, &vec_c0);
+        VecAdd(&collectableMovePos, &moby->m_Position, &collectableMovePos);
 
         // Apply gravity
         if (-220 < collectableProps->m_VelocityOrPickupPos.z) {
           collectableProps->m_VelocityOrPickupPos.z -= g_DeltaTime * 5;
         }
 
-        if (vec_c0.z < 0) {
+        if (collectableMovePos.z < 0) {
           // Fell off the world
           // If it's not a life statue or orb, collect it
           if (moby->m_Class != 14 && moby->m_Class != 15) {
@@ -858,9 +856,9 @@ void func_level_60_8007D938(void) {
           // Easiest way to exit out
           continue;
         } else {
-          vec_c0.z += 240;
+          collectableMovePos.z += 240;
 
-          if (func_8004BE4C(&vec_c0, 240, 240)) {
+          if (func_8004BE4C(&collectableMovePos, 240, 240)) {
             // Checks if the last collision was water
             if (func_80057380() == 0) {
               // If it's not a life statue or orb, collect it
@@ -872,25 +870,25 @@ void func_level_60_8007D938(void) {
               continue;
             }
 
-            VecCopy(&vec_d0, &g_CollisionNormal);
+            VecCopy(&collectableSurfaceNormal, &g_CollisionNormal);
             VecCopy(&moby->m_Position, &g_CollisionPoint);
             moby->m_Position.z -= 0xF0;
 
             if (collectableProps->m_BounceCount == 0) {
-              int groundHeight = func_8004D5EC(&vec_c0, 0x400);
-              int groundAngle = (signed char)Atan2Fast(vec_d0.z, VecMagnitude(&vec_d0, 0));
+              int groundHeight = func_8004D5EC(&collectableMovePos, 0x400);
+              int groundAngle = (signed char)Atan2Fast(collectableSurfaceNormal.z, VecMagnitude(&collectableSurfaceNormal, 0));
               // Settle on ground if close and flat enough
-              if ((vec_c0.z - 0x190) < groundHeight && groundAngle < 0x18) {
+              if ((collectableMovePos.z - 400) < groundHeight && groundAngle < 24) {
                 moby->m_Substate = 1;
-                VecCopy(&moby->m_Position, &vec_c0);
+                VecCopy(&moby->m_Position, &collectableMovePos);
                 moby->m_Position.z = groundHeight;
 
                 if (moby->m_Class != 0xF) {
 
-                  collectableProps->m_RotY = -Atan2Fast(func_80017A38((vec_d0.x * vec_d0.x) + (vec_d0.z * vec_d0.z)), vec_d0.y);
-                  collectableProps->m_RotZ = -Atan2Fast(vec_d0.z, vec_d0.x);
+                  collectableProps->m_RotX = -Atan2Fast(func_80017A38((collectableSurfaceNormal.x * collectableSurfaceNormal.x) + (collectableSurfaceNormal.z * collectableSurfaceNormal.z)), collectableSurfaceNormal.y);
+                  collectableProps->m_RotY = -Atan2Fast(collectableSurfaceNormal.z, collectableSurfaceNormal.x);
 
-                  if (collectableProps->m_RotY != 0 || collectableProps->m_RotZ != 0) {
+                  if (collectableProps->m_RotX != 0 || collectableProps->m_RotY != 0) {
                     moby->m_Rotation.z = 0;
                   }
                 }
@@ -909,21 +907,21 @@ void func_level_60_8007D938(void) {
               // Bounce sound? I think
               PlaySound(g_Spu.m_SoundTable->pickupDing, moby, 8, &moby->m_SoundChannel);
 
-              if (func_80017428(&collectableProps->m_VelocityOrPickupPos, &vec_d0, &collectableProps->m_VelocityOrPickupPos)) {
+              if (func_80017428(&collectableProps->m_VelocityOrPickupPos, &collectableSurfaceNormal, &collectableProps->m_VelocityOrPickupPos)) {
                 collectableProps->m_BounceCount--;
 
                 // Reduce velocity each bounce with randomness
-                collectableProps->m_VelocityOrPickupPos.x = (collectableProps->m_VelocityOrPickupPos.x >> 3) + (rand() & 0x3F) - 0x20;
-                collectableProps->m_VelocityOrPickupPos.y = (collectableProps->m_VelocityOrPickupPos.y >> 3) + (rand() & 0x3F) - 0x20;
+                collectableProps->m_VelocityOrPickupPos.x = (collectableProps->m_VelocityOrPickupPos.x >> 3) + (rand() & 0x3F) - 32;
+                collectableProps->m_VelocityOrPickupPos.y = (collectableProps->m_VelocityOrPickupPos.y >> 3) + (rand() & 0x3F) - 32;
                 collectableProps->m_VelocityOrPickupPos.z = (collectableProps->m_VelocityOrPickupPos.z >> 2) + (rand() & 0xF);
               }
             }
 
           } else {
             // In air
-            vec_c0.z -= 0xF0;
-            VecCopy(&moby->m_Position, &vec_c0);
-            func_8004D5EC(&vec_c0, 0x10000);
+            collectableMovePos.z -= 240;
+            VecCopy(&moby->m_Position, &collectableMovePos);
+            func_8004D5EC(&collectableMovePos, 0x10000);
             func_800533D0(moby);
           }
         }
@@ -964,25 +962,26 @@ void func_level_60_8007D938(void) {
           // Snap to Spyro
           VecCopy(&moby->m_Position, &g_Spyro.m_Position);
         } else {
-          // Interpolate toward Spyro
-          VecSub(&vec_e0, &g_Spyro.m_Position, &collectableProps->m_VelocityOrPickupPos);
-          VecShiftRight(&vec_e0, 5);
 
-          if (VecMagnitude(&vec_e0, 1) > 480) {
+          // Interpolate toward Spyro
+          VecSub(&collectablePickupDelta, &g_Spyro.m_Position, &collectableProps->m_VelocityOrPickupPos);
+          VecShiftRight(&collectablePickupDelta, 5);
+
+          if (VecMagnitude(&collectablePickupDelta, 1) > 480) {
             // Too far, snap
             VecCopy(&moby->m_Position, &g_Spyro.m_Position);
             collectableProps->m_Ticks = 32;
           } else {
             // Move toward Spyro
-            VecMult(&vec_e0, &vec_e0, collectableProps->m_Ticks);
-            VecAdd(&moby->m_Position, &collectableProps->m_VelocityOrPickupPos, &vec_e0);
+            VecMult(&collectablePickupDelta, &collectablePickupDelta, collectableProps->m_Ticks);
+            VecAdd(&moby->m_Position, &collectableProps->m_VelocityOrPickupPos, &collectablePickupDelta);
             moby->m_Position.z += SINE_8(collectableProps->m_Ticks * 4) / 12;
           }
         }
 
         // Spin rapidly while being sucked in
-        moby->m_Rotation.x = moby->m_Rotation.x - 7 + collectableProps->m_RotY;
-        moby->m_Rotation.y = moby->m_Rotation.y - 7 + collectableProps->m_RotZ;
+        moby->m_Rotation.x = moby->m_Rotation.x - 7 + collectableProps->m_RotX;
+        moby->m_Rotation.y = moby->m_Rotation.y - 7 + collectableProps->m_RotY;
         moby->m_Rotation.z = moby->m_Rotation.z - 7 + collectableProps->m_RotationTicks;
         break;
       }
@@ -994,15 +993,15 @@ void func_level_60_8007D938(void) {
       if (moby->m_Substate < 3) {
         int zdist;
         if (moby->m_Class == 14) {
-          moby->m_Rotation.x = (COSINE_8(collectableProps->m_RotationTicks) >> 9) + collectableProps->m_RotY;
-          moby->m_Rotation.y = (SINE_8(collectableProps->m_RotationTicks) >> 9) + collectableProps->m_RotZ;
+          moby->m_Rotation.x = (COSINE_8(collectableProps->m_RotationTicks) >> 9) + collectableProps->m_RotX;
+          moby->m_Rotation.y = (SINE_8(collectableProps->m_RotationTicks) >> 9) + collectableProps->m_RotY;
           collectableProps->m_RotationTicks += g_DeltaTime << 1;
         } else if (moby->m_Class == 15) {
           moby->m_Rotation.z += 8;
           moby->m_Rotation.y -= 6;
         } else {
-          moby->m_Rotation.x = (COSINE_8(collectableProps->m_RotationTicks) >> 7) + collectableProps->m_RotY;
-          moby->m_Rotation.y = (SINE_8(collectableProps->m_RotationTicks) >> 7) + collectableProps->m_RotZ;
+          moby->m_Rotation.x = (COSINE_8(collectableProps->m_RotationTicks) >> 7) + collectableProps->m_RotX;
+          moby->m_Rotation.y = (SINE_8(collectableProps->m_RotationTicks) >> 7) + collectableProps->m_RotY;
           collectableProps->m_RotationTicks += g_DeltaTime << 1;
         }
       }
@@ -1087,12 +1086,12 @@ void func_level_60_8007D938(void) {
           moby->m_CollisionGroup = nullptr;
 
           if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x2000) {
-            if (ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x800) {
+            if (ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 2048) {
               if (fairyProps->m_WasCollected == 0 || padMoby->m_State == 1) {
                 // Spawn the fairy
                 fairyProps->m_WasCollected = 0;
                 moby->m_Position.z = fairyProps->m_BaseZ + 0x80;
-                moby->m_Rotation.z = Atan2(g_Spyro.m_Position.x - moby->m_Position.x, g_Spyro.m_Position.y - moby->m_Position.y, 0) - 0x80;
+                moby->m_Rotation.z = Atan2(g_Spyro.m_Position.x - moby->m_Position.x, g_Spyro.m_Position.y - moby->m_Position.y, 0) - 128;
                 moby->m_RenderRadius = 0x20;
                 moby->m_State = 3;
                 moby->m_ScaleOverride = 0x60;
@@ -1172,7 +1171,7 @@ void func_level_60_8007D938(void) {
         moby->m_Position.z = fairyProps->m_BaseZ + (Cos(fairyProps->m_Timer << 7) >> 6);
 
         if ((padMoby->m_State == 0 || (padMoby->m_State == 2 && padMoby->m_Substate >= 0x10)) && OctDistance(&padMoby->m_Position, &g_Spyro.m_Position) < 0x400 &&
-            ABS2(padMoby->m_Position.z - padMoby->m_FloorDistance - g_Spyro.m_Position.z) < 0x200) {
+            ABS2(padMoby->m_Position.z - padMoby->m_FloorDistance - g_Spyro.m_Position.z) < 512) {
 
           if ((g_Spyro.m_State == 0 || g_Spyro.m_State == 0xD) && g_Spyro.m_idleTimer > 0) {
             moby->m_State = 6;
@@ -1183,7 +1182,7 @@ void func_level_60_8007D938(void) {
         }
 
         // Continue moving toward target
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) >= 0x2801 || ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) >= 0xC01) {
+        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) > 0x2800 || ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) >= 0xC01) {
           moby->m_State = 6;
         } else {
           int angleDiff;
@@ -1244,9 +1243,10 @@ void func_level_60_8007D938(void) {
     }
     case 120: { /* MOBYCLASS_SPARX */
       MobySparxProps *sparxProps = moby->m_Props;
-      char temp;
+      char pitchAngle;
       /* Spawn glow if Spyro has 2+ health, despawn it below */
       if (g_Spyro.m_health >= 2) {
+
         vec_88.x = 0;
         vec_88.y = 0x64;
         vec_88.z = 0;
@@ -1269,7 +1269,7 @@ void func_level_60_8007D938(void) {
           sparxProps->glow = g;
           if (g != nullptr) {
             g->MobyPos = &moby->m_Position;
-            sparxProps->glow->unk_0x010 = 0x40;
+            sparxProps->glow->m_Radius = 0x40;
             sparxProps->glow->PosOffset.x = 0;
             sparxProps->glow->PosOffset.y = 0;
             sparxProps->glow->PosOffset.z = 0;
@@ -1277,12 +1277,12 @@ void func_level_60_8007D938(void) {
             sparxProps->glow->GlowColor.g = 0xC0;
             sparxProps->glow->GlowColor.b = 0x60;
             sparxProps->glow->unk_0x00 = 9;
-            sparxProps->glow->unk_0x04 = (int *)&D_8006E390;
+            sparxProps->glow->m_VertexTable = (int *)&D_8006E390;
           }
         } else {
-          sparxProps->glow->unk_0x010 += 0x20;
-          if (sparxProps->glow->unk_0x010 > 0x400) {
-            sparxProps->glow->unk_0x010 = 0x400;
+          sparxProps->glow->m_Radius += 0x20;
+          if (sparxProps->glow->m_Radius > 0x400) {
+            sparxProps->glow->m_Radius = 0x400;
           }
         }
       } else {
@@ -1316,12 +1316,12 @@ void func_level_60_8007D938(void) {
         case 0: { /* Approach the moby being picked up */
           Moby *target = sparxProps->m_MobyPickingUp;
           MobyButterflyProps *bp = target->m_Props;
-          int isOddAnim = moby->m_AnimationState.m_NextAnimation & 1;
+          int isPickupAnimPhase = moby->m_AnimationState.m_NextAnimation & 1;
           int dist;
-          int target_speed;
+          int targetSpeed;
 
           VecCopy(&vec_38, &target->m_Position);
-          if (isOddAnim == 0) {
+          if (isPickupAnimPhase == 0) {
             vec_38.x -= COSINE_8(sparxProps->m_MobyPickingUp->m_Rotation.z) >> 4;
             vec_38.y -= SINE_8(sparxProps->m_MobyPickingUp->m_Rotation.z) >> 4;
           } else {
@@ -1330,7 +1330,7 @@ void func_level_60_8007D938(void) {
           }
 
           /* Adjust pitch when on second-half of animation */
-          if (isOddAnim) {
+          if (isPickupAnimPhase) {
             int delta;
             if (moby->m_AnimationState.m_NextFrame >= 7) {
               moby->m_Substate++;
@@ -1352,7 +1352,7 @@ void func_level_60_8007D938(void) {
           dist = VecMagnitude(&vec_38, 1);
 
           /* Check for trigger to kick into pickup animation */
-          if (isOddAnim == 0) {
+          if (isPickupAnimPhase == 0) {
             if (func_80037F90(sparxProps, 4) != 0 ||
                 (sparxProps->m_Timer < 80 && func_80017908((moby->m_Rotation.z + (bp->m_SparxApproachSide * 110)) & 0xFF, ((g_Camera.m_Rotation.z >> 4) + 0x80) & 0xFF) < 8)) {
               if (moby->m_AnimationState.m_NextAnimation != moby->m_AnimationState.m_NextAnimation + 1) {
@@ -1367,17 +1367,17 @@ void func_level_60_8007D938(void) {
               }
             }
           }
-          target_speed = isOddAnim ? 150 : 130;
-          if (target_speed + 5 < dist) {
-            VecScaleToLength(&vec_38, dist, target_speed + 5);
+          targetSpeed = isPickupAnimPhase ? 150 : 130;
+          if (targetSpeed + 5 < dist) {
+            VecScaleToLength(&vec_38, dist, targetSpeed + 5);
           } else {
-            VecScaleToLength(&vec_38, dist, target_speed - 5);
+            VecScaleToLength(&vec_38, dist, targetSpeed - 5);
           }
           VecAdd(&moby->m_Position, &moby->m_Position, &vec_38);
           RotateMobyToAngle(moby, Atan2(vec_38.x, vec_38.y, 0), 0xA, 0, 0);
-          temp = Atan2(VecMagnitude(&vec_38, 0), vec_38.z, 0);
-          moby->m_Rotation.y = temp;
-          moby->m_Rotation.y = func_80038098(temp, 0, 0x30);
+          pitchAngle = Atan2(VecMagnitude(&vec_38, 0), vec_38.z, 0);
+          moby->m_Rotation.y = pitchAngle;
+          moby->m_Rotation.y = func_80038098(pitchAngle, 0, 0x30);
           break;
         }
         case 1: { /* Picked it up - heal/grant */
@@ -1407,13 +1407,14 @@ void func_level_60_8007D938(void) {
         case 4: { /* Chasing a gem to gather it */
           MobyCollectableProps *cp = sparxProps->m_MobyPickingUp->m_Props;
           int dist;
-          VecSub(&vec_f0, &sparxProps->m_MobyPickingUp->m_Position, &moby->m_Position);
-          dist = VecMagnitude(&vec_f0, 1);
+
+          VecSub(&sparxChaseDelta, &sparxProps->m_MobyPickingUp->m_Position, &moby->m_Position);
+          dist = VecMagnitude(&sparxChaseDelta, 1);
 
           if (dist < 512) {
             cp->m_Ticks = 0;
+            cp->m_RotX = rand() & 0xE;
             cp->m_RotY = rand() & 0xE;
-            cp->m_RotZ = rand() & 0xE;
             cp->m_RotationTicks = rand() & 0xE;
 
             VecCopy(&cp->m_VelocityOrPickupPos, &sparxProps->m_MobyPickingUp->m_Position);
@@ -1439,20 +1440,21 @@ void func_level_60_8007D938(void) {
             int dcheck = 310;
 
             if (dcheck < dist)
-              VecScaleToLength(&vec_f0, dist, 310);
+              VecScaleToLength(&sparxChaseDelta, dist, 310);
             else
-              VecScaleToLength(&vec_f0, dist, 290);
+              VecScaleToLength(&sparxChaseDelta, dist, 290);
 
-            VecAdd(&moby->m_Position, &moby->m_Position, &vec_f0);
-            RotateMobyToAngle(moby, Atan2(vec_f0.x, vec_f0.y, 0), 0xA, 0, 0);
-            temp = Atan2(VecMagnitude(&vec_f0, 0), vec_f0.z, 0);
-            moby->m_Rotation.y = temp;
-            moby->m_Rotation.y = func_80038098(temp, 0, 0x30);
+            VecAdd(&moby->m_Position, &moby->m_Position, &sparxChaseDelta);
+            RotateMobyToAngle(moby, Atan2(sparxChaseDelta.x, sparxChaseDelta.y, 0), 0xA, 0, 0);
+            pitchAngle = Atan2(VecMagnitude(&sparxChaseDelta, 0), sparxChaseDelta.z, 0);
+            moby->m_Rotation.y = pitchAngle;
+            moby->m_Rotation.y = func_80038098(pitchAngle, 0, 0x30);
           }
           break;
         }
         }
       } else {
+
         /* No moby being picked up - idle hover near Spyro */
         moby->m_RenderRadius = 0x10;
         if (sparxProps->m_Timer <= 0) {
@@ -1662,7 +1664,7 @@ void func_level_60_8007D938(void) {
     }
     case 195: { /* MOBYCLASS_METAL_CHEST */
       struct {
-        int m_HitTimer;   /* 0x00 - flash/recovery timer */
+        int m_ShakeTimer;   /* 0x00 - flash/recovery timer */
         int m_StoredRotX; /* 0x04 */
         int m_StoredRotY; /* 0x08 */
         int m_StoredPosZ; /* 0x0C */
@@ -1675,15 +1677,15 @@ void func_level_60_8007D938(void) {
         func_80038458(moby);
       }
 
-      if (chestProps->m_HitTimer != 0) {
-        chestProps->m_HitTimer += g_DeltaTime;
-        if (chestProps->m_HitTimer < 0x40) {
+      if (chestProps->m_ShakeTimer != 0) {
+        chestProps->m_ShakeTimer += g_DeltaTime;
+        if (chestProps->m_ShakeTimer < 0x40) {
           /* shake animation */
-          moby->m_Rotation.x = D_8006E638[chestProps->m_HitTimer >> 1][0] + chestProps->m_StoredRotX;
-          moby->m_Rotation.y = D_8006E638[chestProps->m_HitTimer >> 1][1] + chestProps->m_StoredRotY;
-          moby->m_Position.z = chestProps->m_StoredPosZ + (ABS2(D_8006E638[chestProps->m_HitTimer >> 1][0]) + ABS2(D_8006E638[chestProps->m_HitTimer >> 1][1])) * 6;
+          moby->m_Rotation.x = D_8006E638[chestProps->m_ShakeTimer >> 1][0] + chestProps->m_StoredRotX;
+          moby->m_Rotation.y = D_8006E638[chestProps->m_ShakeTimer >> 1][1] + chestProps->m_StoredRotY;
+          moby->m_Position.z = chestProps->m_StoredPosZ + (ABS2(D_8006E638[chestProps->m_ShakeTimer >> 1][0]) + ABS2(D_8006E638[chestProps->m_ShakeTimer >> 1][1])) * 6;
         } else {
-          chestProps->m_HitTimer = 0;
+          chestProps->m_ShakeTimer = 0;
           moby->m_Rotation.x = chestProps->m_StoredRotX;
           moby->m_Rotation.y = chestProps->m_StoredRotY;
           moby->m_Position.z = chestProps->m_StoredPosZ;
@@ -1712,8 +1714,8 @@ void func_level_60_8007D938(void) {
         func_80052568(moby);
       } else {
         chestProps->m_FlameTimer = ApplyFlameHeatExternal(moby, chestProps->m_FlameTimer);
-        if ((moby->m_DamageFlags & 0x10000) && chestProps->m_HitTimer == 0) {
-          chestProps->m_HitTimer = 1;
+        if ((moby->m_DamageFlags & 0x10000) && chestProps->m_ShakeTimer == 0) {
+          chestProps->m_ShakeTimer = 1;
           chestProps->m_StoredRotX = moby->m_Rotation.x;
           chestProps->m_StoredRotY = moby->m_Rotation.y;
           chestProps->m_StoredPosZ = moby->m_Position.z;
@@ -1852,116 +1854,96 @@ void func_level_60_8007D938(void) {
       break;
     }
     case 250: { /* MOBYCLASS_CRYSTAL_DRAGON */
-      struct {
-        int m_DragonId; /* 0x00 - dragon entry id */
-        int m_unk_0x04;
-        int m_unk_0x08;
-        int m_unk_0x0C;
-        int m_unk_0x10;
-        int m_unk_0x14;
-        int m_DragonIndex;   /* 0x18 */
-        int m_CheckpointAngle;
-        int m_PadMobyIdx;    /* 0x20 - linked pad moby index */
-        int m_DragonNameIdx; /* 0x24 - dragon name id */
-        int m_unk_0x28;
-        int m_unk_0x2C;
-        int m_unk_0x30;
-        int m_unk_0x34;
-        int m_unk_0x38;
-        int m_unk_0x3C;
-        int m_unk_0x40;
-        int m_HitTimer;   /* 0x44 - active hit/break animation timer */
-        int m_StoredRotX; /* 0x48 */
-        int m_StoredRotY; /* 0x4C */
-        int m_StoredPosZ; /* 0x50 */
-      } *dragonProps = moby->m_Props;
+      RescuedDragonMobyProps *dragonProps = moby->m_Props;
 
       if (moby->m_State == 0) {
         /* Init: link the pad and store rest pose */
-        int padIdx = dragonProps->m_PadMobyIdx;
+        int padIdx = dragonProps->m_DragonPadLink;
         if (padIdx != -1) {
           g_LevelMobys[padIdx].m_State = 3;
         }
         moby->m_State = 1;
-        dragonProps->m_StoredRotX = moby->m_Rotation.x;
-        dragonProps->m_StoredRotY = moby->m_Rotation.y;
-        dragonProps->m_StoredPosZ = moby->m_Position.z;
+        dragonProps->m_AngleStorage.x = moby->m_Rotation.x;
+        dragonProps->m_AngleStorage.y = moby->m_Rotation.y;
+        dragonProps->m_AngleStorage.z = moby->m_Position.z;
       } else if (moby->m_State == 1) {
-        dragonProps->m_HitTimer += g_DeltaTime;
-        if (dragonProps->m_HitTimer > 256) {
+        dragonProps->m_ShakeTimer += g_DeltaTime;
+        if (dragonProps->m_ShakeTimer > 256) {
           /* Recovery from hit */
-          dragonProps->m_HitTimer = 0;
-          moby->m_Rotation.x = dragonProps->m_StoredRotX;
-          moby->m_Rotation.y = dragonProps->m_StoredRotY;
-          moby->m_Position.z = dragonProps->m_StoredPosZ;
+          dragonProps->m_ShakeTimer = 0;
+          moby->m_Rotation.x = dragonProps->m_AngleStorage.x;
+          moby->m_Rotation.y = dragonProps->m_AngleStorage.y;
+          moby->m_Position.z = dragonProps->m_AngleStorage.z;
           moby->m_DamageFlags = 0;
           func_800562A4(moby, 1);
-        } else if (dragonProps->m_HitTimer >= 192) {
+        } else if (dragonProps->m_ShakeTimer >= 192) {
 
           /* Active rumble/break animation */
           if (!IsMobyPlayingSound(moby, g_Models[moby->m_Class]->m_Sounds[0])) {
             func_8003851C(moby, 0, 0);
           }
-          moby->m_Rotation.x = D_8006E638[(dragonProps->m_HitTimer - 192) >> 1][0] + dragonProps->m_StoredRotX;
-          moby->m_Rotation.y = D_8006E638[(dragonProps->m_HitTimer - 192) >> 1][1] + dragonProps->m_StoredRotY;
+          moby->m_Rotation.x = D_8006E638[(dragonProps->m_ShakeTimer - 192) >> 1][0] + dragonProps->m_AngleStorage.x;
+          moby->m_Rotation.y = D_8006E638[(dragonProps->m_ShakeTimer - 192) >> 1][1] + dragonProps->m_AngleStorage.y;
           moby->m_Position.z =
-              dragonProps->m_StoredPosZ + (ABS2(D_8006E638[(dragonProps->m_HitTimer - 192) >> 1][0]) + ABS2(D_8006E638[(dragonProps->m_HitTimer - 192) >> 1][1])) * 6;
-        } else if (dragonProps->m_HitTimer >= 188) {
-          dragonProps->m_StoredRotX = moby->m_Rotation.x;
-          dragonProps->m_StoredRotY = moby->m_Rotation.y;
-          dragonProps->m_StoredPosZ = moby->m_Position.z;
+              dragonProps->m_AngleStorage.z + (ABS2(D_8006E638[(dragonProps->m_ShakeTimer - 192) >> 1][0]) + ABS2(D_8006E638[(dragonProps->m_ShakeTimer - 192) >> 1][1])) * 6;
+        } else if (dragonProps->m_ShakeTimer >= 188) {
+          dragonProps->m_AngleStorage.x = moby->m_Rotation.x;
+          dragonProps->m_AngleStorage.y = moby->m_Rotation.y;
+          dragonProps->m_AngleStorage.z = moby->m_Position.z;
         } else if (moby->m_DamageFlags != 0) {
           /* Got hit */
-          dragonProps->m_HitTimer = 188;
+          dragonProps->m_ShakeTimer = 188;
           func_800562A4(moby, 1);
         } else {
           /* Periodic sparkles */
-          if ((dragonProps->m_HitTimer >> 1) == 16 && (rand() & 3) == 0) {
+          if ((dragonProps->m_ShakeTimer >> 1) == 16 && (rand() & 3) == 0) {
             SpawnMobySparkle(moby, &D_8006E57C[0]);
-          } else if ((dragonProps->m_HitTimer >> 1) == 48 && (rand() & 3) == 0) {
+          } else if ((dragonProps->m_ShakeTimer >> 1) == 48 && (rand() & 3) == 0) {
             SpawnMobySparkle(moby, &D_8006E57C[1]);
-          } else if ((dragonProps->m_HitTimer >> 1) == 80 && (rand() & 3) == 0) {
+          } else if ((dragonProps->m_ShakeTimer >> 1) == 80 && (rand() & 3) == 0) {
             SpawnMobySparkle(moby, &D_8006E57C[2]);
           }
         }
 
         /* Check pickup distance */
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x800) {
-          VecSub(&vec_100, &moby->m_Position, &g_Spyro.m_Position);
-          vec_100.z = (vec_100.z * 3) >> 2;
-          if (VecMagnitude(&vec_100, 1) < 0x440) {
+        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 2048) {
+          Vector3D dragonPickupDelta;
+
+          VecSub(&dragonPickupDelta, &moby->m_Position, &g_Spyro.m_Position);
+          dragonPickupDelta.z = (dragonPickupDelta.z * 3) >> 2;
+          if (VecMagnitude(&dragonPickupDelta, 1) < 1088) {
             int rotZ;
-            int dragonidx;
-            if (dragonProps->m_PadMobyIdx != -1) {
-              rotZ = g_LevelMobys[dragonProps->m_PadMobyIdx].m_Rotation.z;
+            int cutsceneId;
+            if (dragonProps->m_DragonPadLink != -1) {
+              rotZ = g_LevelMobys[dragonProps->m_DragonPadLink].m_Rotation.z;
             } else {
-              rotZ = dragonProps->m_CheckpointAngle;
+              rotZ = dragonProps->m_Rotation;
             }
             func_8003B854(0, moby);
             CheckpointSave(moby, rotZ);
 
-            if (dragonProps->m_DragonNameIdx != -1) {
+            if (dragonProps->m_OldDialogueId != -1) {
               /* Counted dragon */
               g_LevelDragonCount[g_LevelIndex]++;
               g_DragonTotal++;
-              func_8002C914(dragonProps->m_DragonNameIdx, 0);
-              if (dragonProps->m_PadMobyIdx != -1) {
-                g_LevelMobys[dragonProps->m_PadMobyIdx].m_State = 1;
+              func_8002C914(dragonProps->m_OldDialogueId, 0);
+              if (dragonProps->m_DragonPadLink != -1) {
+                g_LevelMobys[dragonProps->m_DragonPadLink].m_State = 1;
               }
               func_80052568(moby);
-            } else if (dragonidx = dragonProps->m_DragonIndex, dragonidx == dragonProps->m_DragonNameIdx) {
+            } else if (cutsceneId = dragonProps->m_CutsceneId, cutsceneId == dragonProps->m_OldDialogueId) {
               /* Already counted */
               g_LevelDragonCount[g_LevelIndex]++;
               g_DragonTotal++;
-              if (dragonProps->m_PadMobyIdx != dragonidx) {
-                g_LevelMobys[dragonProps->m_PadMobyIdx].m_State = 1;
+              if (dragonProps->m_DragonPadLink != cutsceneId) {
+                g_LevelMobys[dragonProps->m_DragonPadLink].m_State = 1;
               }
               func_80052568(moby);
             } else {
               moby->m_State = 2;
-              moby->m_Rotation.x = dragonProps->m_StoredRotX;
-              moby->m_Rotation.y = dragonProps->m_StoredRotY;
-              moby->m_Position.z = dragonProps->m_StoredPosZ;
+              moby->m_Rotation.x = dragonProps->m_AngleStorage.x;
+              moby->m_Rotation.y = dragonProps->m_AngleStorage.y;
+              moby->m_Position.z = dragonProps->m_AngleStorage.z;
               func_8002C924(moby);
               VecNull(&g_Spyro.m_HeadLookTarget);
               g_Spyro.m_ControlFlags = 0x80000000 | 0x2000 | 0x100 | 0x40 | 0x4 | 0x2 | 0x1;
@@ -2010,33 +1992,33 @@ void func_level_60_8007D938(void) {
     case 269: { // Digits
 
       struct {
-        int m_Timer;     /* 0x00: Remaining lifetime frames */
+        int m_Lifetime;     /* 0x00: Remaining lifetime frames */
         int m_Unused04;  /* 0x04 */
         int m_VelocityX; /* 0x08 */
         int m_VelocityY; /* 0x0C */
         int m_VelocityZ; /* 0x10 */
-      } *props = moby->m_Props;
+      } *digitProps = moby->m_Props;
 
       if (!(moby->m_RenderRadius & 0x80) && (moby->m_RenderRadius != 0)) {
 
-        if (props->m_Timer >= 1) {
+        if (digitProps->m_Lifetime >= 1) {
 
           /* Update Rotation (Spinning effect) */
           moby->m_Rotation.z += 1;
 
           /* Apply Gravity */
-          props->m_VelocityZ -= 6;
-          if (props->m_VelocityZ < -0x80) {
-            props->m_VelocityZ = -0x80; /* Terminal velocity cap */
+          digitProps->m_VelocityZ -= 6;
+          if (digitProps->m_VelocityZ < -0x80) {
+            digitProps->m_VelocityZ = -0x80; /* Terminal velocity cap */
           }
 
           /* Apply Velocity to Position */
-          moby->m_Position.x += props->m_VelocityX;
-          moby->m_Position.y += props->m_VelocityY;
-          moby->m_Position.z += props->m_VelocityZ;
+          moby->m_Position.x += digitProps->m_VelocityX;
+          moby->m_Position.y += digitProps->m_VelocityY;
+          moby->m_Position.z += digitProps->m_VelocityZ;
 
           /* Collision Logic */
-          if (moby->m_Position.z > 0x3FF) {
+          if (moby->m_Position.z > 1023) {
             /* Check for collision with world geometry */
             if (func_8004BE4C(&moby->m_Position, 0x100, 0x100)) {
               int dot;
@@ -2049,17 +2031,17 @@ void func_level_60_8007D938(void) {
               func_80017330(&g_CollisionNormal, 0x1000);
 
               /* Dot product of velocity and surface normal */
-              dot = (props->m_VelocityX * g_CollisionNormal.x + props->m_VelocityY * g_CollisionNormal.y + props->m_VelocityZ * g_CollisionNormal.z) >> 11;
+              dot = (digitProps->m_VelocityX * g_CollisionNormal.x + digitProps->m_VelocityY * g_CollisionNormal.y + digitProps->m_VelocityZ * g_CollisionNormal.z) >> 11;
 
               if (dot < 0) {
                 /* Reflect velocity vector against the surface */
                 VecScaleToLength(&g_CollisionNormal, 0x1000, -dot);
-                props->m_VelocityX += g_CollisionNormal.x;
-                props->m_VelocityY += g_CollisionNormal.y;
-                props->m_VelocityZ += g_CollisionNormal.z;
+                digitProps->m_VelocityX += g_CollisionNormal.x;
+                digitProps->m_VelocityY += g_CollisionNormal.y;
+                digitProps->m_VelocityZ += g_CollisionNormal.z;
               }
             }
-            props->m_Timer--;
+            digitProps->m_Lifetime--;
           } else {
               func_80052568(moby);
           }
@@ -2135,13 +2117,13 @@ void func_level_60_8007D938(void) {
       }
       case 3:
         if (func_80037F90(&ambProps->m_StateTimer, 4) != 0) {
-          ambProps->m_StateTimer = 0x270 - (rand() & 0x7F);
+          ambProps->m_StateTimer = 624 - (rand() & 0x7F);
           soundTableIndex = (rand() & 1) + 15;
         }
         break;
       case 4:
         if (func_80037F90(&ambProps->m_StateTimer, 4) != 0) {
-          ambProps->m_StateTimer = 0x258 - (rand() & 0x7F);
+          ambProps->m_StateTimer = 600 - (rand() & 0x7F);
           soundTableIndex = rand() % 4 + 21;
         }
         break;
@@ -2170,11 +2152,13 @@ void func_level_60_8007D938(void) {
     }
 
     case 309: { // Some fragment 1
-      MobyPhysicsProps *physicsProps = moby->m_Props;
+      MobyFragmentPhysicsProps *physicsProps = moby->m_Props;
       int i;
 
       if (physicsProps->m_Lifetime != 0) {
         if (moby->m_WasDrawn) {
+          Vector3D fragmentDustPos;
+
           /* Movement and Rotation (No Bouncing) */
           moby->m_Position.x += physicsProps->m_VelocityX;
           moby->m_Position.y += physicsProps->m_VelocityY;
@@ -2187,11 +2171,11 @@ void func_level_60_8007D938(void) {
           moby->m_Rotation.y += physicsProps->m_AngularVelocityY;
           moby->m_Rotation.z += physicsProps->m_AngularVelocityZ;
 
-          vec_100.x = (rand() & 0xFE) - 127;
-          vec_100.y = (rand() & 0xFE) - 127;
-          vec_100.z = (rand() & 0xFE) - 64;
-          VecAdd(&vec_100, &vec_100, &moby->m_Position);
-          D_800758E4(1, 0x42, &vec_100, (void *)1);
+          fragmentDustPos.x = (rand() & 0xFE) - 127;
+          fragmentDustPos.y = (rand() & 0xFE) - 127;
+          fragmentDustPos.z = (rand() & 0xFE) - 64;
+          VecAdd(&fragmentDustPos, &fragmentDustPos, &moby->m_Position);
+          D_800758E4(1, 0x42, &fragmentDustPos, (void *)1);
           physicsProps->m_Lifetime--;
         } else {
           if (moby->m_WasDrawn) {
@@ -2209,7 +2193,7 @@ void func_level_60_8007D938(void) {
     case 311: {
       int i;
       int dot;
-      MobyPhysicsProps *physicsProps = moby->m_Props;
+      MobyFragmentPhysicsProps *physicsProps = moby->m_Props;
 
       if (physicsProps->m_Lifetime > 0 && moby->m_WasDrawn) {
         if (func_8004BE4C(&moby->m_Position, 0x100, 0x100)) {
@@ -2240,6 +2224,8 @@ void func_level_60_8007D938(void) {
 
         /* Spawn 3 dust particles */
         for (i = 0; i < 3; i++) {
+          Vector3D vec_110;
+
           // TODO: Permuter hack
           i++;
           i--;
@@ -2272,7 +2258,7 @@ void func_level_60_8007D938(void) {
         respProps->m_RespawnTimer = respProps->m_RespawnInterval;
 
         for (m = g_LevelMobys; m < g_DynMobys; m++) {
-          if (m->m_Class == respProps->m_TargetClass && m->m_State >= 0x80 && OctDistance(&g_Spyro.m_Position, (Vector3D *)m->m_Props) > 0x6000) {
+          if (m->m_Class == respProps->m_TargetClass && m->m_State >= 0x80 && OctDistance(&g_Spyro.m_Position, (Vector3D *)m->m_Props) > 24576) {
             /* Respawn it */
             VecCopy(&m->m_Position, (Vector3D *)m->m_Props);
             func_800526A8(m);
@@ -2293,7 +2279,7 @@ void func_level_60_8007D938(void) {
     case 331: { // Dragon pad
       switch (moby->m_State) {
       case 0: {
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) >= 2561) {
+        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) > 2560) {
           moby->m_State = 1;
         }
         break;
@@ -2346,6 +2332,8 @@ void func_level_60_8007D938(void) {
       short progressed;
       switch (moby->m_State) {
       case 1: {
+        Vector3D vortexPathMidpoint;
+
         g_Spyro.m_ControlFlags = (0x80000000 | 0x2000 | 0x4000 | 0x100 | 0x40 | 0x4 | 0x2 | 0x1);
         g_Spyro.unk_0x248 = moby->m_Substate;
         g_Spyro.unk_0x240 = vortexProps->m_Path;
@@ -2355,10 +2343,10 @@ void func_level_60_8007D938(void) {
 
         /* Compute mid-point of vortex top */
         p = vortexProps->m_Path;
-        VecAdd(&vec_120, &p->m_Nodes[0].m_Position, &p->m_Nodes[1].m_Position);
-        VecShiftRight(&vec_120, 1);
+        VecAdd(&vortexPathMidpoint, &p->m_Nodes[0].m_Position, &p->m_Nodes[1].m_Position);
+        VecShiftRight(&vortexPathMidpoint, 1);
 
-        VecSub(&g_Spyro.unk_0x208, &vec_120, &g_Spyro.m_Position);
+        VecSub(&g_Spyro.unk_0x208, &vortexPathMidpoint, &g_Spyro.m_Position);
         VecAdd(&g_Spyro.unk_0x208, &g_Spyro.unk_0x208, &vortexProps->m_FlyInOffset);
 
         mag = VecMagnitude(&g_Spyro.unk_0x208, 1);
@@ -2496,12 +2484,12 @@ void func_level_60_8007D938(void) {
     case 449:
     case 450: // Letters
     case 451: {
-      MobyLetterProps *letterprops = moby->m_Props;
+      MobyLetterProps *letterProps = moby->m_Props;
 
-      if (letterprops->m_Parent->m_State == 0 || letterprops->m_Parent->m_Substate != moby->m_State) {
+      if (letterProps->m_Parent->m_State == 0 || letterProps->m_Parent->m_Substate != moby->m_State) {
         func_80052568(moby);
-      } else if (letterprops->m_Parent->m_Class == 9) {
-        if (OctDistance(&letterprops->m_Parent->m_Position, &g_Spyro.m_Position) < 0x400) {
+      } else if (letterProps->m_Parent->m_Class == 9) {
+        if (OctDistance(&letterProps->m_Parent->m_Position, &g_Spyro.m_Position) < 0x400) {
           int oldval;
           oldval = COSINE_8(moby->m_Substate);
           moby->m_Substate += 8;
@@ -2509,36 +2497,40 @@ void func_level_60_8007D938(void) {
         } else {
           // TODO: used for multiple purposes? review name
           int anglespyro;
+          Vector3D letterForwardOffset;
+          Vector3D letterSideStep;
+          Vector3D letterCenteringOffset;
+          Vector3D letterWaveOriginOffset;
 
           moby->m_Substate += 8;
-          anglespyro = Atan2(g_Spyro.m_Position.x - letterprops->m_Parent->m_Position.x, g_Spyro.m_Position.y - letterprops->m_Parent->m_Position.y, 0);
-          vec_130.x = COSINE_8(anglespyro) * 3 >> 4;
-          vec_130.y = SINE_8(anglespyro) * 3 >> 4;
-          vec_130.z = 0;
-          vec_140.x = COSINE_8(anglespyro + 64 & 0xFF) >> 5;
-          vec_140.y = SINE_8((anglespyro + 64) & 0xFF) >> 5;
-          vec_140.z = 0;
+          anglespyro = Atan2(g_Spyro.m_Position.x - letterProps->m_Parent->m_Position.x, g_Spyro.m_Position.y - letterProps->m_Parent->m_Position.y, 0);
+          letterForwardOffset.x = COSINE_8(anglespyro) * 3 >> 4;
+          letterForwardOffset.y = SINE_8(anglespyro) * 3 >> 4;
+          letterForwardOffset.z = 0;
+          letterSideStep.x = COSINE_8(anglespyro + 64 & 0xFF) >> 5;
+          letterSideStep.y = SINE_8((anglespyro + 64) & 0xFF) >> 5;
+          letterSideStep.z = 0;
           anglespyro = (anglespyro + 0x80) & 0xFF;
           moby->m_Rotation.z = anglespyro + (COSINE_8(moby->m_Substate) * 3 >> 9);
-          VecMult(&vec_150, &vec_140, letterprops->m_Len - 1);
-          VecShiftLeft(&vec_140, 1);
+          VecMult(&letterCenteringOffset, &letterSideStep, letterProps->m_Len - 1);
+          VecShiftLeft(&letterSideStep, 1);
           anglespyro = 2;
-          anglespyro = (letterprops->m_Len - 1) * anglespyro;
-          vec_150.z += COSINE_8(anglespyro) * 3 >> 3;
-          vec_160.x = vec_130.x * COSINE_8(anglespyro);
-          vec_160.y = vec_130.y * COSINE_8(anglespyro);
-          vec_160.z = 0;
-          anglespyro = ((anglespyro - letterprops->m_Index * 4)) & 0xFF;
-          VecMult(&vec_140, &vec_140, letterprops->m_Index);
-          VecSub(&vec_150, &vec_150, &vec_140);
-          moby->m_Position.x = vec_130.x * COSINE_8(anglespyro);
-          moby->m_Position.y = vec_130.y * COSINE_8(anglespyro);
+          anglespyro = (letterProps->m_Len - 1) * anglespyro;
+          letterCenteringOffset.z += COSINE_8(anglespyro) * 3 >> 3;
+          letterWaveOriginOffset.x = letterForwardOffset.x * COSINE_8(anglespyro);
+          letterWaveOriginOffset.y = letterForwardOffset.y * COSINE_8(anglespyro);
+          letterWaveOriginOffset.z = 0;
+          anglespyro = ((anglespyro - letterProps->m_Index * 4)) & 0xFF;
+          VecMult(&letterSideStep, &letterSideStep, letterProps->m_Index);
+          VecSub(&letterCenteringOffset, &letterCenteringOffset, &letterSideStep);
+          moby->m_Position.x = letterForwardOffset.x * COSINE_8(anglespyro);
+          moby->m_Position.y = letterForwardOffset.y * COSINE_8(anglespyro);
           moby->m_Position.z = 0;
-          VecSub(&moby->m_Position, &moby->m_Position, &vec_160);
+          VecSub(&moby->m_Position, &moby->m_Position, &letterWaveOriginOffset);
           VecShiftRight(&moby->m_Position, 10);
-          VecAdd(&moby->m_Position, &moby->m_Position, &vec_130);
-          VecAdd(&moby->m_Position, &moby->m_Position, &letterprops->m_Parent->m_Position);
-          VecSub(&moby->m_Position, &moby->m_Position, &vec_150);
+          VecAdd(&moby->m_Position, &moby->m_Position, &letterForwardOffset);
+          VecAdd(&moby->m_Position, &moby->m_Position, &letterProps->m_Parent->m_Position);
+          VecSub(&moby->m_Position, &moby->m_Position, &letterCenteringOffset);
           moby->m_Position.z = moby->m_Position.z + (COSINE_8(anglespyro) * 3 >> 3) + 0x600;
         }
       } else {

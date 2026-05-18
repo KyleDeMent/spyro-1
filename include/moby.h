@@ -444,8 +444,8 @@ typedef struct {
   u_char m_SpawnState;
   u_char m_Ticks;
   u_char m_BounceCount;
+  u_char m_RotX;
   u_char m_RotY;
-  u_char m_RotZ;
   u_char m_RotationTicks;
   u_char m_SparkleHandle;
 } MobyCollectableProps;
@@ -552,7 +552,7 @@ typedef struct {
   short m_AngularVelocityZ;
   int m_Lifetime;
   int m_KillBelowZ;
-} MobyPhysicsProps;
+} MobyFragmentPhysicsProps;
 typedef struct {
   int m_TargetClass;     /* 0x00 - which class to respawn */
   int m_RespawnTimer;    /* 0x04 - countdown */

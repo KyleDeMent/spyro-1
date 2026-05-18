@@ -44,8 +44,8 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
     lifeOrbProps->m_SpawnState = 0;
     lifeOrbProps->m_Ticks = 0;
     lifeOrbProps->m_BounceCount = 3;
+    lifeOrbProps->m_RotX = 0;
     lifeOrbProps->m_RotY = 0;
-    lifeOrbProps->m_RotZ = 0;
     lifeOrbProps->m_RotationTicks = 0;
     lifeOrbProps->m_SparkleHandle = -1;
 
@@ -147,8 +147,8 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
     gemProps->m_SpawnState = 0;
     gemProps->m_Ticks = 0;
 
+    gemProps->m_RotX = 0;
     gemProps->m_RotY = 0;
-    gemProps->m_RotZ = 0;
 
     gemProps->m_RotationTicks = 0;
 
