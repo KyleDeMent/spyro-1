@@ -410,11 +410,51 @@ typedef struct {
   Vector3D unk_0x8;
 } MobyNumberProps;
 
+typedef struct {
+  int m_unk_0x00;
+  int m_unk_0x04;
+  int m_unk_0x08;
+  PathData *m_Path;
+  int m_unk_0x10;
+  int m_unk_0x14;
+  int m_unk_0x18;
+  int m_unk_0x1C;
+  int m_KnockbackSpeed;    /* 0x20 - countdown / power level */
+  int m_TargetAngle; /* 0x24 - aim angle */
+  int m_unk_0x28;
+  int m_RetargetTimer; /* 0x2C - retarget delay */
+  int m_unk_0x30;
+} MobyEnemyProps;
+
+typedef struct {
+  int timer_0x0;
+} Moby11Props;
+
 // WIP
 typedef struct {
   Vector3D unk_0x00;
   int unk_0x0C;
 } Moby17Props;
+
+typedef struct {
+  int m_BitPos;
+  int m_MobyIdx;
+} Moby18Props;
+
+typedef struct {
+  int unk_0x0;
+  int m_AnimChecked;
+  int unk_0x8;
+} Moby49Props; //toasty head?
+
+typedef struct {
+  PathData* m_Path;
+  int m_Timer;
+  int m_LvlMobyIdx;
+  int m_TargetAngle;
+  int m_Timer2;
+  int m_ZVelocity;
+} Moby114Props;
 
 typedef struct {
   short unk_0x00;

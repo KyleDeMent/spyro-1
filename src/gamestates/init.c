@@ -503,7 +503,7 @@ void func_8002D02C(void) {
 
   // reset spyro
   func_8004AC24(1);
-  g_Spyro.unk_0x1b4 = 256;
+  g_Spyro.m_HeadLookCurrent.y = 256;
   g_Spyro.m_headRotation.y = 16;
   g_Spyro.m_noGamepadUpdateFrames = 8;
 

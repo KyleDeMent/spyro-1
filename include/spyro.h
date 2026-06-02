@@ -9,6 +9,8 @@
 #include <moby.h>
 #include <vector.h>
 
+#include "camera.h"
+
 // This is literally the largest structure in the game
 // a massive pain to document and figure out
 
@@ -206,12 +208,8 @@ typedef struct {
   Vector3D
       m_HeadLookTarget; // Target angles for head look-at (set by
                         // SetSpyroHeadLookTarget, consumed by func_80049880)
-  int unk_0x1b0;
-  int unk_0x1b4;
-  int unk_0x1b8;
-  int unk_0x1bc;
-  int unk_0x1c0;
-  int unk_0x1c4;
+  Vector3D m_HeadLookCurrent;
+  Vector3D m_HeadLookVelocity;
   MATRIX
   m_headRotationMatrix; // 0x1c8 - Combined body+head rotation for rendering
   int m_seperateTailAnimation; // Whether the tail is animated seperately from
@@ -234,7 +232,7 @@ typedef struct {
   int unk_0x214;
   int m_fallingState; // Not sure
   Vector3D *unk_0x21c;
-  int unk_0x220;
+  SphericalCoordsOffset *unk_0x220;
 
   // Used for the cannon, and whirlwinds, camera related
   Moby *m_mobyInUseBySpyro;

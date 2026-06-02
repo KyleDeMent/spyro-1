@@ -1,4 +1,4 @@
-
+.DEFAULT_GOAL := all
 
 # -------------------------------
 # Compiler & Toolchain Setup
@@ -144,13 +144,7 @@ build/src/overlays/%.o: C_FLAGS := $(subst -G8,-G0,$(C_FLAGS))
 build/src/%.o: src/%.c
 	@echo "\e[0;36m[Compiling] $<\e[0m"
 		
-	@$(GCC) $(MODERN_COMPILER_FLAG) $(NEW_PSYQ_FLAG) $(DEBUG_FLAG) $(NON_MATCHING_FLAG) -Iinclude -Ipsyq/include -ffreestanding -MT $@ -MMD -MP -MF $@.d $< | \
-		$(CC) $(C_FLAGS) |\
-		$(MASPSX_COMMAND) \
-		$(PYTHON) $(REMOVE_SECTIONS) | \
-		$(PYTHON) $(FIX_STR_ALIGN) | \
-		$(PYTHON) $(FIX_JTBL_ALIGN) | \
-		$(AS) $(AS_FLAGS) -o $@
+	@$(GCC) $(MODERN_COMPILER_FLAG) $(NEW_PSYQ_FLAG) $(DEBUG_FLAG) $(NON_MATCHING_FLAG) -Iinclude -Ipsyq/include -ffreestanding -MT $@ -MMD -MP -MF $@.d $< | $(CC) $(C_FLAGS) |	$(MASPSX_COMMAND) $(PYTHON) $(REMOVE_SECTIONS) | $(PYTHON) $(FIX_STR_ALIGN) | $(PYTHON) $(FIX_JTBL_ALIGN) | $(AS) $(AS_FLAGS) -o $@
 
 build/asm/%.o: asm/%.s
 	@echo "\e[0;34m[Assembling] $<\e[0m"

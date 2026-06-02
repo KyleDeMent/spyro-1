@@ -211,7 +211,7 @@ void func_level_60_8007D938(void) {
       }
 
       if (spawnerProps->m_SpawnTimer != 0) {
-        if (func_80037F90(&spawnerProps->m_SpawnTimer, 4) != 0) {
+        if (TimerTick(&spawnerProps->m_SpawnTimer, 4) != 0) {
           if (spawnerProps->m_RelativeMode != 0) {
             VecAdd(&spawnerProps->m_Position, &spawnerProps->m_Position, &moby->m_Position);
           } else {
@@ -311,10 +311,10 @@ void func_level_60_8007D938(void) {
       case 0: {
         // Timer running, exit
         // Wasn't drawn last frame, exit
-        if (func_80037F90(&butterflyProps->m_unk_14, 2) == 0 || moby->m_WasDrawn) {
+        if (TimerTick(&butterflyProps->m_unk_14, 2) == 0 || moby->m_WasDrawn) {
           int refHeight, rotated, moved;
 
-          if (func_80037F90(&butterflyProps->m_TurnRetargetTimer, 1) != 0) {
+          if (TimerTick(&butterflyProps->m_TurnRetargetTimer, 1) != 0) {
             int r = RandRangeSigned(30, 90);
             if (rand() & 1) {
               r = -r;
@@ -324,7 +324,7 @@ void func_level_60_8007D938(void) {
             butterflyProps->m_TurnRetargetTimer = RandRange(60, 140);
           }
 
-          if (func_80037F90(&butterflyProps->m_VerticalSpeedTimer, 1) != 0) {
+          if (TimerTick(&butterflyProps->m_VerticalSpeedTimer, 1) != 0) {
             butterflyProps->m_VerticalSpeed = RandRangeSigned(10, 25);
             butterflyProps->m_VerticalSpeedTimer = RandRange(80, 140);
           }
@@ -378,7 +378,7 @@ void func_level_60_8007D938(void) {
           int refHeight;
 
           // Timer
-          if (func_80037F90(&butterflyProps->m_VerticalSpeedTimer, 1)) {
+          if (TimerTick(&butterflyProps->m_VerticalSpeedTimer, 1)) {
             butterflyProps->m_VerticalSpeed = RandRangeSigned(5, 20);
             butterflyProps->m_VerticalSpeedTimer = RandRange(40, 80);
           }
@@ -1353,7 +1353,7 @@ void func_level_60_8007D938(void) {
 
           /* Check for trigger to kick into pickup animation */
           if (isPickupAnimPhase == 0) {
-            if (func_80037F90(sparxProps, 4) != 0 ||
+            if (TimerTick(sparxProps, 4) != 0 ||
                 (sparxProps->m_Timer < 80 && func_80017908((moby->m_Rotation.z + (bp->m_SparxApproachSide * 110)) & 0xFF, ((g_Camera.m_Rotation.z >> 4) + 0x80) & 0xFF) < 8)) {
               if (moby->m_AnimationState.m_NextAnimation != moby->m_AnimationState.m_NextAnimation + 1) {
                 D_80075794 = 0;
@@ -1801,7 +1801,7 @@ void func_level_60_8007D938(void) {
         switch (moby->m_State) {
         case 0:
           func_80039AA8(moby, enemyProps);
-          if (func_80037F90(&enemyProps->m_RetargetTimer, 4) != 0) {
+          if (TimerTick(&enemyProps->m_RetargetTimer, 4) != 0) {
             moby->m_State = 2;
             if (moby->m_AnimationState.m_NextAnimation != 2) {
               moby->m_AnimationState.m_FrameProgress = 0x10;
@@ -2074,7 +2074,7 @@ void func_level_60_8007D938(void) {
         soundTableIndex = 6;
         break;
       case 1:
-        if (func_80037F90(&ambProps->m_StateTimer, 4) != 0) {
+        if (TimerTick(&ambProps->m_StateTimer, 4) != 0) {
           ambProps->m_StateTimer = 0x258 - (rand() & 0x7F);
           soundTableIndex = (rand() & 7) + 7;
         }
@@ -2082,7 +2082,7 @@ void func_level_60_8007D938(void) {
       case 2: {
         switch (ambProps->m_PathState) {
         case 0:
-          if (func_80037F90(&ambProps->m_StateTimer, 4) != 0) {
+          if (TimerTick(&ambProps->m_StateTimer, 4) != 0) {
             ambProps->m_StateTimer = 0x200 - (rand() & 0x7F);
             soundTableIndex = (rand() & 1) + 13;
             ambProps->m_PathState = 1;
@@ -2116,13 +2116,13 @@ void func_level_60_8007D938(void) {
         break;
       }
       case 3:
-        if (func_80037F90(&ambProps->m_StateTimer, 4) != 0) {
+        if (TimerTick(&ambProps->m_StateTimer, 4) != 0) {
           ambProps->m_StateTimer = 624 - (rand() & 0x7F);
           soundTableIndex = (rand() & 1) + 15;
         }
         break;
       case 4:
-        if (func_80037F90(&ambProps->m_StateTimer, 4) != 0) {
+        if (TimerTick(&ambProps->m_StateTimer, 4) != 0) {
           ambProps->m_StateTimer = 600 - (rand() & 0x7F);
           soundTableIndex = rand() % 4 + 21;
         }
@@ -2253,7 +2253,7 @@ void func_level_60_8007D938(void) {
       } *respProps = moby->m_Props;
       VecCopy(&moby->m_Position, &g_Spyro.m_Position);
 
-      if (func_80037F90(&respProps->m_RespawnTimer, 4) != 0) {
+      if (TimerTick(&respProps->m_RespawnTimer, 4) != 0) {
         Moby *m;
         respProps->m_RespawnTimer = respProps->m_RespawnInterval;
 
@@ -2537,8 +2537,8 @@ void func_level_60_8007D938(void) {
         moby->m_Substate += 8;
         moby->m_Rotation.z = moby->m_FloorDistance + (COSINE_8(moby->m_Substate) * 3 >> 9);
       }
+      break;
     }
-    break;
     }
   }
 }

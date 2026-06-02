@@ -145,7 +145,7 @@
 - [x] LoadDragonCutscene
 - [x] LoadLevel
 - [x] main
-- [x] func_80037F90
+- [x] TimerTick
 - [x] func_80038074
 - [x] func_80038098
 - [x] func_80038120

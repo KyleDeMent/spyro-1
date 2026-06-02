@@ -7,7 +7,7 @@
 /// @param pTimer The timer to update
 /// @param pTimerType The type of timer, equal to the size of the type
 /// @return non-0 if the timer has elapsed
-int func_80037F90(void *pTimer, int pTimerType);
+int TimerTick(void *pTimer, int pTimerType);
 
 /// @brief Adds two angles together
 /// @param p1 Angle 1

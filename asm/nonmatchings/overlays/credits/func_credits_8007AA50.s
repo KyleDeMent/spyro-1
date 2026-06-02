@@ -508,7 +508,7 @@ glabel func_credits_8007AA50
 /* 5C97F70 8007B1A8 0857848C */  lw         $a0, %lo(D_80075708)($a0)
 /* 5C97F74 8007B1AC 02000524 */  addiu      $a1, $zero, 0x2
 /* 5C97F78 8007B1B0 21209700 */  addu       $a0, $a0, $s7
-/* 5C97F7C 8007B1B4 E4DF000C */  jal        func_80037F90
+/* 5C97F7C 8007B1B4 E4DF000C */  jal        TimerTick
 /* 5C97F80 8007B1B8 06008424 */   addiu     $a0, $a0, 0x6
 /* 5C97F84 8007B1BC 10004010 */  beqz       $v0, .Lcredits_8007B200
 /* 5C97F88 8007B1C0 00000000 */   nop
@@ -539,7 +539,7 @@ glabel func_credits_8007AA50
 /* 5C97FE8 8007B220 21980000 */   addu      $s3, $zero, $zero
 .Lcredits_8007B224:
 /* 5C97FEC 8007B224 08008424 */  addiu      $a0, $a0, 0x8
-/* 5C97FF0 8007B228 E4DF000C */  jal        func_80037F90
+/* 5C97FF0 8007B228 E4DF000C */  jal        TimerTick
 /* 5C97FF4 8007B22C 02000524 */   addiu     $a1, $zero, 0x2
 /* 5C97FF8 8007B230 12004010 */  beqz       $v0, .Lcredits_8007B27C
 /* 5C97FFC 8007B234 FFFF0224 */   addiu     $v0, $zero, -0x1
