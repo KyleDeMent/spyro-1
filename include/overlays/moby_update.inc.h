@@ -23,44 +23,113 @@
 #include "titlescreen.h"
 #include "variables.h"
 
+extern int D_80075794;
+// g_FrameFinished
+extern int D_800757F4;
+// g_MobyLocalDeltaTime
+extern int g_ScreenBorderEnabled; // Is the screen border enabled
+extern Vector3D D_8006E5A0;
+extern Vector3D D_8006E5B8;
+extern Vector3D D_8006E5AC;
+extern Vector3D D_8006E57C[3];
+
+// Sparx Glow Vertices
+extern int D_8006E390[9][2];
+
+// Fix type
+extern int D_8006E490;
+extern int D_8006E494;
+// Fix
+extern int D_8006E330;
+extern signed char D_8006E638[32][2];
+
+extern SphericalCoordsOffset D_8006CA24[];
+
+// extern int D_800756C4;
+// extern Moby *g_DynMobys;
+//
+//
+//
+//
+// extern int g_KeyFlag;
+//
+// extern unsigned char D_800758D0[8];
+// extern int g_DynMobyMax;
+// extern int g_DynMobyCount;
+
+extern char D_800758D1;
+
+extern short D_80073094[];
+
 #define ROTDEG(X) ((int)((X) / (360.0f / 256.0f)))
+#define ABS2(x) ((x) > 0 ? (x) : -(x))
+#define DISTANCE_TO_SPYRO(m) OctDistance(&(m)->m_Position, &g_Spyro.m_Position)
+#define ANGLE_TO(p1, p2) Atan2((p1).x - (p2).x, (p1).y - (p2).y, 0)
+#define ANGLE_TO_MOBY(p1) ANGLE_TO(p1, moby->m_Position)
+// Promote the queued anim to current, queue `nextAnim` after it
+#define MOBY_ANIM_ADVANCE(m, nextAnim)                                                                                                                                        \
+  (m)->m_AnimationState.m_FrameProgress = 0x10;                                                                                                                               \
+  (m)->m_AnimationState.m_PerFrameProgress = 0x10;                                                                                                                            \
+  (m)->m_AnimationState.m_Animation = (m)->m_AnimationState.m_NextAnimation;                                                                                                  \
+  (m)->m_AnimationState.m_NextAnimation = (nextAnim);                                                                                                                         \
+  (m)->m_AnimationState.m_Frame = (m)->m_AnimationState.m_NextFrame;                                                                                                          \
+  (m)->m_AnimationState.m_NextFrame = 0;                                                                                                                                      \
+  func_80037E98(m);
 
+// Restart animation `anim` from frame 0 at its natural model speed.
+#define MOBY_ANIM_RESET(m, anim)                                                                                                                                              \
+  (m)->m_AnimationState.m_FrameProgress = 0;                                                                                                                                  \
+  (m)->m_AnimationState.m_PerFrameProgress = g_Models[(m)->m_Class]->m_Animations[(anim)]->m_ProgressPerTick;                                                                 \
+  (m)->m_AnimationState.m_Animation = (anim);                                                                                                                                 \
+  (m)->m_AnimationState.m_NextAnimation = (anim);                                                                                                                             \
+  (m)->m_AnimationState.m_Frame = 0;                                                                                                                                          \
+  (m)->m_AnimationState.m_NextFrame = 1;
 
+#define FX12(X) ((int)(X * 4096))
 
-#define MOBY_SWITCH_ANIM_STATE(anim)                                                                                                                                            \
-  moby->m_State = anim;                                                                                                                                                       \
-  if (moby->m_AnimationState.m_NextAnimation != anim) {                                                                                                                       \
-    moby->m_AnimationState.m_FrameProgress = 0x10;                                                                                                                            \
-    moby->m_AnimationState.m_PerFrameProgress = 0x10;                                                                                                                         \
-    moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;                                                                                              \
-    moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;                                                                                                      \
-    moby->m_AnimationState.m_NextAnimation = 4;                                                                                                                               \
-    moby->m_AnimationState.m_NextFrame = 0;                                                                                                                                   \
-    func_80037E98(moby);                                                                                                                                                      \
-  }
+#define ABS2(x) ((x) > 0 ? (x) : -(x))
+#define DISTANCE_TO_SPYRO(m) OctDistance(&(m)->m_Position, &g_Spyro.m_Position)
+#define ANGLE_TO(p1, p2) Atan2((p1).x - (p2).x, (p1).y - (p2).y, 0)
+#define ANGLE_TO_MOBY(p1) ANGLE_TO(p1, moby->m_Position)
+// Promote the queued anim to current, queue `nextAnim` after it
+#define MOBY_ANIM_ADVANCE(m, nextAnim)                                                                                                                                        \
+  (m)->m_AnimationState.m_FrameProgress = 0x10;                                                                                                                               \
+  (m)->m_AnimationState.m_PerFrameProgress = 0x10;                                                                                                                            \
+  (m)->m_AnimationState.m_Animation = (m)->m_AnimationState.m_NextAnimation;                                                                                                  \
+  (m)->m_AnimationState.m_NextAnimation = (nextAnim);                                                                                                                         \
+  (m)->m_AnimationState.m_Frame = (m)->m_AnimationState.m_NextFrame;                                                                                                          \
+  (m)->m_AnimationState.m_NextFrame = 0;                                                                                                                                      \
+  func_80037E98(m);
 
-#define LEVEL 10
+// Restart animation `anim` from frame 0 at its natural model speed.
+#define MOBY_ANIM_RESET(m, anim)                                                                                                                                              \
+  (m)->m_AnimationState.m_FrameProgress = 0;                                                                                                                                  \
+  (m)->m_AnimationState.m_PerFrameProgress = g_Models[(m)->m_Class]->m_Animations[(anim)]->m_ProgressPerTick;                                                                 \
+  (m)->m_AnimationState.m_Animation = (anim);                                                                                                                                 \
+  (m)->m_AnimationState.m_NextAnimation = (anim);                                                                                                                             \
+  (m)->m_AnimationState.m_Frame = 0;                                                                                                                                          \
+  (m)->m_AnimationState.m_NextFrame = 1;
 
-#define HAS_WOODEN_CHEST
-#define HAS_DRAGON
-#define HAS_MOBY_398
-#define HAS_MOBY_405
-#define HAS_MOBY_421
+#define FX12(X) ((int)(X * 4096))
 
-void func_level_10_8007D9C8(void) {
+void NAME_OVERLAY_FUNCTION(UpdateMoby)(void) {
   Moby **mobyList;
   Moby *moby;
-  // Vector3D vec_38;
-  // Vector3D eggInterpStartPos;
-  // Vector3D eggInterpDelta;
-  // Vector3D vec_68;
-  // Vector3D eggCameraEffectPos;
-  // Vector3D vec_88;
-  // Vector3D collectableCollVerts[3];
-  // Vector3D collectableMovePos;
-  // Vector3D collectableSurfaceNormal;
-  // Vector3D collectablePickupDelta;
-  // Vector3D sparxChaseDelta;
+  Vector3D vec_38;
+  Vector3D eggInterpStartPos;
+  Vector3D eggInterpDelta;
+  Vector3D vec_68;
+  Vector3D eggCameraEffectPos;
+  Vector3D vec_88;
+  Vector3D collectableCollVerts[3];
+  Vector3D collectableMovePos;
+  Vector3D collectableSurfaceNormal;
+  Vector3D collectablePickupDelta;
+  Vector3D sparxChaseDelta;
+#ifdef HAS_MOBY_166
+  int nodeIndex[2];
+  Vector3D delta;
+#endif
 
   // Generate the moby update list (which looks at things such as the state and
   // distance)
@@ -93,7 +162,8 @@ void func_level_10_8007D9C8(void) {
     D_800756C4 = localDeltaTime;                              // Deltatime used in overlays, dunno why
 
     switch (mobyClass) {
-    case MOBYCLASS_PORTAL: { // Portal text
+#ifdef HAS_PORTAL
+    case 1: { // Portal text
       int shouldSpawnText, cameraPortalAngleDiff;
       int distance = OctDistance(&moby->m_Position, &g_Camera.m_Position);
 
@@ -138,152 +208,202 @@ void func_level_10_8007D9C8(void) {
 
       break;
     }
+#endif
 
-    case 10: { //todo - sheep fodder
-      MobyEnemyProps *enemyProps = moby->m_Props;
-      if ((moby->m_DamageFlags & (0x10000 | 0x20000 | 0x80000)) != 0 && moby->m_State != 3) {
-        moby->m_DamageFlags = 0;
-        enemyProps->m_unk_0x1C = Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0);
-        if (moby->m_DamageFlags & 0x10000) {
-          enemyProps->m_KnockbackSpeed = 200;
-        } else {
-          enemyProps->m_KnockbackSpeed = 400;
+#ifdef HAS_EXIT_VORTEX
+    case 9: {
+      MobyExitVortexProps *vortexProps;
+      int distance;
+      int heightLimit;
+      int zDelta;
+      int camPitch;
+      int i;
+
+      vortexProps = (MobyExitVortexProps *)moby->m_Props;
+
+      distance = OctDistance(&moby->m_Position, &g_Camera.m_Position);
+
+      if ((moby->m_State != 0 && distance < 0x2800) || (moby->m_State == 0 && distance < 0x2400)) {
+        if (moby->m_State == 0) {
+          moby->m_Position.z += 0x600;
+          func_8003C358(moby, 0);
+          moby->m_Position.z -= 0x600;
         }
-        func_8003ABC0(moby, 3, 0, nullptr);
-        func_8003B7C0(moby);
-        moby->m_State = 3;
-        moby->m_AnimationState.m_FrameProgress = 0;
-        moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[3]->m_ProgressPerTick;
-        moby->m_AnimationState.m_Animation = 3;
-        moby->m_AnimationState.m_NextAnimation = 3;
-        moby->m_AnimationState.m_Frame = 0;
-        moby->m_AnimationState.m_NextFrame = 1;
+        moby->m_State = 1;
       } else {
-        switch (moby->m_State) {
-        case 0: {
-          func_80038458(moby);
-          if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x1400 && ABS2(moby->m_Position.z - g_Spyro.m_Position.z) < 0x400) {
-            if (moby->m_Pod != 0xFF) {
-              Moby *iter = *(Moby **)(g_SonyImage.u.m_Buf + 0x400);
-              while (iter) {
-                MobyEnemyProps *iterProps = iter->m_Props;
-                if (iter->m_Pod == moby->m_Pod && iter->m_State == 0 && iterProps->m_Path->m_CurrentNode == enemyProps->m_Path->m_CurrentNode) {
-                  iter->m_State = 1;
-                  iterProps->m_unk_0x30 = RandRange(6, 40);
-                }
-                ++iter;
-              }
-            }
-            moby->m_State = 1;
-          } else {
-            if (moby->m_AnimationState.m_NextAnimation == 0) {
-              func_800529E4(moby, 1);
-            } else {
-              D_80075794 = 0;
-              moby->m_AnimationState.m_FrameProgress = 0x10;
-              moby->m_AnimationState.m_PerFrameProgress = 0x10;
-              moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
-              moby->m_AnimationState.m_NextAnimation = 0;
-              moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
-              moby->m_AnimationState.m_NextFrame = 0;
-              func_80037E98(moby);
-            }
-          }
-          break;
-        }
-        case 1: {
-          int spyroAngleToMoby = Atan2(g_Spyro.m_Position.x - moby->m_Position.x, g_Spyro.m_Position.y - moby->m_Position.y, 0);
-          int nextNode = (enemyProps->m_Path->m_CurrentNode + 1) % enemyProps->m_Path->m_NodeCount;
-          int lastNode = (enemyProps->m_Path->m_CurrentNode + (enemyProps->m_Path->m_NodeCount - 1)) % enemyProps->m_Path->m_NodeCount;
-          int nextNodeAngleToMoby =
-              Atan2(enemyProps->m_Path->m_Nodes[nextNode].m_Position.x - moby->m_Position.x, enemyProps->m_Path->m_Nodes[nextNode].m_Position.y - moby->m_Position.y, 0);
-          int lastNodeAngleToMoby =
-              Atan2(enemyProps->m_Path->m_Nodes[lastNode].m_Position.x - moby->m_Position.x, enemyProps->m_Path->m_Nodes[lastNode].m_Position.y - moby->m_Position.y, 0);
-          int mobyAngleToSpyro;
-          int i22;
+        moby->m_State = 0;
+      }
 
-          if (func_80017908(spyroAngleToMoby, nextNodeAngleToMoby) < func_80017908(spyroAngleToMoby, lastNodeAngleToMoby))
-            enemyProps->m_Path->m_CurrentNode = lastNode;
-          else
-            enemyProps->m_Path->m_CurrentNode = nextNode;
+      distance = DISTANCE_TO_SPYRO(moby);
 
-          mobyAngleToSpyro = Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0);
-          i22 = func_800381BC(mobyAngleToSpyro, Atan2(enemyProps->m_Path->m_Nodes[enemyProps->m_Path->m_CurrentNode].m_Position.x - moby->m_Position.x,
-                                                      enemyProps->m_Path->m_Nodes[enemyProps->m_Path->m_CurrentNode].m_Position.y - moby->m_Position.y, 0) +
-                                                    RandRange(-32, 32));
-          enemyProps->m_unk_0x1C = mobyAngleToSpyro + (i22 * 108 >> 7) & 0xFF;
-          enemyProps->m_TargetAngle = RandRange(110, 160);
-          enemyProps->m_KnockbackSpeed = 0;
-          enemyProps->m_unk_0x28 =
-              MIN(90, OctDistance(&moby->m_Position, &enemyProps->m_Path->m_Nodes[enemyProps->m_Path->m_CurrentNode].m_Position) / enemyProps->m_TargetAngle);
-          moby->m_State = 2;
-          break;
-        }
-        case 2: {
-          int i11 = OctDistance(&moby->m_Position, &enemyProps->m_Path->m_Nodes[enemyProps->m_Path->m_CurrentNode].m_Position);
-          if (TimerTick(&enemyProps->m_unk_0x30, sizeof(enemyProps->m_unk_0x30)) != 0) {
-            if (enemyProps->m_KnockbackSpeed < enemyProps->m_TargetAngle) {
-              enemyProps->m_KnockbackSpeed += 10;
-            }
-            if (moby->m_AnimationState.m_NextAnimation != 1) {
-              D_80075794 = 0;
-              moby->m_AnimationState.m_FrameProgress = 0x10;
-              moby->m_AnimationState.m_PerFrameProgress = 0x10;
-              moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
-              moby->m_AnimationState.m_NextAnimation = 0;
-              moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
-              moby->m_AnimationState.m_NextFrame = 0;
-              func_80037E98(moby);
-            }
-            if (TimerTick(&enemyProps->m_unk_0x28, sizeof(enemyProps->m_unk_0x28)) != 0) {
-              int i16 = func_800381BC(Atan2(enemyProps->m_Path->m_Nodes[enemyProps->m_Path->m_CurrentNode].m_Position.x - moby->m_Position.x,
-                                            enemyProps->m_Path->m_Nodes[enemyProps->m_Path->m_CurrentNode].m_Position.y - moby->m_Position.y, 0),
-                                      enemyProps->m_unk_0x1C);
-              int i24 = ABS2(i16) > 30 ? 2 : 1;
-              if (i16 >= 1)
-                enemyProps->m_unk_0x1C = (enemyProps->m_unk_0x1C - i24) & 0xff;
-              else if (i16 <= -1)
-                enemyProps->m_unk_0x1C = (enemyProps->m_unk_0x1C + i24) & 0xff;
-            }
-            if (RotateMobyToAngle(moby, enemyProps->m_unk_0x1C, 6, 20, 1)) {
-              if (func_80039398(moby, enemyProps->m_KnockbackSpeed, 300, 300, 21))
-                ++enemyProps->m_RetargetTimer;
-              else
-                enemyProps->m_RetargetTimer = 0;
-              if (enemyProps->m_RetargetTimer > 3 && D_80075794) {
-                if (i11 >= 0x1400) {
-                  enemyProps->m_unk_0x1C = func_80038074(enemyProps->m_unk_0x1C, RandRangeSigned(60, 100));
-                }
-              }
-              if (i11 < 0xC00 && D_80075794) {
-                moby->m_State = 0;
-              }
-            }
+      for (i = 0; i < g_DeltaTime; i++) {
+        vortexProps->m_ParticleTimer++;
+        if (distance < 0x4000) {
+          if ((vortexProps->m_ParticleTimer & 3) == 0) {
+            D_800758E4(1, 0x15, &moby->m_Position, (void *)vortexProps->m_ParticleTimer);
           }
-          break;
-        }
-        case 3: {
-          if (enemyProps->m_KnockbackSpeed >= 16) {
-            enemyProps->m_KnockbackSpeed -= 15;
-            func_80039688(moby, enemyProps->m_unk_0x1C, enemyProps->m_KnockbackSpeed, 0, 700, 5);
+        } else if ((vortexProps->m_ParticleTimer & 0xf) < 8) {
+          if ((vortexProps->m_ParticleTimer & 3) == 0) {
+            D_800758E4(1, 0x4c, &moby->m_Position, (void *)vortexProps->m_ParticleTimer);
           }
-          if (D_80075794 != 0) {
-            func_80052568(moby);
+        }
+      }
+
+      if (distance < 0x400) {
+        zDelta = g_Spyro.m_Position.z - moby->m_Position.z;
+        if (0x200 < zDelta && zDelta < 0x4000) {
+          if (vortexProps->m_HeightLimit) {
+            heightLimit = vortexProps->m_HeightLimit;
           } else {
-            func_800529E4(moby, 1);
+            heightLimit = 0x2000;
           }
-          break;
-        }
+          if (g_Spyro.m_State == 0x11 || g_Spyro.m_Position.z + 0xc00 < moby->m_Position.z + heightLimit) {
+            if (g_Hud.m_GemDisplayState == HDS_Open) {
+              HudGemUpdate();
+            }
+            g_Spyro.m_ControlFlags = 0x80008000;
+            g_Spyro.m_mobyInUseBySpyro = moby;
+            g_Spyro.m_DamageFlags |= 0x800;
+            g_Spyro.m_portalEndPos.z = moby->m_Position.z + 0x4000;
+            VecCopy(&g_Spyro.unk_0x17c, &moby->m_Position);
+            if (heightLimit < zDelta) {
+              camPitch = g_Camera.m_Rotation.y & 0xfff;
+              if (camPitch > 0x800) {
+                camPitch -= 0x1000;
+              }
+              if (camPitch < -0x200) {
+                g_LevelVortexExitFlags[g_LevelIndex] = 1;
+                g_LoadStage = 0;
+                D_8007576C = -1;
+                g_HasLevelTransition = 1;
+                g_LevelTransHudActive = 1;
+                g_LevelTransTicks = 0;
+                g_Gamestate = GS_LevelTransition;
+                g_StateSwitch = 1;
+                g_PortalLevelId = g_LevelId;
+                g_NextLevelId = (g_LevelId / 10) * 10;
+                g_Camera.unk_0xC0 = 0x80000012;
+                g_Spyro.m_ControlFlags = 0;
+                func_8004AC24(0);
+                g_Spyro.m_flyingAbility = 0;
+                g_SpyroFlame.m_FairyKissTimer = 0;
+              }
+            }
+          }
         }
       }
       break;
     }
+#endif
 
-    case 11: {
-      Moby11Props *props = moby->m_Props;
-      if (TimerTick(&props->timer_0x0, sizeof(props->timer_0x0)) != 0) {
-        D_800758E4(1, 0x16, &moby->m_Position, nullptr);
-        props->timer_0x0 = rand() & 0xE;
+    case 13: {
+      Moby *parent;
+      MobyGemSpawnerProps *spawnerProps;
+      spawnerProps = (MobyGemSpawnerProps *)moby->m_Props;
+      parent = &g_LevelMobys[spawnerProps->m_ParentIndex];
+
+      if (spawnerProps->m_InitDone == 0) {
+        if (spawnerProps->m_RelativeMode != 0) {
+          VecSub(&spawnerProps->m_Position, &spawnerProps->m_Position, &parent->m_Position);
+          moby->m_UpdateDistance = 255;
+        } else {
+          moby->m_UpdateDistance = 32;
+        }
+
+        if (spawnerProps->m_HasParent != 0 && (parent->m_State >= 0x80 || (parent->m_DropMoby & 0x80))) {
+          Moby *dst;
+          Moby *src;
+          int newIndex;
+
+          parent->m_DropMoby = moby->m_DropMoby;
+          func_80052568(moby);
+          if (parent->m_State < 0x80) {
+            func_80052568(parent);
+          }
+
+          dst = moby;
+          src = parent;
+          *dst = *src;
+          func_800526A8(moby);
+          moby->m_WasDrawn = 1;
+
+          newIndex = moby - g_LevelMobys;
+
+          for (parent = g_LevelMobys; parent < (Moby *)g_DynMobys; parent++) {
+            MobyGemSpawnerProps *mp;
+            if (parent == moby)
+              continue;
+            if (parent->m_State >= 0x80)
+              continue;
+            if (parent->m_Class != MOBYCLASS_GEM_SPAWNER)
+              continue;
+            mp = (MobyGemSpawnerProps *)parent->m_Props;
+            if (mp->m_ParentIndex == spawnerProps->m_ParentIndex) {
+              mp->m_ParentIndex = newIndex;
+            }
+          }
+
+          moby->m_State = 0;
+          MOBY_ANIM_RESET(moby, 0);
+          break;
+        } else {
+          spawnerProps->m_InitDone = 1;
+        }
+      }
+
+      if (spawnerProps->m_RelativeMode != 0) {
+        VecCopy(&moby->m_Position, &parent->m_Position);
+      }
+
+      if (spawnerProps->m_SpawnTimer != 0) {
+        if (TimerTick(&spawnerProps->m_SpawnTimer, 4) != 0) {
+          if (spawnerProps->m_RelativeMode != 0) {
+            VecAdd(&spawnerProps->m_Position, &spawnerProps->m_Position, &moby->m_Position);
+          } else {
+            VecCopy(&moby->m_Position, &parent->m_Position);
+          }
+
+          spawnerProps->m_Position.z += 1024;
+
+          if (spawnerProps->m_GroundFlag != 0) {
+            func_8003ABC0(moby, 4, 0, nullptr);
+          } else if (func_8004D5EC(&spawnerProps->m_Position, 0x1400) != 0) {
+            spawnerProps->m_Position.z -= 1024;
+            func_8003ABC0(moby, 2, 0, &spawnerProps->m_Position);
+          } else {
+            func_8003ABC0(moby, 1, 0, nullptr);
+          }
+
+          func_8003B7C0(moby);
+
+          spawnerProps->m_PitchOffset <<= 7;
+          g_Spu.m_NextSoundOverrideFlags = 2;
+          g_Spu.m_PitchOverride = g_Spu.m_SoundDefinitions[g_Spu.m_SoundTable->titlescreenMove].m_Pitch + spawnerProps->m_PitchOffset;
+          PlaySound(g_Spu.m_SoundTable->titlescreenMove, moby, 8, &moby->m_SoundChannel);
+          func_80052568(moby);
+        }
+      } else if (moby->m_Substate != 0 || parent->m_State >= 0x80) {
+        spawnerProps->m_SpawnTimer = 9;
+        spawnerProps->m_PitchOffset = 1;
+
+        for (parent = g_LevelMobys; parent < moby; parent++) {
+          MobyGemSpawnerProps *mp;
+          if (parent->m_State >= 0x80)
+            continue;
+          if (parent->m_Class != MOBYCLASS_GEM_SPAWNER)
+            continue;
+          mp = (MobyGemSpawnerProps *)parent->m_Props;
+          if (mp->m_ParentIndex == spawnerProps->m_ParentIndex) {
+            spawnerProps->m_SpawnTimer += 9;
+            spawnerProps->m_PitchOffset += 1;
+          }
+        }
+
+        if (spawnerProps->m_PitchOffset == 1) {
+          g_Spu.m_NextSoundOverrideFlags = 2;
+          g_Spu.m_PitchOverride = g_Spu.m_SoundDefinitions[g_Spu.m_SoundTable->titlescreenMove].m_Pitch;
+          PlaySound(g_Spu.m_SoundTable->titlescreenMove, moby, 8, &moby->m_SoundChannel);
+        }
       }
       break;
     }
@@ -291,7 +411,7 @@ void func_level_10_8007D9C8(void) {
     case MOBYCLASS_BUTTERFLY: { // Butterfly
       MobyButterflyProps *butterflyProps = moby->m_Props;
 
-      if (g_Spyro.m_health < 3 && OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 2400) {
+      if (g_Spyro.m_health < 3 && DISTANCE_TO_SPYRO(moby) < 2400) {
         // We're in range and Spyro's health isn't full
         int mobyZ = moby->m_Position.z - moby->m_FloorDistance;
         if (ABS2(mobyZ - g_Spyro.m_Position.z) < 1800) {
@@ -314,7 +434,7 @@ void func_level_10_8007D9C8(void) {
             // Sparx is alive, and not chasing something already
             if (sparxProps->m_MobyPickingUp == nullptr) {
               // Set him to chase us
-              if (func_800381BC(g_Spyro.m_bodyRotation.z, Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0)) < 0) {
+              if (func_800381BC(g_Spyro.m_bodyRotation.z, ANGLE_TO(moby->m_Position, g_Spyro.m_Position)) < 0) {
                 butterflyProps->m_SparxApproachSide = 1;
               } else {
                 butterflyProps->m_SparxApproachSide = -1;
@@ -384,10 +504,10 @@ void func_level_10_8007D9C8(void) {
           // Check distance to target position
           if (OctDistance(&moby->m_Position, &butterflyProps->m_AnchorPosition) > 2000) {
             // Too far from target, turn directly towards it
-            int angle = Atan2(butterflyProps->m_AnchorPosition.x - moby->m_Position.x, butterflyProps->m_AnchorPosition.y - moby->m_Position.y, 0);
+            int angle = ANGLE_TO_MOBY(butterflyProps->m_AnchorPosition);
 
             butterflyProps->m_TargetAngle = angle;
-            butterflyProps->m_TurnRetargetTimer = 0x28;
+            butterflyProps->m_TurnRetargetTimer = 40;
           }
         } else {
           func_80052568(moby);
@@ -395,9 +515,8 @@ void func_level_10_8007D9C8(void) {
         break;
       }
       case 1: {
-        func_80038638(moby, &g_Spyro.m_Position, 0x320,
-                      func_80038074(Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0), butterflyProps->m_SparxApproachSide * 8),
-                      8, 0x82, 0xE, 0x80, 0xFF, 0xFF, 0, 0, 0);
+        func_80038638(moby, &g_Spyro.m_Position, 0x320, func_80038074(ANGLE_TO(moby->m_Position, g_Spyro.m_Position), butterflyProps->m_SparxApproachSide * 8), 8, 0x82, 0xE,
+                      0x80, 0xFF, 0xFF, 0, 0, 0);
 
         // If Sparx is not alive, or is chasing something
         if (g_Sparx == nullptr || g_Sparx->m_Substate == 99) {
@@ -433,70 +552,6 @@ void func_level_10_8007D9C8(void) {
       }
       }
 
-      break;
-    }
-
-    case 18: { // todo sunny flight stone
-      Moby18Props *props = moby->m_Props;
-
-      if (moby->m_Substate == 0) {
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x500 && ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x280) {
-          if ((g_LevelMobys[props->m_MobyIdx].m_Substate >> props->m_BitPos) & 1)
-            g_LevelMobys[props->m_MobyIdx].m_Substate = 0;
-          else
-            g_LevelMobys[props->m_MobyIdx].m_Substate |= 1 << props->m_BitPos;
-          moby->m_Substate = 1;
-        }
-      } else if (moby->m_Substate == 1) {
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) > 0x600 || ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) > 0x2C0) {
-          moby->m_Substate = 0;
-        }
-      }
-
-      if (g_LevelMobys[props->m_MobyIdx].m_State == 10) {
-        if ((moby->m_State & 1) == 0) {
-          moby->m_State = 1;
-          moby->m_AnimationState.m_FrameProgress = 0;
-          moby->m_AnimationState.m_PerFrameProgress = g_Models[mobyClass]->m_Animations[1]->m_ProgressPerTick;
-          moby->m_AnimationState.m_Animation = 1;
-          moby->m_AnimationState.m_NextAnimation = 1;
-          moby->m_AnimationState.m_Frame = 0;
-          moby->m_AnimationState.m_NextFrame = 1;
-        }
-      } else if (g_LevelMobys[props->m_MobyIdx].m_State == 11) {
-        if (moby->m_State & 1) {
-          moby->m_State = 0;
-          moby->m_AnimationState.m_FrameProgress = 0;
-          moby->m_AnimationState.m_PerFrameProgress = g_Models[mobyClass]->m_Animations[0]->m_ProgressPerTick;
-          moby->m_AnimationState.m_Animation = 0;
-          moby->m_AnimationState.m_NextAnimation = 0;
-          moby->m_AnimationState.m_Frame = 0;
-          moby->m_AnimationState.m_NextFrame = 1;
-        }
-      } else if ((g_LevelMobys[props->m_MobyIdx].m_Substate >> props->m_BitPos & 1) == 0 || (D_80077908[15][0] & 1) == 0 || g_LevelMobys[props->m_MobyIdx].m_State > 98) {
-        if (moby->m_State & 1) {
-          moby->m_State = 0;
-          moby->m_AnimationState.m_FrameProgress = 0;
-          moby->m_AnimationState.m_PerFrameProgress = g_Models[mobyClass]->m_Animations[0]->m_ProgressPerTick;
-          moby->m_AnimationState.m_Animation = 0;
-          moby->m_AnimationState.m_NextAnimation = 0;
-          moby->m_AnimationState.m_Frame = 0;
-          moby->m_AnimationState.m_NextFrame = 1;
-        }
-      } else {
-        if ((moby->m_State & 1) == 0) {
-          g_Spu.m_NextSoundOverrideFlags = 2;
-          g_Spu.m_PitchOverride = g_Spu.m_SoundDefinitions[g_Spu.m_SoundTable->titlescreenMove].m_Pitch + D_80073094[props->m_BitPos];
-          PlaySound(g_Spu.m_SoundTable->titlescreenMove, moby, 8, &moby->m_SoundChannel);
-        }
-        moby->m_State = 1;
-        moby->m_AnimationState.m_FrameProgress = 0;
-        moby->m_AnimationState.m_PerFrameProgress = g_Models[mobyClass]->m_Animations[1]->m_ProgressPerTick;
-        moby->m_AnimationState.m_Animation = 1;
-        moby->m_AnimationState.m_NextAnimation = 1;
-        moby->m_AnimationState.m_Frame = 0;
-        moby->m_AnimationState.m_NextFrame = 1;
-      }
       break;
     }
 
@@ -565,9 +620,11 @@ void func_level_10_8007D9C8(void) {
           moby->m_Position.z -= eggProps->m_Timer * 8;
           moby->m_Rotation.z += g_DeltaTime * 4;
         } else {
-          Vector3D vec_38;
+
           VecCopy(&vec_38, &g_Spyro.m_Position);
 
+          // todo here
+          // v.x += (((Cos(g_Spyro.m_bodyRotation.z * 16)*181)*4 + (Sin(g_Spyro.m_bodyRotation.z * 16)*181)*4)) >> 12;
           {
             // TODO: Messed up match (Possible macro usage related to short
             // vectors)
@@ -606,8 +663,7 @@ void func_level_10_8007D9C8(void) {
       case 3: {
         eggProps->m_Timer += g_DeltaTime;
         if (eggProps->m_Timer < 64) {
-          Vector3D eggInterpStartPos;
-          Vector3D eggInterpDelta;
+
           func_80017C24(&eggInterpStartPos, &eggProps->m_StartPosition);
           func_80017C24(&eggInterpDelta, &eggProps->m_TargetPosition);
 
@@ -619,7 +675,7 @@ void func_level_10_8007D9C8(void) {
 
           moby->m_Rotation.z += g_DeltaTime * 4;
         } else {
-          Vector3D vec_68;
+
           VecCopy(&vec_68, &g_Spyro.m_Position);
 
           vec_68.x += Cos(g_Spyro.m_bodyRotation.z * 0x10) >> 3;
@@ -649,7 +705,7 @@ void func_level_10_8007D9C8(void) {
           eggProps->m_SpiralRadius -= deltaAngle;
           eggProps->m_Angle -= deltaAngle;
 
-          func_80017C24(&moby->m_Position, &eggProps->m_StartPosition, deltaAngle);
+          func_80017C24(&moby->m_Position, &eggProps->m_StartPosition);
 
           // Apply circular motion
           moby->m_Position.x += (Cos(eggProps->m_Angle * 0x10) * eggProps->m_SpiralRadius) >> 12;
@@ -668,7 +724,7 @@ void func_level_10_8007D9C8(void) {
       }
 
       case 5: {
-        Vector3D eggCameraEffectPos;
+
         // Get position relative to camera for particle effect
         VecSub(&eggCameraEffectPos, &moby->m_Position, &g_Camera.m_Position);
         VecRotateByCam(&eggCameraEffectPos, &eggCameraEffectPos);
@@ -695,33 +751,18 @@ void func_level_10_8007D9C8(void) {
       break;
     }
 
-    case 49: {
-      Moby49Props *props = moby->m_Props;
-      if (!props->m_AnimChecked) {
-        if (g_VisitedFlags[4]) {
-          func_8002B390(props->unk_0x0, 0xFC, 0); // set flags
-          func_8002B444(props->unk_0x0, 0x3B, 0); // set frame
-        }
-        props->m_AnimChecked = 1;
-      }
-
-      if (func_8002B3F4(props->unk_0x0) >> 8 & 0xFF == 0) {
-        if ((g_LevelVortexExitFlags[1] || g_LevelVortexExitFlags[2] || g_LevelVortexExitFlags[3] || g_LevelVortexExitFlags[4]) &&
-            g_LevelMobys[props->unk_0x8].m_State > 0x7F && OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x4000) {
-          func_8002B390(props->unk_0x0, 0xFC, 0);
-          moby->m_SoundDistance = 0;
-          PlaySound(g_Spu.m_SoundTable->sound_0x41, moby, 8, &moby->m_SoundChannel);
-        }
-      } else if (func_8002B3F4(props->unk_0x0) >> 8 & 0xFF == 0x3C) {
-        func_800562A4(moby, 1); // stop all moby sounds
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) > 0x4800)
-          func_8002B390(props->unk_0x0, 0xFC, 0);
-      }
-      break;
-    }
-
-    case 255:
-    case 256: {
+#ifdef HAS_WOODEN_CHEST
+#define HAS_ANY_CHEST_FRAGMENTS
+    case MOBYCLASS_WOODEN_CHEST_FRAG_1:
+    case MOBYCLASS_WOODEN_CHEST_FRAG_2:
+#endif
+#ifdef HAS_MOBY_421
+#define HAS_ANY_CHEST_FRAGMENTS
+    case 423:
+    case 424:
+#endif
+#ifdef HAS_ANY_CHEST_FRAGMENTS
+    {
       MobyFragmentPhysicsProps *physicsProps = moby->m_Props;
 
       if (physicsProps->m_Lifetime > 0 && moby->m_WasDrawn) {
@@ -748,7 +789,7 @@ void func_level_10_8007D9C8(void) {
         moby->m_Rotation.y += physicsProps->m_AngularVelocityY;
         moby->m_Rotation.z += physicsProps->m_AngularVelocityZ;
         if ((physicsProps->m_Lifetime & 3) == 0) {
-          Vector3D vec_68;
+
           vec_68.x = rand() & 3;
           vec_68.y = rand() & 3;
           vec_68.z = 0x14;
@@ -761,7 +802,19 @@ void func_level_10_8007D9C8(void) {
       }
       break;
     }
-    case 257: {
+#endif
+#undef HAS_ANY_CHEST_FRAGMENTS
+
+#ifdef HAS_WOODEN_CHEST
+#define HAS_ANY_CHEST_FRAGMENTS
+    case MOBYCLASS_WOODEN_CHEST_FRAG_3:
+#endif
+#ifdef HAS_MOBY_421
+#define HAS_ANY_CHEST_FRAGMENTS
+    case 425:
+#endif
+#ifdef HAS_ANY_CHEST_FRAGMENTS
+    {
       MobyFragmentPhysicsProps *physicsProps = moby->m_Props;
 
       if (physicsProps->m_Lifetime != 0 && moby->m_WasDrawn && moby->m_Position.z > physicsProps->m_KillBelowZ) {
@@ -789,24 +842,19 @@ void func_level_10_8007D9C8(void) {
       }
       break;
     }
+#endif
+#undef HAS_ANY_CHEST_FRAGMENTS
 
-    case MOBYCLASS_LIFE_STATUE:
-    case MOBYCLASS_LIFE_ORB:
-    case MOBYCLASS_GEM_1: // The gems
+    case MOBYCLASS_LIFE_STATUE: // Life statue
+    case MOBYCLASS_LIFE_ORB:    // Life orb
+    case MOBYCLASS_GEM_1:
     case MOBYCLASS_GEM_2:
     case MOBYCLASS_GEM_5:
     case MOBYCLASS_GEM_10:
     case MOBYCLASS_GEM_25: {
-      Vector3D vec_38;
-      Vector3D collectableCollVerts[3];
-      Vector3D collectableMovePos;
-      Vector3D collectableSurfaceNormal;
-      Vector3D collectablePickupDelta;
-      Vector3D vec_88;
-
       MobyCollectableProps *collectableProps = moby->m_Props;
 
-      int distanceToSpyro = OctDistance(&moby->m_Position, &g_Spyro.m_Position);
+      int distanceToSpyro = DISTANCE_TO_SPYRO(moby);
 
       // Sparkle stuff
       if (collectableProps->m_Ticks < 0xFA) {
@@ -1170,9 +1218,7 @@ void func_level_10_8007D9C8(void) {
       break;
     }
 
-    case 110: { // Dragon Pad Fairy
-      Vector3D vec_88;
-
+    case MOBYCLASS_DRAGON_PAD_FAIRY: { // Dragon Pad Fairy
       struct {
         int m_TriggerMobyLink; // Dragon moby link
         int m_ParentMobyLink;  // Pad moby link
@@ -1190,7 +1236,7 @@ void func_level_10_8007D9C8(void) {
       switch (moby->m_State) {
       case 0: {
         moby->m_CollisionGroup = nullptr;
-        if (OctDistance(&padMoby->m_Position, &g_Spyro.m_Position) > 2560) {
+        if (DISTANCE_TO_SPYRO(padMoby) > 2560) {
           moby->m_State = 1;
         }
         break;
@@ -1212,13 +1258,13 @@ void func_level_10_8007D9C8(void) {
         } else {
           moby->m_CollisionGroup = nullptr;
 
-          if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x2000) {
+          if (DISTANCE_TO_SPYRO(moby) < 0x2000) {
             if (ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 2048) {
               if (fairyProps->m_WasCollected == 0 || padMoby->m_State == 1) {
                 // Spawn the fairy
                 fairyProps->m_WasCollected = 0;
                 moby->m_Position.z = fairyProps->m_BaseZ + 0x80;
-                moby->m_Rotation.z = Atan2(g_Spyro.m_Position.x - moby->m_Position.x, g_Spyro.m_Position.y - moby->m_Position.y, 0) - 128;
+                moby->m_Rotation.z = ANGLE_TO_MOBY(g_Spyro.m_Position) - 128;
                 moby->m_RenderRadius = 0x20;
                 moby->m_State = 3;
                 moby->m_ScaleOverride = 0x60;
@@ -1255,8 +1301,8 @@ void func_level_10_8007D9C8(void) {
         moby->m_Position.z = fairyProps->m_BaseZ + (Cos(fairyProps->m_Timer << 7) >> 6);
 
         // Check if pad is near Spyro and Spyro is idle
-        if ((padMoby->m_State == 0 || (padMoby->m_State == 2 && padMoby->m_Substate >= 0x10)) && OctDistance(&padMoby->m_Position, &g_Spyro.m_Position) < 0x400 &&
-            ABS2(padMoby->m_Position.z - padMoby->m_FloorDistance - g_Spyro.m_Position.z) < 0x200) {
+        if ((padMoby->m_State == 0 || (padMoby->m_State == 2 && padMoby->m_Substate >= 0x10)) && DISTANCE_TO_SPYRO(padMoby) < 1024 &&
+            ABS2(padMoby->m_Position.z - padMoby->m_FloorDistance - g_Spyro.m_Position.z) < 512) {
 
           // Spyro must be idle or standing still
           if ((g_Spyro.m_State == 0 || g_Spyro.m_State == 0xD) && g_Spyro.m_idleTimer > 0) {
@@ -1268,7 +1314,7 @@ void func_level_10_8007D9C8(void) {
         }
 
         // Check if should retarget or move away
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) > 0x2400 || (ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) > 0xC00)) {
+        if (DISTANCE_TO_SPYRO(moby) > 0x2400 || (ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) > 0xC00)) {
           // Too far from Spyro, despawn
           moby->m_State = 6;
         } else {
@@ -1276,7 +1322,7 @@ void func_level_10_8007D9C8(void) {
           if (fairyProps->m_RetargetTimer == 0) {
             // Calculate new target position away from Spyro
             int baseDistance = (rand() & 0x3F) + 0x140; // 320-383
-            char finalAngle = (Atan2(g_Spyro.m_Position.x - padMoby->m_Position.x, g_Spyro.m_Position.y - padMoby->m_Position.y, 0) + (rand() & 0xF) - 8);
+            char finalAngle = (ANGLE_TO(g_Spyro.m_Position, padMoby->m_Position) + (rand() & 0xF) - 8);
 
             VecCopy(&fairyProps->m_TargetPosition, &padMoby->m_Position);
 
@@ -1286,7 +1332,7 @@ void func_level_10_8007D9C8(void) {
             fairyProps->m_TargetPosition.x -= (Cos(finalAngle * 0x10) * baseDistance) >> 12;
             fairyProps->m_TargetPosition.y -= (Sin(finalAngle * 0x10) * baseDistance) >> 12;
 
-            fairyProps->m_TargetAngle = Atan2(g_Spyro.m_Position.x - fairyProps->m_TargetPosition.x, g_Spyro.m_Position.y - fairyProps->m_TargetPosition.y, 0);
+            fairyProps->m_TargetAngle = ANGLE_TO(g_Spyro.m_Position, fairyProps->m_TargetPosition);
             fairyProps->m_RetargetTimer = 0;
           }
         }
@@ -1296,7 +1342,7 @@ void func_level_10_8007D9C8(void) {
         fairyProps->m_Timer++;
         moby->m_Position.z = fairyProps->m_BaseZ + (Cos(fairyProps->m_Timer << 7) >> 6);
 
-        if ((padMoby->m_State == 0 || (padMoby->m_State == 2 && padMoby->m_Substate >= 0x10)) && OctDistance(&padMoby->m_Position, &g_Spyro.m_Position) < 0x400 &&
+        if ((padMoby->m_State == 0 || (padMoby->m_State == 2 && padMoby->m_Substate >= 0x10)) && DISTANCE_TO_SPYRO(padMoby) < 0x400 &&
             ABS2(padMoby->m_Position.z - padMoby->m_FloorDistance - g_Spyro.m_Position.z) < 512) {
 
           if ((g_Spyro.m_State == 0 || g_Spyro.m_State == 0xD) && g_Spyro.m_idleTimer > 0) {
@@ -1308,7 +1354,7 @@ void func_level_10_8007D9C8(void) {
         }
 
         // Continue moving toward target
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) > 0x2800 || ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) >= 0xC01) {
+        if (DISTANCE_TO_SPYRO(moby) > 0x2800 || ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) >= 0xC01) {
           moby->m_State = 6;
         } else {
           int angleDiff;
@@ -1368,219 +1414,207 @@ void func_level_10_8007D9C8(void) {
       break;
     }
 
-    case 114: { //todo big green gnorc guy
-      Moby114Props *props = moby->m_Props;
-      if ((moby->m_DamageFlags & (0x10000 | 0x20000 | 0x80000)) && moby->m_State - 7 > 2) {
-        func_8003ABC0(moby, 3, 0, nullptr);
+#ifdef HAS_MOBY_115
+    case 115: {
+      Moby115Props *props = (Moby115Props *)moby->m_Props;
+      int distance;
+      if ((moby->m_DamageFlags & 0x90000) && moby->m_State != 6) {
+        props->m_Timer = 0xf0;
+        props->m_Angle = g_Spyro.m_bodyRotation.z;
+        moby->m_DamageFlags = 0;
+
+        func_8003ABC0(moby, 1, 0, 0);
         func_8003B7C0(moby);
-        if (moby->m_DamageFlags & 0x20000) {
-          props->m_Timer2 = 400;
-          props->m_ZVelocity = 70;
-          props->m_TargetAngle =
-              func_80038178(Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0), g_Spyro.m_bodyRotation.z, 40, 128);
-          MOBY_SWITCH_ANIM_STATE(8)
+
+        moby->m_State = 6;
+        if (moby->m_AnimationState.m_NextAnimation != 6) {
+          MOBY_ANIM_ADVANCE(moby, 6);
+        }
+        break;
+      }
+
+      switch (moby->m_State) {
+      case 0:
+
+        RotateMobyToSpyro(moby, 3, 0x10, 0);
+
+        if (DISTANCE_TO_SPYRO(moby) < 0x2000 && ABS2(moby->m_Position.z - g_Spyro.m_Position.z) < 0x5dc) {
+          props->m_Timer = 0x48;
+          moby->m_State = 2;
+          if (moby->m_AnimationState.m_NextAnimation != 2) {
+            MOBY_ANIM_ADVANCE(moby, 2);
+          }
+          break;
+        }
+
+        if (props->m_TargetMobyIndex != -1) {
+          if (TimerTick(&props->m_WaitTimer, 4) != 0) {
+            Moby *targetMoby;
+            int angle;
+            targetMoby = &g_LevelMobys[props->m_TargetMobyIndex];
+            angle = ANGLE_TO_MOBY(targetMoby->m_Position);
+            angle = func_800381BC(angle, moby->m_Rotation.z);
+            if (-32 <= angle && angle <= -26) {
+              moby->m_Substate = 0;
+              moby->m_State = 10;
+            } else
+              func_800529E4(moby, 1);
+          } else
+            func_800529E4(moby, 1);
+        } else
+          func_800529E4(moby, 1);
+        break;
+      case 2:
+        if (D_80075794) {
+          moby->m_State = 3;
+          if (moby->m_AnimationState.m_NextAnimation != 3) {
+            MOBY_ANIM_ADVANCE(moby, 3);
+          }
         } else {
-          PlaySound(g_Spu.m_SoundTable->sound_0x27, moby, 8, &moby->m_SoundChannel);
-          props->m_ZVelocity = 180;
-          props->m_Timer2 = 280;
-          props->m_TargetAngle =
-              func_80038178(Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0), g_Spyro.m_bodyRotation.z, 32, 64);
-          MOBY_SWITCH_ANIM_STATE(7)
+          func_800529E4(moby, 1);
         }
-      } else {
-        if (props->m_LvlMobyIdx >= 0 && g_LevelMobys[props->m_LvlMobyIdx].m_State >= 0x80)
-          props->m_LvlMobyIdx = -1;
-        switch (moby->m_State) {
-        case 0: {
-          if (ABS(g_Spyro.m_Position.x - moby->m_Position.x) + ABS(g_Spyro.m_Position.y - moby->m_Position.y) + ABS(g_Spyro.m_Position.z - moby->m_Position.z) < 0x4000 &&
-              OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x2800 && ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x800) {
-            MOBY_SWITCH_ANIM_STATE(4)
+        break;
+      case 3:
+        distance = DISTANCE_TO_SPYRO(moby);
+        RotateMobyToSpyro(moby, 3, 0, 0);
+
+        if (distance < 0xbb8 && ABS2(moby->m_Position.z - g_Spyro.m_Position.z) < 0x5dc) {
+          props->m_Timer = 0x48;
+          props->m_AttackLatchOrTimer = 0;
+          moby->m_State = 4;
+          if (moby->m_AnimationState.m_NextAnimation != 4) {
+            MOBY_ANIM_ADVANCE(moby, 4);
+          }
+        } else if (distance > 0x2400) {
+          moby->m_State = 5;
+          if (moby->m_AnimationState.m_NextAnimation != 5) {
+            MOBY_ANIM_ADVANCE(moby, 5);
+          }
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+      case 4:
+        RotateMobyToSpyro(moby, 6, 0, 0);
+
+        if (g_Spyro.m_State == 0x19) {
+          props->m_AttackLatchOrTimer = 2;
+        }
+
+        if (D_80075794) {
+          if (props->m_AttackLatchOrTimer != 0) {
+            moby->m_State = 7;
+            if (moby->m_AnimationState.m_NextAnimation != 7) {
+              MOBY_ANIM_ADVANCE(moby, 7);
+            }
           } else {
-            if (props->m_LvlMobyIdx >= 0 && TimerTick(&props->m_Timer, sizeof(&props->m_Timer))) {
-              if (OctDistance(&moby->m_Position, &g_LevelMobys[props->m_LvlMobyIdx].m_Position) < 0x1000) {
-                MOBY_SWITCH_ANIM_STATE(1)
-              }
-            } else {
-              func_80038458(moby); // place on floor...
-              func_800529E4(moby, UPDATE_PROP_COLLISION);
+            moby->m_State = 3;
+            if (moby->m_AnimationState.m_NextAnimation != 3) {
+              MOBY_ANIM_ADVANCE(moby, 3);
             }
           }
-          break;
+        } else {
+          func_800529E4(moby, 1);
         }
-        case 1: {
-          if (ABS(g_LevelMobys[props->m_LvlMobyIdx].m_Position.x - moby->m_Position.x) + ABS(g_LevelMobys[props->m_LvlMobyIdx].m_Position.y - moby->m_Position.y) +
-                      ABS(g_LevelMobys[props->m_LvlMobyIdx].m_Position.z - moby->m_Position.z) <
-                  0x1800 &&
-              OctDistance(&moby->m_Position, &g_LevelMobys[props->m_LvlMobyIdx].m_Position) < 0x1000) {
-            if (!D_80075794) {
-              props->m_Timer = rand() & 0x3F + 20;
-              MOBY_SWITCH_ANIM_STATE(0)
-            } else {
-              func_80038458(moby); // place on floor...
-              func_800529E4(moby, UPDATE_PROP_COLLISION);
-            }
+        break;
+      case 5:
+        if (!D_80075794) {
+          func_800529E4(moby, 1);
+        } else {
+          moby->m_State = 0;
+          if (moby->m_AnimationState.m_NextAnimation != 0) {
+            MOBY_ANIM_ADVANCE(moby, 0);
           }
-          break;
         }
-        case 2: {
-          if (ABS(g_Spyro.m_Position.x - moby->m_Position.x) + ABS(g_Spyro.m_Position.y - moby->m_Position.y) + ABS(g_Spyro.m_Position.z - moby->m_Position.z) < 0x4000 &&
-              OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x2800 && ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x800) {
-            MOBY_SWITCH_ANIM_STATE(4)
+        break;
+      case 6:
+        if (props->m_Timer > 0) {
+          func_80039688(moby, props->m_Angle, props->m_Timer, 0x1f4, 0x2bc, 0);
+          props->m_Timer -= 0x10;
+        }
+      moby115_state6_finish:
+        if (D_80075794) {
+          func_800529E4(moby, 4);
+          func_800385BC(moby, 0x48);
+          func_80052568(moby);
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+      case 7:
+        if (D_80075794) {
+          if (!TimerTick(&props->m_AttackLatchOrTimer, 4)) {
+            func_800529E4(moby, 1);
           } else {
-            RotateMobyToAngle(
-                moby, Atan2(g_LevelMobys[props->m_LvlMobyIdx].m_Position.x - moby->m_Position.x, g_LevelMobys[props->m_LvlMobyIdx].m_Position.y - moby->m_Position.y, 0), 8,
-                16, 1);
-            if (!D_80075794) {
-              MOBY_SWITCH_ANIM_STATE(0)
-            } else {
-              func_80038458(moby); // place on floor...
-              func_800529E4(moby, UPDATE_PROP_COLLISION);
+            moby->m_State = 0;
+            if (moby->m_AnimationState.m_NextAnimation != 0) {
+              MOBY_ANIM_ADVANCE(moby, 0);
             }
           }
-          break;
+        } else {
+          func_800529E4(moby, 1);
         }
-        case 3: {
-          int uv16;
-          if (ABS(g_Spyro.m_Position.x - moby->m_Position.x) + ABS(g_Spyro.m_Position.y - moby->m_Position.y) + ABS(g_Spyro.m_Position.z - moby->m_Position.z) < 0x4000 &&
-              OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x2800 && ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x800) {
-            if (props->m_Path->m_CurrentNode < props->m_Path->m_NodeCount)
-              ++props->m_Path->m_CurrentNode;
-            MOBY_SWITCH_ANIM_STATE(4)
-          } else {
-            if (OctDistance(&moby->m_Position, &props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position) < 0x200) {
-              if (props->m_Path->m_CurrentNode != 0) {
-                --props->m_Path->m_CurrentNode; // or + 0xFF
-              } else {
-                MOBY_SWITCH_ANIM_STATE(0)
-                break; // ugly but maybe works
-              }
-            }
-            uv16 = Atan2(props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position.x - moby->m_Position.x,
-                         props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position.y - moby->m_Position.y, 0) -
-                       moby->m_Rotation.z &
-                   0xff;
-            if (uv16 > 128)
-              uv16 -= 256;
-            if (ABS(uv16) < 32)
-              func_80039398(moby, 64, 512, 512, 39);
-            moby->m_Rotation.z += (uv16 < -8 ? -8 : (uv16 > 8 ? 8 : uv16));
-            func_800529E4(moby, UPDATE_PROP_COLLISION);
+        break;
+      case 10:
+        switch (moby->m_Substate) {
+        case 0:
+          if (moby->m_AnimationState.m_NextAnimation != 2) {
+            D_80075794 = 0;
+            MOBY_ANIM_ADVANCE(moby, 2);
           }
-          break;
-        }
-        case 4: {
           if (D_80075794) {
-            if (g_Spyro.m_State == 11 || g_Spyro.m_State == 14) {
-              if (moby->m_AnimationState.m_Animation != 6) {
-                D_80075794 = 0;
-                moby->m_AnimationState.m_FrameProgress = 0;
-                moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[6]->m_ProgressPerTick;
-                moby->m_AnimationState.m_Animation = 6;
-                moby->m_AnimationState.m_NextAnimation = 6;
-                moby->m_AnimationState.m_Frame = 0;
-                moby->m_AnimationState.m_NextFrame = 1;
-              }
-              moby->m_State = 20;
-            } else {
-              MOBY_SWITCH_ANIM_STATE(5)
+            moby->m_Substate++;
+          }
+          func_800529E4(moby, 1);
+          break;
+        case 1:
+          if (moby->m_AnimationState.m_NextAnimation != 8) {
+            D_80075794 = 0;
+            MOBY_ANIM_ADVANCE(moby, 8);
+          }
+
+          if (D_800757F4 && moby->m_AnimationState.m_Frame == 8) {
+            g_LevelMobys[props->m_TargetMobyIndex].m_State = 13;
+            g_LevelMobys[props->m_TargetMobyIndex].m_AnimationState.m_Animation = 13;
+            g_LevelMobys[props->m_TargetMobyIndex].m_AnimationState.m_NextAnimation = 13;
+            g_LevelMobys[props->m_TargetMobyIndex].m_AnimationState.m_Frame = 0;
+            g_LevelMobys[props->m_TargetMobyIndex].m_AnimationState.m_NextFrame = 0;
+            g_LevelMobys[props->m_TargetMobyIndex].m_AnimationState.m_FrameProgress = 0;
+          }
+          if (D_80075794) {
+            moby->m_Substate++;
+          }
+          func_800529E4(moby, 1);
+          break;
+        case 2:
+          if (moby->m_AnimationState.m_NextAnimation != 5) {
+            D_80075794 = 0;
+            MOBY_ANIM_ADVANCE(moby, 5);
+          }
+          if (D_80075794) {
+            props->m_WaitTimer = 0x258;
+            moby->m_State = 0;
+            if (moby->m_AnimationState.m_NextAnimation != 0) {
+              MOBY_ANIM_ADVANCE(moby, 0);
             }
           } else {
-            RotateMobyToSpyro(moby, 8, 16, 1);
-            func_800529E4(moby, UPDATE_PROP_COLLISION);
+            func_800529E4(moby, 1);
           }
           break;
-        }
-        case 5: {
-          int uv16;
-          if (OctDistance(&moby->m_Position, &props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position) < 0x200) {
-            if (props->m_Path->m_CurrentNode < props->m_Path->m_NodeCount - 1)
-              ++props->m_Path->m_CurrentNode;
-            else {
-              props->m_Timer = 120;
-              MOBY_SWITCH_ANIM_STATE(6)
-              break; // ugly but maybe works
-            }
-          }
-          uv16 = Atan2(props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position.x - moby->m_Position.x,
-                       props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position.y - moby->m_Position.y, 0) -
-                     moby->m_Rotation.z &
-                 0xff;
-          if (uv16 > 128)
-            uv16 -= 256;
-          if (ABS(uv16) < 32)
-            func_80039398(moby, 64, 512, 512, 39);
-          moby->m_Rotation.z += (uv16 < -8 ? -8 : (uv16 > 8 ? 8 : uv16));
-          func_800529E4(moby, UPDATE_PROP_COLLISION);
+        default:
+          func_800529E4(moby, 1);
           break;
         }
-        case 6: {
-          if (ABS(g_Spyro.m_Position.x - moby->m_Position.x) + ABS(g_Spyro.m_Position.y - moby->m_Position.y) + ABS(g_Spyro.m_Position.z - moby->m_Position.z) < 0x4000 &&
-              OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x2800 && ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x800) {
-            RotateMobyToSpyro(moby, 8, 16, 1);
-            props->m_Timer = 120;
-            func_800529E4(moby, UPDATE_PROP_COLLISION);
-          } else if (TimerTick(&props->m_Timer, sizeof(props->m_Timer))) {
-            props->m_Path->m_CurrentNode += 0xFF; // same as -1
-            MOBY_SWITCH_ANIM_STATE(3)
-          } else {
-            func_800529E4(moby, UPDATE_PROP_COLLISION);
-          }
-          break;
-        }
-        case 7: {
-          if (D_80075794) {
-            MOBY_SWITCH_ANIM_STATE(9)
-          } else {
-            moby->m_Rotation.y += 4;
-            RotateMobyToAngle(moby, props->m_TargetAngle + 128 & 0xFF, 16, 32, 1);
-            MoveMobyWithGravity(moby, &props->m_Timer2, props->m_TargetAngle, &props->m_ZVelocity, 12, 12);
-            func_800529E4(moby, UPDATE_PROP_COLLISION);
-          }
-          break;
-        }
-        case 8: {
-          if (D_80075794) {
-            func_800529E4(moby, UPDATE_PROP_COLLISION);
-            func_800385BC(moby, 0x1C); // playpoofandsparks
-            func_80052568(moby);
-          } else {
-            MoveMobyWithGravity(moby, &props->m_Timer2, props->m_TargetAngle, &props->m_ZVelocity, 12, 12);
-            RotateMobyToAngle(moby, props->m_TargetAngle + 128 & 0xFF, 16, 32, 1);
-            func_800529E4(moby, UPDATE_PROP_COLLISION);
-          }
-          break;
-        }
-        case 9: {
-          if (MoveMobyWithGravity(moby, &props->m_Timer2, props->m_TargetAngle, &props->m_ZVelocity, 12, 16) == 3) {
-            // landed on ground
-            func_800529E4(moby, UPDATE_PROP_ROTMATRIX);
-            func_800385BC(moby, 0x10);
-            func_80052568(moby);
-          } else {
-            RotateMobyToAngle(moby, props->m_TargetAngle + 128 & 0xFF, 16, 32, 1);
-            func_800529E4(moby, UPDATE_PROP_COLLISION);
-          }
-          break;
-        }
-        case 20: {
-          RotateMobyToSpyro(moby, 4, 0, 0);
-          if (g_Spyro.m_State == 11 || g_Spyro.m_State == 20) {
-            func_800529E4(moby, UPDATE_PROP_COLLISION);
-          } else {
-            MOBY_SWITCH_ANIM_STATE(5);
-          }
-          break;
-        }
-        }
+        break;
+      default:
+        func_800529E4(moby, 1);
+        break;
       }
       break;
     }
+#endif
 
     case MOBYCLASS_SPARX: {
-      Vector3D vec_38;
-      Vector3D vec_88;
-      Vector3D sparxChaseDelta;
-
       MobySparxProps *sparxProps = moby->m_Props;
       char pitchAngle;
       /* Spawn glow if Spyro has 2+ health, despawn it below */
@@ -1643,7 +1677,7 @@ void func_level_10_8007D9C8(void) {
       }
 
       /* Detach if too far from Spyro */
-      if (sparxProps->m_MobyPickingUp != nullptr && OctDistance(&moby->m_Position, &g_Spyro.m_Position) > 8192) {
+      if (sparxProps->m_MobyPickingUp != nullptr && DISTANCE_TO_SPYRO(moby) > 8192) {
         sparxProps->m_Timer = 0;
       }
 
@@ -1696,13 +1730,7 @@ void func_level_10_8007D9C8(void) {
                 (sparxProps->m_Timer < 80 && func_80017908((moby->m_Rotation.z + (bp->m_SparxApproachSide * 110)) & 0xFF, ((g_Camera.m_Rotation.z >> 4) + 0x80) & 0xFF) < 8)) {
               if (moby->m_AnimationState.m_NextAnimation != moby->m_AnimationState.m_NextAnimation + 1) {
                 D_80075794 = 0;
-                moby->m_AnimationState.m_FrameProgress = 0x10;
-                moby->m_AnimationState.m_PerFrameProgress = 0x10;
-                moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
-                moby->m_AnimationState.m_NextAnimation = moby->m_AnimationState.m_NextAnimation + 1;
-                moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
-                moby->m_AnimationState.m_NextFrame = 0;
-                func_80037E98(moby);
+                MOBY_ANIM_ADVANCE(moby, moby->m_AnimationState.m_NextAnimation + 1);
               }
             }
           }
@@ -1730,13 +1758,7 @@ void func_level_10_8007D9C8(void) {
           if (D_80075794 != 0) {
             if (moby->m_AnimationState.m_NextAnimation != moby->m_AnimationState.m_NextAnimation - 1) {
               D_80075794 = 0;
-              moby->m_AnimationState.m_FrameProgress = 0x10;
-              moby->m_AnimationState.m_PerFrameProgress = 0x10;
-              moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
-              moby->m_AnimationState.m_NextAnimation = moby->m_AnimationState.m_NextAnimation - 1;
-              moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
-              moby->m_AnimationState.m_NextFrame = 0;
-              func_80037E98(moby);
+              MOBY_ANIM_ADVANCE(moby, moby->m_AnimationState.m_NextAnimation - 1);
             }
             sparxProps->m_MobyPickingUp = nullptr;
             moby->m_Substate = 0;
@@ -1851,12 +1873,7 @@ void func_level_10_8007D9C8(void) {
           if (moby->m_AnimationState.m_NextAnimation != 0) {
             if (moby->m_AnimationState.m_Animation != 0) {
               D_80075794 = 0;
-              moby->m_AnimationState.m_FrameProgress = 0;
-              moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[0]->m_ProgressPerTick;
-              moby->m_AnimationState.m_Animation = 0;
-              moby->m_AnimationState.m_NextAnimation = 0;
-              moby->m_AnimationState.m_Frame = 0;
-              moby->m_AnimationState.m_NextFrame = 1;
+              MOBY_ANIM_RESET(moby, 0);
             }
           }
           break;
@@ -1864,12 +1881,7 @@ void func_level_10_8007D9C8(void) {
           if (moby->m_AnimationState.m_NextAnimation != 2) {
             if (moby->m_AnimationState.m_Animation != 2) {
               D_80075794 = 0;
-              moby->m_AnimationState.m_FrameProgress = 0;
-              moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[2]->m_ProgressPerTick;
-              moby->m_AnimationState.m_Animation = 2;
-              moby->m_AnimationState.m_NextAnimation = 2;
-              moby->m_AnimationState.m_Frame = 0;
-              moby->m_AnimationState.m_NextFrame = 1;
+              MOBY_ANIM_RESET(moby, 2);
             }
           }
 
@@ -1878,12 +1890,7 @@ void func_level_10_8007D9C8(void) {
           if (moby->m_AnimationState.m_NextAnimation != 4) {
             if (moby->m_AnimationState.m_Animation != 4) {
               D_80075794 = 0;
-              moby->m_AnimationState.m_FrameProgress = 0;
-              moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[4]->m_ProgressPerTick;
-              moby->m_AnimationState.m_Animation = 4;
-              moby->m_AnimationState.m_NextAnimation = 4;
-              moby->m_AnimationState.m_Frame = 0;
-              moby->m_AnimationState.m_NextFrame = 1;
+              MOBY_ANIM_RESET(moby, 4);
             }
           }
           break;
@@ -1892,6 +1899,598 @@ void func_level_10_8007D9C8(void) {
       func_800529E4(moby, 4);
       break;
     }
+
+#ifdef HAS_MOBY_129
+    case 129: {
+      switch (moby->m_State) {
+      case 0:
+        if (moby->m_DamageFlags & 0x20000) {
+          moby->m_State = 1;
+          if (moby->m_AnimationState.m_NextAnimation != 1) {
+            MOBY_ANIM_ADVANCE(moby, 1);
+          }
+        }
+        break;
+
+      case 1:
+        if (D_80075794) {
+          moby->m_DamageFlags = 0;
+          moby->m_State = 0;
+          if (moby->m_AnimationState.m_NextAnimation != 0) {
+            MOBY_ANIM_ADVANCE(moby, 0);
+          }
+        }
+        break;
+      }
+
+      break;
+    }
+#endif
+
+#ifdef HAS_MOBY_157
+    case 157: {
+      if ((moby->m_DamageFlags & 0x10000) && moby->m_State == 0) {
+        func_8002B390(((Moby157Props *)moby->m_Props)->m_UnlockId, 0xfc, 0);
+
+        moby->m_State = 1;
+        MOBY_ANIM_RESET(moby, 1);
+      } else if (moby->m_State == 1 && D_80075794) {
+        moby->m_State = 2;
+        if (moby->m_AnimationState.m_NextAnimation != 2) {
+          MOBY_ANIM_ADVANCE(moby, 2);
+        }
+      }
+
+      break;
+    }
+#endif
+#ifdef HAS_MOBY_165
+    case 165: {
+      Moby165Props *props;
+      Moby165Props *linkedProps;
+      int angle;
+      int angle2;
+      int distance;
+      int nodeDistance;
+      int i;
+
+      props = (Moby165Props *)moby->m_Props;
+
+      ApplyFlameHeat(moby);
+
+      if ((moby->m_DamageFlags & 0xb0000) && moby->m_State != 2) {
+        if (moby->m_DamageFlags != 0x10000 || props->m_ActionPhase == 0) {
+          props->m_KnockbackZVel = 0x8c;
+          props->m_KnockbackTimer = 0x118;
+          props->m_Timer = 0x28;
+
+          if (moby->m_DamageFlags == 0x20000) {
+            props->m_KnockbackZVel = 0xaa;
+            props->m_KnockbackTimer = 0x15e;
+            props->m_Timer = 0x3c;
+          }
+
+          angle = ANGLE_TO(moby->m_Position, g_Spyro.m_Position);
+          props->m_KnockbackAngle = func_80038178(angle, g_Spyro.m_bodyRotation.z, 0x20, 0x40);
+
+          props->m_RotVelX = 0x10 - (rand() & 0x1f);
+          props->m_RotVelY = 0x10 - (rand() & 0x1f);
+
+          moby->m_DamageFlags = 0;
+          func_8003ABC0(moby, 3, 0, 0);
+          func_8003B7C0(moby);
+
+          moby->m_State = 2;
+          if (moby->m_AnimationState.m_NextAnimation != 2) {
+            MOBY_ANIM_ADVANCE(moby, 2);
+          }
+          break;
+        }
+      }
+
+      moby->m_DamageFlags = 0;
+
+      switch (moby->m_State) {
+      case 0:
+        switch (props->m_Mode) {
+        case 0:
+          if (OctDistance(&g_Spyro.m_Position, &props->m_Path->m_Nodes[0].m_Position) < 0x1c00) {
+            if (func_80017908(ANGLE_TO_MOBY(g_Spyro.m_Position), ANGLE_TO_MOBY(props->m_Path->m_Nodes[0].m_Position)) >= 0x15 ||
+                DISTANCE_TO_SPYRO(moby) > OctDistance(&moby->m_Position, &props->m_Path->m_Nodes[0].m_Position)) {
+              props->m_Path->m_CurrentNode = 0;
+              moby->m_State = 3;
+              break;
+            }
+          } else if (OctDistance(&g_Spyro.m_Position, &props->m_Path->m_Nodes[1].m_Position) < 0x1c00) {
+            if (func_80017908(ANGLE_TO_MOBY(g_Spyro.m_Position), ANGLE_TO_MOBY(props->m_Path->m_Nodes[1].m_Position)) >= 21 ||
+                DISTANCE_TO_SPYRO(moby) > OctDistance(&moby->m_Position, &props->m_Path->m_Nodes[1].m_Position)) {
+              props->m_Path->m_CurrentNode = 1;
+              moby->m_State = 3;
+              break;
+            }
+          }
+          func_800529E4(moby, 1);
+          break;
+
+        case 1:
+          if (moby->m_AnimationState.m_NextAnimation != 1) {
+            D_80075794 = 0;
+            MOBY_ANIM_ADVANCE(moby, 1);
+          }
+
+          func_80039E94(moby, props->m_Path, 0x100, 0x5a, 0xc8, 5, 0xa, moby->m_Pod, 5);
+
+          if (DISTANCE_TO_SPYRO(moby) < 0x1400) {
+            func_8003B1E8(moby, 0x14);
+          }
+
+          func_800529E4(moby, 1);
+          break;
+
+        case 2:
+          RotateMobyToSpyro(moby, 4, 0, 0);
+
+          if (D_80075794 && moby->m_AnimationState.m_NextAnimation != 0) {
+            D_80075794 = 0;
+            MOBY_ANIM_ADVANCE(moby, 0);
+          }
+
+          if (DISTANCE_TO_SPYRO(moby) < 0x1800) {
+            moby->m_Substate = 0;
+            props->m_Timer = RandRange(0x8c, 0xc8);
+            moby->m_State = 1;
+          } else {
+            func_800529E4(moby, 1);
+          }
+          break;
+        case 3:
+          switch (props->m_AttackState) {
+          case 0:
+            RotateMobyToSpyro(moby, 4, 0, 0);
+
+            if (DISTANCE_TO_SPYRO(moby) < 0x2000 && moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z < 0 && g_Spyro.m_airTime == 0) {
+              linkedProps = (Moby165Props *)g_LevelMobys[props->m_LinkedMobyIndex].m_Props;
+              props->m_AttackState = 1;
+              linkedProps->m_Timer = RandRange(0, 0xf);
+              linkedProps->m_AttackState = 1;
+            }
+
+            func_800529E4(moby, 1);
+            break;
+
+          case 1:
+            if (TimerTick(&props->m_Timer, 4) != 0) {
+              props->m_AttackState++;
+            }
+
+            func_800529E4(moby, 1);
+            break;
+
+          case 2:
+            if (moby->m_AnimationState.m_NextAnimation != 7) {
+              D_80075794 = 0;
+              MOBY_ANIM_ADVANCE(moby, 7);
+            }
+
+            if (D_80075794) {
+              props->m_AttackState++;
+            }
+
+            func_800529E4(moby, 1);
+            break;
+
+          case 3:
+            if (moby->m_AnimationState.m_NextAnimation != 1) {
+              D_80075794 = 0;
+              MOBY_ANIM_ADVANCE(moby, 1);
+            }
+
+            if (func_80039E94(moby, props->m_Path, 0x100, 0x96, 0, 8, 0x32, 0xff, 5) == 0x100) {
+              props->m_AttackState++;
+            }
+
+            func_800529E4(moby, 1);
+            break;
+
+          case 4:
+            if (!RotateMobyToSpyro(moby, 6, 0xa, 1)) {
+              func_800529E4(moby, 1);
+            } else {
+              moby->m_State = 1;
+            }
+            break;
+          default:
+            func_800529E4(moby, 1);
+            break;
+          }
+          break;
+        default:
+          func_800529E4(moby, 1);
+          break;
+        }
+        break;
+
+      case 1:
+        RotateMobyToSpyro(moby, 6, 0, 0);
+        switch (props->m_ChasePhase) {
+        case 0:
+          if (moby->m_AnimationState.m_NextAnimation != 4) {
+            D_80075794 = 0;
+            MOBY_ANIM_ADVANCE(moby, 4);
+          }
+          props->m_ActionPhase = 1;
+          if (TimerTick(&props->m_Timer, 4) != 0 && D_80075794) {
+            props->m_ChasePhase = 1;
+            props->m_ActionPhase = 0;
+
+            if (moby->m_AnimationState.m_NextAnimation != 5) {
+              D_80075794 = 0;
+              MOBY_ANIM_ADVANCE(moby, 5);
+            }
+          }
+          break;
+        case 1:
+          if (TimerTick(&props->m_Timer, 4) != 0 && DISTANCE_TO_SPYRO(moby) < 0x578 && ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x3e8 &&
+              moby->m_AnimationState.m_Animation == 5) {
+
+            props->m_Timer = 0xb4;
+            if (moby->m_AnimationState.m_NextAnimation != 6) {
+              D_80075794 = 0;
+              MOBY_ANIM_ADVANCE(moby, 6);
+            }
+          }
+
+          if (D_80075794) {
+            if (moby->m_AnimationState.m_Animation == 6) {
+              if (moby->m_AnimationState.m_NextAnimation != 5) {
+                D_80075794 = 0;
+                MOBY_ANIM_ADVANCE(moby, 5);
+              }
+            } else {
+              props->m_ActionPhase = 1;
+              props->m_ChasePhase = 0;
+              props->m_Timer = RandRange(0x8c, 0xc8);
+
+              if (moby->m_AnimationState.m_Animation != 4) {
+                moby->m_AnimationState.m_FrameProgress = 8;
+                moby->m_AnimationState.m_PerFrameProgress = 8;
+                moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
+                moby->m_AnimationState.m_NextAnimation = 4;
+                moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
+                moby->m_AnimationState.m_NextFrame = 0;
+                func_80037E98(moby);
+              }
+            }
+          }
+          break;
+        }
+
+        if (DISTANCE_TO_SPYRO(moby) > 0x2000) {
+          moby->m_State = 0;
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+
+      case 2:
+        moby->m_Rotation.x += props->m_RotVelX;
+        moby->m_Rotation.y += props->m_RotVelY;
+
+        MoveMobyWithGravity(moby, &props->m_KnockbackTimer, props->m_KnockbackAngle, &props->m_KnockbackZVel, 0xc, 0xc);
+
+        if (D_80075794 && moby->m_AnimationState.m_NextAnimation == 2 && moby->m_AnimationState.m_Animation != 3) {
+          D_80075794 = 0;
+          MOBY_ANIM_RESET(moby, 3);
+        }
+
+        if (TimerTick(&props->m_Timer, 4) != 0) {
+          func_800529E4(moby, 4);
+          func_800385BC(moby, 0x20);
+          func_80052568(moby);
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+
+      case 3:
+        if (moby->m_AnimationState.m_NextAnimation != 1) {
+          D_80075794 = 0;
+          MOBY_ANIM_ADVANCE(moby, 1);
+        }
+
+        angle = ANGLE_TO_MOBY(props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position);
+
+        if (RotateMobyToAngle(moby, angle, 6, 0x14, 1) != 0) {
+          func_80039398(moby, 0x8c, 0, 0, 5);
+        }
+
+        if (OctDistance(&moby->m_Position, &props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position) < 0x100 || DISTANCE_TO_SPYRO(moby) < 0xc00) {
+          if (moby->m_AnimationState.m_Animation != 4) {
+            moby->m_AnimationState.m_FrameProgress = 8;
+            moby->m_AnimationState.m_PerFrameProgress = 8;
+            moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
+            moby->m_AnimationState.m_NextAnimation = 4;
+            moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
+            moby->m_AnimationState.m_NextFrame = 0;
+            func_80037E98(moby);
+          }
+
+          moby->m_State = 1;
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+      case 0x14:
+        if (RotateMobyToSpyro(moby, 7, 0x14, 1) != 0) {
+          moby->m_State = 0x15;
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+      case 0x15:
+        if (moby->m_AnimationState.m_NextAnimation != 7) {
+          D_80075794 = 0;
+          MOBY_ANIM_ADVANCE(moby, 7);
+        }
+
+        if (D_80075794) {
+          props->m_ChasePhase = 0;
+
+          if (moby->m_AnimationState.m_Animation != 4) {
+            moby->m_AnimationState.m_FrameProgress = 8;
+            moby->m_AnimationState.m_PerFrameProgress = 8;
+            moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
+            moby->m_AnimationState.m_NextAnimation = 4;
+            moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
+            moby->m_AnimationState.m_NextFrame = 0;
+            func_80037E98(moby);
+          }
+
+          moby->m_State = 1;
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+
+      default:
+        func_800529E4(moby, 1);
+        break;
+      }
+
+      break;
+    }
+#endif
+#ifdef HAS_MOBY_166
+    case 166: {
+      Moby166Props *props;
+      int angle, angle2;
+      int pathAngle;
+      int distance;
+      int pathDistance;
+      int prevNode;
+      int pathEnded;
+      int distanceOk;
+      props = (Moby166Props *)moby->m_Props;
+
+      ApplyFlameHeat(moby);
+
+      if ((moby->m_DamageFlags & 0x90000) && moby->m_State != 1) {
+        angle = ANGLE_TO_MOBY(g_Spyro.m_Position);
+
+        if (func_80017908(moby->m_Rotation.z, angle) >= 0x47) {
+          moby->m_DamageFlags = 0;
+          func_8003ABC0(moby, 1, 0, 0);
+          func_8003B7C0(moby);
+
+          moby->m_State = 1;
+          if (moby->m_AnimationState.m_NextAnimation != 1) {
+            MOBY_ANIM_ADVANCE(moby, 1);
+          }
+          break;
+        }
+      }
+
+      moby->m_DamageFlags = 0;
+
+      switch (moby->m_State) {
+      case 0:
+        pathAngle = ANGLE_TO_MOBY(props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position);
+        pathEnded = 0;
+        if (func_80017908(pathAngle, moby->m_Rotation.z) < 0x10) {
+          RotateMobyToAngle(moby, pathAngle, 5, 0, 0);
+          func_80039688(moby, pathAngle, 0x50, 0, 0, 5);
+
+          if (props->m_CloseEnough != 0 || OctDistance(&moby->m_Position, &props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position) < 0x80) {
+            if (props->m_Path->m_Reversed == 1) {
+              if (props->m_Path->m_CurrentNode + 1 == props->m_Path->m_NodeCount) {
+                props->m_Path->m_Reversed = -props->m_Path->m_Reversed;
+                props->m_Path->m_CurrentNode = props->m_Path->m_NodeCount - 2;
+                pathEnded = 1;
+              } else {
+                props->m_Path->m_CurrentNode += props->m_Path->m_Reversed;
+              }
+            } else {
+              if (props->m_Path->m_CurrentNode == 0) {
+                props->m_Path->m_Reversed = -props->m_Path->m_Reversed;
+                props->m_Path->m_CurrentNode = 1;
+                pathEnded = 1;
+              } else {
+                props->m_Path->m_CurrentNode += props->m_Path->m_Reversed;
+              }
+            }
+          }
+        } else {
+          RotateMobyToAngle(moby, pathAngle, 5, 0, 0);
+        }
+
+        if (pathEnded != 0) {
+          if (props->m_Mode == 2) {
+            props->m_UseWideDistance = 1;
+          } else {
+            props->m_UseWideDistance = 0;
+          }
+
+          if (DISTANCE_TO_SPYRO(moby) < 0x2000) {
+            if (func_80017908(moby->m_Rotation.z, ANGLE_TO_MOBY(g_Spyro.m_Position)) < 0x40) {
+              if (props->m_Mode == 0 || RandRange(0, 2) == 0) {
+                props->m_Mode = 2;
+                moby->m_State = 6;
+
+                if (moby->m_AnimationState.m_NextAnimation != 6) {
+                  MOBY_ANIM_ADVANCE(moby, 6);
+                }
+                break;
+              }
+            }
+          }
+
+          props->m_Mode = 1;
+        }
+
+        props->m_CloseEnough = 0;
+
+        if (TimerTick(&props->m_Timer, 4) != 0 && moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z >= -0x1f3) {
+          int attackDistance = DISTANCE_TO_SPYRO(moby);
+          pathDistance = OctDistance(&moby->m_Position, &props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position);
+
+          if (props->m_UseWideDistance != 0) {
+            if (attackDistance < pathDistance + 0x2000) {
+              distanceOk = attackDistance < 0x2400;
+            } else {
+              distanceOk = 0;
+            }
+          } else {
+            if (attackDistance < pathDistance + 0x1400) {
+              distanceOk = attackDistance < 0x1800;
+            } else {
+              distanceOk = 0;
+            }
+          }
+
+          if (distanceOk != 0) {
+            if (func_80017908(ANGLE_TO_MOBY(g_Spyro.m_Position), ANGLE_TO_MOBY(props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position)) < 0x20) {
+              moby->m_Substate = 0;
+              moby->m_State = 2;
+
+              if (moby->m_AnimationState.m_NextAnimation != 2) {
+                MOBY_ANIM_ADVANCE(moby, 2);
+              }
+              break;
+            }
+          }
+        }
+
+        func_800529E4(moby, 1);
+        break;
+
+      case 2:
+        props->m_CloseEnough = 1;
+
+        if (moby->m_Substate == 0) {
+          distance = DISTANCE_TO_SPYRO(moby);
+
+          if (RotateMobyToSpyro(moby, 5, 0x14, 1) == 0) {
+            break;
+          }
+
+          if (func_80039398(moby, 0x78, 0, 0x1f4, 0x15) != 0) {
+            props->m_Timer = 0x78;
+            moby->m_State = 0;
+
+            if (moby->m_AnimationState.m_NextAnimation != 0) {
+              MOBY_ANIM_ADVANCE(moby, 0);
+            }
+            break;
+          }
+
+          if (distance < 0x5dc) {
+            moby->m_Substate++;
+          }
+
+          if (func_80038A40(moby, props->m_Path, nodeIndex) < 0x5dd) {
+            func_800529E4(moby, 1);
+            break;
+          }
+
+          angle = ANGLE_TO_MOBY(props->m_Path->m_Nodes[nodeIndex[0]].m_Position);
+          angle2 = ANGLE_TO_MOBY(props->m_Path->m_Nodes[1 - nodeIndex[0]].m_Position);
+
+          if (func_80017908(angle, angle2) >= 0x20) {
+            func_800529E4(moby, 1);
+            break;
+          }
+
+          angle2 = ANGLE_TO_MOBY(g_Spyro.m_Position);
+
+          if (func_80017908(angle, angle2) >= 0x20) {
+            func_800529E4(moby, 1);
+            break;
+          }
+
+          props->m_Timer = 0x78;
+          moby->m_State = 0;
+
+          if (moby->m_AnimationState.m_NextAnimation != 0) {
+            MOBY_ANIM_ADVANCE(moby, 0);
+          }
+          break;
+        }
+
+        if (moby->m_AnimationState.m_NextAnimation != 4) {
+          D_80075794 = 0;
+          MOBY_ANIM_ADVANCE(moby, 4);
+        }
+
+        if (D_800757F4 && moby->m_AnimationState.m_Frame == 4) {
+          prevNode = props->m_Path->m_NodeCount;
+          prevNode = props->m_Path->m_CurrentNode - 1 + prevNode;
+          prevNode %= props->m_Path->m_NodeCount;
+
+          VecSub(&delta, &props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position, &props->m_Path->m_Nodes[prevNode].m_Position);
+          VecScaleToLength(&delta, VecMagnitude(&delta, 0), 0x96);
+
+          g_Spyro.m_ControlFlags = 0x80000147;
+          g_Spyro.unk_0x208.x = delta.x;
+          g_Spyro.unk_0x208.y = delta.y;
+          g_Spyro.unk_0x208.z = 0x78;
+          g_Spyro.m_fallingState = 6;
+
+          if (D_80075904 < 0xf) {
+            D_80075904 = 0xf;
+          }
+        }
+        if (D_80075794 == 0) {
+          func_800529E4(moby, 1);
+        } else {
+          moby->m_State = 0;
+          if (moby->m_AnimationState.m_NextAnimation != 0) {
+            MOBY_ANIM_ADVANCE(moby, 0);
+          }
+        }
+        break;
+      case 1:
+        goto moby115_state6_finish;
+      case 6:
+      case 7:
+        RotateMobyToSpyro(moby, 5, 0, 0);
+
+        if (D_80075794) {
+          moby->m_State = 0;
+          if (moby->m_AnimationState.m_NextAnimation != 0) {
+            MOBY_ANIM_ADVANCE(moby, 0);
+          }
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+      default:
+        func_800529E4(moby, 1);
+        break;
+      }
+
+      break;
+    }
+#endif
 
     case MOBYCLASS_KEY: {
       struct {
@@ -1905,7 +2504,7 @@ void func_level_10_8007D9C8(void) {
         moby->m_Rotation.y = SINE_8(keyProps->m_RotationTick) >> 7;
         keyProps->m_RotationTick += g_DeltaTime * 2;
 
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 512) {
+        if (DISTANCE_TO_SPYRO(moby) < 512) {
           if (ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 512) {
             /* Pickup! */
             int i;
@@ -1935,7 +2534,7 @@ void func_level_10_8007D9C8(void) {
           }
         } else if (keyProps->m_SparkleTimer >= 248) {
           int handle = SpawnMobySparkle(moby, &D_8006E5AC);
-          if (handle >= 0 && OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x4000) {
+          if (handle >= 0 && DISTANCE_TO_SPYRO(moby) < 0x4000) {
             keyProps->m_SparkleHandle = handle;
           }
           keyProps->m_SparkleTimer = (rand() & 0x3F) + 24;
@@ -1945,43 +2544,225 @@ void func_level_10_8007D9C8(void) {
       break;
     }
 
-    case 187: { // balloonist
-      if (moby->m_State == 0) {
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) >= 0x1000) {
-          moby->m_State = 1;
-        }
-      } else {
-        if ((g_Spyro.m_State < 2 || g_Spyro.m_State == 21 || g_Spyro.m_State == 2 || g_Spyro.m_State == 11) && OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x780 &&
-            func_80017908(g_Spyro.m_bodyRotation.z, Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0)) < 32 &&
-            func_80017908(moby->m_Rotation.z, Atan2(g_Spyro.m_Position.x - moby->m_Position.x, g_Spyro.m_Position.y - moby->m_Position.y, 0)) < 40) {
-          moby->m_State = 0;
-          g_Spyro.m_ControlFlags = 0x80000000 | 0x2000;
-          func_8003DFA4(); // reset velo/momentum
-          VecNull(&g_Spyro.m_HeadLookTarget);
-          D_800757A0(moby);
-          if (g_DragonTotal < 10) {
-            if (!D_800758D1) {
-              D_800777E8.m_DialogueId = 0;
-              D_800758D1 = 1;
-            } else {
-              D_800777E8.m_DialogueId = 2;
-            }
-          } else if (D_800758D1 < 2) {
-            if (!D_800758D1) {
-              D_800777E8.m_DialogueId = 3;
-            } else {
-              D_800777E8.m_DialogueId = 4;
-            }
-            D_800758D1 = 2;
+#ifdef HAS_LOCKED_CHEST
+    case MOBYCLASS_LOCKED_CHEST: {
+      MobyLockedChestProps *props;
+      Moby *keyMoby;
+      Vector3D vec;
+
+      props = (MobyLockedChestProps *)moby->m_Props;
+      keyMoby = &g_LevelMobys[props->m_KeyMobyIndex];
+
+      if (moby->m_DamageFlags & 0x80000) {
+        moby->m_Substate = 2;
+        props->m_Timer = 0xd2;
+      }
+
+      if (moby->m_Substate < 2) {
+        if (props->m_Timer != 0) {
+          props->m_Timer += g_DeltaTime;
+
+          if (props->m_Timer < 0x40) {
+            moby->m_Rotation.x = props->m_StoredRotX + D_8006E638[props->m_Timer >> 1][0];
+            moby->m_Rotation.y = props->m_StoredRotY + D_8006E638[props->m_Timer >> 1][1];
+            moby->m_Position.z = props->m_StoredPosZ + (ABS2(D_8006E638[props->m_Timer >> 1][0]) + ABS2(D_8006E638[props->m_Timer >> 1][1])) * 8;
           } else {
-            D_800777E8.m_DialogueId = 30;
-            D_800777E8.m_DialogueTopStr = rand() % 3;
+            props->m_Timer = 0;
+            moby->m_Rotation.x = props->m_StoredRotX;
+            moby->m_Rotation.y = props->m_StoredRotY;
+            moby->m_Position.z = props->m_StoredPosZ;
+          }
+        } else if (moby->m_DamageFlags & 0xb0000) {
+          props->m_Timer = 1;
+          props->m_StoredRotX = moby->m_Rotation.x;
+          props->m_StoredRotY = moby->m_Rotation.y;
+          props->m_StoredPosZ = moby->m_Position.z;
+        }
+      }
+
+      switch (moby->m_Substate) {
+      case 0:
+        if (g_KeyFlag == 0 || g_KeyFlag == 3) {
+          g_KeyFlag = 0;
+          moby->m_UpdateDistance = 0x10;
+          keyMoby->m_UpdateDistance = 0x40;
+          keyMoby->m_RenderRadius = 0x18;
+        } else {
+          g_KeyFlag = 1;
+          moby->m_Substate = 1;
+
+          keyMoby->m_ScaleOverride = 0x40;
+          keyMoby->m_ShadowDistance = 0;
+          keyMoby->m_SectorIndex = 0xff;
+          keyMoby->m_Substate = 2;
+        }
+        goto locked_chest_heat_only;
+
+      case 1:
+        if (g_KeyFlag == 1 && (g_Spyro.m_State == 0 || g_Spyro.m_State == 1 || g_Spyro.m_State == 0x15 || g_Spyro.m_State == 2) && DISTANCE_TO_SPYRO(moby) < 0x600 &&
+            ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x200) {
+          if (func_80017908(g_Spyro.m_bodyRotation.z, ANGLE_TO(moby->m_Position, g_Spyro.m_Position)) < 0x30) {
+            if (func_80017908(moby->m_Rotation.z, ANGLE_TO_MOBY(g_Spyro.m_Position)) < 0x30) {
+              g_Spyro.m_ControlFlags = 0x80002000;
+              func_8003DFA4();
+              VecNull(&g_Spyro.m_HeadLookTarget);
+
+              moby->m_Substate = 2;
+
+              if (props->m_Timer > 0) {
+                props->m_Timer = 0;
+                moby->m_Rotation.x = props->m_StoredRotX;
+                moby->m_Rotation.y = props->m_StoredRotY;
+                moby->m_Position.z = props->m_StoredPosZ;
+              }
+
+              keyMoby->m_Rotation.x = 0;
+              keyMoby->m_Rotation.y = 0;
+              keyMoby->m_Rotation.z = g_Spyro.m_bodyRotation.z + 0x80;
+            }
           }
         }
+        goto locked_chest_heat_only;
+
+      case 2: {
+        int i;
+        if (g_Pad.m_Down & PAD_CROSS) {
+          props->m_Timer = 0xd2;
+        }
+
+        g_Spyro.m_ControlFlags = 0x80002000;
+        keyMoby->m_RenderRadius = 0x18;
+        props->m_Timer += g_DeltaTime;
+        g_ScreenBorderEnabled = 1;
+
+        if (props->m_Timer < 0xc0) {
+          delta.x = 0x200;
+          delta.y = 0;
+          delta.z = 0x140;
+
+          VecRotateByMatrix((MATRIX *)&moby->m_RotationMatrix, &delta, &delta);
+          VecAdd(&delta, &delta, &moby->m_Position);
+          VecSub(&delta, &delta, &g_Spyro.m_Position);
+          delta.z -= 0x100;
+          VecShiftRight(&delta, 5);
+          VecMult(&delta, &delta, props->m_Timer);
+          func_800177F8(&delta, &delta, 6);
+          VecAdd(&delta, &delta, &g_Spyro.m_Position);
+
+          delta.z += 0x100;
+          delta.z += SINE_8((props->m_Timer * 128) / 192) >> 3;
+          VecCopy(&keyMoby->m_Position, &delta);
+
+          g_Spyro.m_HeadLookTarget.y = SINE_8((props->m_Timer * 128) / 192) >> 3;
+
+          if (props->m_Timer < 0x40) {
+            int rotTemp;
+            keyMoby->m_Rotation.y = -props->m_Timer;
+            rotTemp = g_Spyro.m_bodyRotation.z + 0x80;
+            keyMoby->m_Rotation.z = rotTemp + props->m_Timer * 4;
+          } else if (props->m_Timer < 0x80) {
+            int rotTemp;
+            keyMoby->m_Rotation.y = 0xc0;
+            rotTemp = g_Spyro.m_bodyRotation.z + 0x80;
+            keyMoby->m_Rotation.z = rotTemp + (props->m_Timer - 0x40) * 3;
+          } else {
+            int rotTemp;
+            int angleDelta;
+            angleDelta = func_80017908(moby->m_Rotation.z, (g_Spyro.m_bodyRotation.z + 0x40) & 0xff);
+            rotTemp = g_Spyro.m_bodyRotation.z + 0x40;
+            keyMoby->m_Rotation.z = rotTemp + ((angleDelta * (props->m_Timer - 0x80)) / 0x40);
+          }
+        } else if (props->m_Timer < 0xd0) {
+
+          keyMoby->m_Rotation.z = moby->m_Rotation.z;
+          vec.x = 0x200 - ((props->m_Timer - 0xc0) << 3);
+          vec.y = 0;
+          vec.z = 0x140;
+          VecRotateByMatrix((MATRIX *)&moby->m_RotationMatrix, &vec, &vec);
+          VecAdd(&keyMoby->m_Position, &vec, &moby->m_Position);
+        }
+
+        if (props->m_Timer < 0xd0 && (g_Spyro.m_State == 0 || g_Spyro.m_State == 1 || g_Spyro.m_State == 0x15 || g_Spyro.m_State == 2 || g_Spyro.m_State == 3)) {
+          goto locked_chest_update_key;
+        }
+
+        keyMoby->m_RenderRadius = 0;
+        keyMoby->m_UpdateDistance = 0;
+        keyMoby->m_WasDrawn = 0;
+        g_ScreenBorderEnabled = 0;
+
+        moby->m_SoundDistance = 0x20;
+        func_8003851C(moby, 0, 0);
+
+        for (i = 0; i < 4; i++) {
+          if (g_DynMobyMax - g_DynMobyCount < 21) {
+            break;
+          }
+          g_SpawnMoby(0x136, moby);
+          g_SpawnMoby(0x137, moby);
+        }
+
+        for (i = 0; i < 10 && (g_DynMobyMax - g_DynMobyCount) > 20; i++) {
+          g_SpawnMoby(0x135, moby);
+        }
+
+        D_800758E4(0x20, 0x46, &moby->m_Position, (void *)0x18);
+        g_KeyMoby = (Moby *)func_8003ABC0(moby, 1, 0, 0);
+        func_8003B7C0(moby);
+        func_80052568(moby);
+
+        g_KeyFlag = 2;
+        g_Spyro.m_HeadLookTarget.z = 0;
+        g_Spyro.m_HeadLookTarget.y = 0;
+        g_Spyro.m_HeadLookTarget.x = 0;
+        goto locked_chest_update_key;
+      }
+      default:
+        goto locked_chest_heat_only;
+      }
+    locked_chest_update_key:
+      func_800529E4(keyMoby, 4);
+
+      if (props->m_Timer - (props->m_Timer / 4 * 4) < 2) {
+        D_800758E4(1, 0xc, keyMoby, (void *)0x8080);
+      } else {
+        D_800758E4(1, 0xc, keyMoby, (void *)0x5008080);
+      }
+
+    locked_chest_heat_only:
+      props->m_FlameHeat = ApplyFlameHeatExternal(moby, props->m_FlameHeat);
+      moby->m_DamageFlags = 0;
+      break;
+    }
+#endif
+
+#ifdef HAS_BALLOONIST
+    case MOBYCLASS_BALLOONIST: {
+      if (moby->m_State == 0) {
+        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) >= 4096) {
+          moby->m_State = 1;
+        }
+      } else if ((g_Spyro.m_State == 0 || g_Spyro.m_State == 1 || g_Spyro.m_State == 21 || g_Spyro.m_State == 2 || g_Spyro.m_State == 11) &&
+                 OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x780 &&
+                 func_80017908(g_Spyro.m_bodyRotation.z, Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0)) < 0x20 &&
+                 func_80017908(moby->m_Rotation.z, Atan2(g_Spyro.m_Position.x - moby->m_Position.x, g_Spyro.m_Position.y - moby->m_Position.y, 0)) < 0x28) {
+        moby->m_State = 0;
+        g_Spyro.m_ControlFlags = 0x80002000;
+        func_8003DFA4();
+        VecNull(&g_Spyro.m_HeadLookTarget);
+        D_800757A0(moby);
+        D_800777E8.m_DialogueId = 0x1E; /* TODO: actual struct member */
+        D_800758D0[1] = 2;
+        D_800758D0[2] = 2;
+        D_800758D0[3] = 2;
+        D_800758D0[4] = 2;
+        D_800758D0[5] = 2;
       }
       break;
     }
+#endif
 
+#ifdef HAS_WOODEN_CHEST
     case MOBYCLASS_WOODEN_CHEST: {
       struct {
         int m_unk_0x00;
@@ -1991,20 +2772,20 @@ void func_level_10_8007D9C8(void) {
         func_80038458(moby);
       }
 
-      if (moby->m_DamageFlags & 0xB0000) {
+      if (moby->m_DamageFlags & (0x80000 | 0x20000 | 0x10000)) {
         int i;
-        moby->m_SoundDistance = 0x20;
+        moby->m_SoundDistance = 32;
         func_8003851C(moby, 0, 0);
 
         /* Spawn fragments (limited by free dyn moby slots) */
         for (i = 0; i < 2; i++) {
-          if (g_DynMobyMax - g_DynMobyCount < 0x15)
+          if (g_DynMobyMax - g_DynMobyCount < 21)
             break;
           g_SpawnMoby(0xFF, moby);
           g_SpawnMoby(0x100, moby);
         }
         for (i = 0; i < 6; i++) {
-          if (g_DynMobyMax - g_DynMobyCount < 0x15)
+          if (g_DynMobyMax - g_DynMobyCount < 21)
             break;
           g_SpawnMoby(0x101, moby);
         }
@@ -2017,7 +2798,209 @@ void func_level_10_8007D9C8(void) {
       }
       break;
     }
+#endif
 
+#ifdef HAS_METAL_CHEST
+    case MOBYCLASS_METAL_CHEST: { /* MOBYCLASS_METAL_CHEST */
+      struct {
+        int m_ShakeTimer;   /* 0x00 - flash/recovery timer */
+        int m_StoredRotX;   /* 0x04 */
+        int m_StoredRotY;   /* 0x08 */
+        int m_StoredPosZ;   /* 0x0C */
+        int m_PlaceOnFloor; /* 0x10 - check for func_80038458 trigger */
+        int m_FlameTimer;   /* 0x14 - flame heat tracker */
+        int m_unk_0x18;
+      } *chestProps = moby->m_Props;
+
+      if (chestProps->m_PlaceOnFloor != 0) {
+        func_80038458(moby);
+      }
+
+      if (chestProps->m_ShakeTimer != 0) {
+        chestProps->m_ShakeTimer += g_DeltaTime;
+        if (chestProps->m_ShakeTimer < 0x40) {
+          /* shake animation */
+          moby->m_Rotation.x = D_8006E638[chestProps->m_ShakeTimer >> 1][0] + chestProps->m_StoredRotX;
+          moby->m_Rotation.y = D_8006E638[chestProps->m_ShakeTimer >> 1][1] + chestProps->m_StoredRotY;
+          moby->m_Position.z = chestProps->m_StoredPosZ + (ABS2(D_8006E638[chestProps->m_ShakeTimer >> 1][0]) + ABS2(D_8006E638[chestProps->m_ShakeTimer >> 1][1])) * 6;
+        } else {
+          chestProps->m_ShakeTimer = 0;
+          moby->m_Rotation.x = chestProps->m_StoredRotX;
+          moby->m_Rotation.y = chestProps->m_StoredRotY;
+          moby->m_Position.z = chestProps->m_StoredPosZ;
+        }
+      }
+
+      if (moby->m_DamageFlags & (0x20000 | 0x80000)) {
+        int i;
+        moby->m_SoundDistance = 0x20;
+        func_8003851C(moby, 0, 0);
+
+        for (i = 0; i < 2; i++) {
+          if (g_DynMobyMax - g_DynMobyCount < 21)
+            break;
+          g_SpawnMoby(0x136, moby);
+          g_SpawnMoby(0x137, moby);
+        }
+        for (i = 0; i < 6; i++) {
+          if (g_DynMobyMax - g_DynMobyCount < 21)
+            break;
+          g_SpawnMoby(0x135, moby);
+        }
+        D_800758E4(0x10, 0x46, &moby->m_Position, (void *)0x18);
+        func_8003ABC0(moby, 3, 0, 0);
+        func_8003B7C0(moby);
+        func_80052568(moby);
+      } else {
+        chestProps->m_FlameTimer = ApplyFlameHeatExternal(moby, chestProps->m_FlameTimer);
+        if ((moby->m_DamageFlags & 0x10000) && chestProps->m_ShakeTimer == 0) {
+          chestProps->m_ShakeTimer = 1;
+          chestProps->m_StoredRotX = moby->m_Rotation.x;
+          chestProps->m_StoredRotY = moby->m_Rotation.y;
+          chestProps->m_StoredPosZ = moby->m_Position.z;
+        }
+      }
+      moby->m_DamageFlags = 0;
+
+      break;
+    }
+#endif
+
+#ifdef HAS_MOBY_208
+    case 208: { /* Gnexus Dragon Head Unlocks */
+      struct {
+        int m_Initialized; /* 0x00 - one-time init flag */
+      } *doorProps = moby->m_Props;
+      if (doorProps->m_Initialized == 0) {
+        /* Sync portal-locked flags from visited flags on first run */
+        if (g_VisitedFlags[32] != 0) {
+          func_8002B390(0, 0xFC, 0);
+          if (g_Spyro.m_State == 0xF && g_Spyro.m_walkingState == 9)
+            func_8002B444(0, 0x3B, 0);
+        }
+        if (g_VisitedFlags[33] != 0) {
+          func_8002B390(1, 0xFC, 0);
+          if (g_Spyro.m_State == 0xF && g_Spyro.m_walkingState == 9)
+            func_8002B444(1, 0x3B, 0);
+        }
+        if (g_VisitedFlags[34] != 0) {
+          func_8002B390(2, 0xFC, 0);
+          if (g_Spyro.m_State == 0xF && g_Spyro.m_walkingState == 9)
+            func_8002B444(2, 0x3B, 0);
+        }
+        doorProps->m_Initialized = 1;
+      }
+
+      if (((func_8002B3F4(0) >> 8) & 0xFF) == 0 && g_LevelVortexExitFlags[31] != 0 && g_LevelDragonCount[30] > 0) {
+        func_8002B390(0, 0xFC, 0);
+      }
+      if (((func_8002B3F4(1) >> 8) & 0xFF) == 0 && g_LevelVortexExitFlags[32] != 0) {
+        func_8002B390(1, 0xFC, 0);
+      }
+      if (((func_8002B3F4(2) >> 8) & 0xFF) == 0 && g_GemTotal >= 12000 && g_DragonTotal >= 80 && g_EggTotal >= 12) {
+        func_8002B390(2, 0xFC, 0);
+      }
+      break;
+    }
+#endif
+
+#ifdef HAS_RAT_FODDER
+    case MOBYCLASS_FODDER_RAT: {
+      struct {
+        int m_unk_0x00;
+        int m_unk_0x04;
+        int m_unk_0x08;
+        int m_unk_0x0C;
+        int m_unk_0x10;
+        int m_unk_0x14;
+        int m_unk_0x18;
+        int m_unk_0x1C;
+        int m_KnockbackSpeed; /* 0x20 - countdown / power level */
+        int m_TargetAngle;    /* 0x24 - aim angle */
+        int m_unk_0x28;
+        int m_RetargetTimer; /* 0x2C - retarget delay */
+      } *enemyProps = moby->m_Props;
+
+      if ((moby->m_DamageFlags & (0x10000 | 0x20000 | 0x80000)) && moby->m_State != 1) {
+        enemyProps->m_TargetAngle =
+            func_80038178(Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0), g_Spyro.m_bodyRotation.z, 0x20, 0x40);
+        if (moby->m_DamageFlags & 0x10000) {
+          enemyProps->m_KnockbackSpeed = 200;
+        } else {
+          enemyProps->m_KnockbackSpeed = 400;
+        }
+        moby->m_DamageFlags = 0;
+        func_8003ABC0(moby, 3, 0, 0);
+        func_8003B7C0(moby);
+        moby->m_State = 1;
+        if (moby->m_AnimationState.m_NextAnimation != 1) {
+          moby->m_AnimationState.m_FrameProgress = 0x10;
+          moby->m_AnimationState.m_PerFrameProgress = 0x10;
+          moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
+          moby->m_AnimationState.m_NextAnimation = 1;
+          moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
+          moby->m_AnimationState.m_NextFrame = 0;
+          func_80037E98(moby);
+        }
+      } else {
+        switch (moby->m_State) {
+        case 0:
+          func_80039AA8(moby, enemyProps);
+          if (TimerTick(&enemyProps->m_RetargetTimer, 4) != 0) {
+            moby->m_State = 2;
+            if (moby->m_AnimationState.m_NextAnimation != 2) {
+              moby->m_AnimationState.m_FrameProgress = 0x10;
+              moby->m_AnimationState.m_PerFrameProgress = 0x10;
+              moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
+              moby->m_AnimationState.m_NextAnimation = 2;
+              moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
+              moby->m_AnimationState.m_NextFrame = 0;
+              func_80037E98(moby);
+            }
+          } else {
+            func_800529E4(moby, 1);
+          }
+          break;
+        case 1:
+          if (enemyProps->m_KnockbackSpeed >= 16) {
+            enemyProps->m_KnockbackSpeed -= 15;
+            func_80039688(moby, enemyProps->m_TargetAngle, enemyProps->m_KnockbackSpeed, 0, 0x1F4, 5);
+          }
+          if (D_80075794 != 0) {
+            func_800529E4(moby, 4);
+            func_800385BC(moby, 0x10);
+            func_80052568(moby);
+          } else {
+            func_800529E4(moby, 1);
+          }
+          break;
+        case 2:
+          if (D_80075794 != 0) {
+            enemyProps->m_RetargetTimer = RandRange(90, 300);
+            moby->m_State = 0;
+            if (moby->m_AnimationState.m_NextAnimation != 0) {
+              moby->m_AnimationState.m_FrameProgress = 0x10;
+              moby->m_AnimationState.m_PerFrameProgress = 0x10;
+              moby->m_AnimationState.m_Animation = moby->m_AnimationState.m_NextAnimation;
+              moby->m_AnimationState.m_NextAnimation = 0;
+              moby->m_AnimationState.m_Frame = moby->m_AnimationState.m_NextFrame;
+              moby->m_AnimationState.m_NextFrame = 0;
+              func_80037E98(moby);
+            }
+          } else {
+            func_800529E4(moby, 1);
+          }
+          break;
+        default:
+          func_800529E4(moby, 1);
+          break;
+        }
+      }
+      break;
+    }
+#endif
+
+#ifdef HAS_DRAGON
     case MOBYCLASS_CRYSTAL_DRAGON: {
       RescuedDragonMobyProps *dragonProps = moby->m_Props;
 
@@ -2071,7 +3054,7 @@ void func_level_10_8007D9C8(void) {
         }
 
         /* Check pickup distance */
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 2048) {
+        if (DISTANCE_TO_SPYRO(moby) < 2048) {
           Vector3D dragonPickupDelta;
 
           VecSub(&dragonPickupDelta, &moby->m_Position, &g_Spyro.m_Position);
@@ -2141,12 +3124,12 @@ void func_level_10_8007D9C8(void) {
       break;
     }
 
-    case MOBYCLASS_CRYSTAL_DRAGON_FRAGMENT: { // Dragon fragment
-      UpdateMobyDragonFragment(moby, g_DeltaTime);
+    case 251: // Dragon fragment
+      UpdateMobyDragonFragment(moby);
       break;
-    }
+#endif
 
-    case MOBYCLASS_NUMBER_0:
+    case MOBYCLASS_NUMBER_0: // Text 0-9
     case MOBYCLASS_NUMBER_1:
     case MOBYCLASS_NUMBER_2:
     case MOBYCLASS_NUMBER_3:
@@ -2155,7 +3138,7 @@ void func_level_10_8007D9C8(void) {
     case MOBYCLASS_NUMBER_6:
     case MOBYCLASS_NUMBER_7:
     case MOBYCLASS_NUMBER_8:
-    case MOBYCLASS_NUMBER_9: {
+    case MOBYCLASS_NUMBER_9: { // Digits
 
       struct {
         int m_Lifetime;  /* 0x00: Remaining lifetime frames */
@@ -2241,7 +3224,7 @@ void func_level_10_8007D9C8(void) {
         break;
       case 1:
         if (TimerTick(&ambProps->m_StateTimer, 4) != 0) {
-          ambProps->m_StateTimer = 0x258 - (rand() & 0x7F);
+          ambProps->m_StateTimer = 600 - (rand() & 0x7F);
           soundTableIndex = (rand() & 7) + 7;
         }
         break;
@@ -2249,7 +3232,7 @@ void func_level_10_8007D9C8(void) {
         switch (ambProps->m_PathState) {
         case 0:
           if (TimerTick(&ambProps->m_StateTimer, 4) != 0) {
-            ambProps->m_StateTimer = 0x200 - (rand() & 0x7F);
+            ambProps->m_StateTimer = 512 - (rand() & 0x7F);
             soundTableIndex = (rand() & 1) + 13;
             ambProps->m_PathState = 1;
           }
@@ -2317,103 +3300,142 @@ void func_level_10_8007D9C8(void) {
       break;
     }
 
-    case 300: {
-      Vector3D v;
-      struct {
-        int unk_0x0;
-        int unk_0x4;
-        int unk_0x8;
-        int m_Timer;
-        int unk_0x10;
-        int unk_0x14;
-      } *props = moby->m_Props; // Moby300Props
-      if ((props->unk_0x8 & 0x8) == 0 ||
-          (g_LevelMobys[props->unk_0x10].m_Class == MOBYCLASS_KEY && g_LevelMobys[props->unk_0x10].m_State != 0 &&
-           OctDistance(&moby->m_Position, &g_Spyro.m_Position) <= 0x1C00) ||
-          ((g_LevelMobys[props->unk_0x10].m_Class == MOBYCLASS_CRYSTAL_DRAGON || g_LevelMobys[props->unk_0x10].m_Class == MOBYCLASS_GEM_1) &&
-           g_LevelMobys[props->unk_0x10].m_State >= 0x80)) {
-        if ((props->unk_0x8 & 2) == 0) {
-          if (props->unk_0x8 & 0x10)
-            moby->m_Substate = 1;
-          PlaySound(g_Spu.m_SoundTable->whirlwind, moby, 8, &moby->m_SoundChannel);
-          if ((rand() & 1) == 0)
-            D_800758E4(1, 6, moby, nullptr);
-          VecSub(&v, &g_Spyro.m_Position, &moby->m_Position);
-          if (VecMagnitude(&v, 0) < props->unk_0x4 && v.z > -0x400 && v.z < props->unk_0x0 &&
-              (g_Spyro.m_State == 17 || g_Spyro.m_Position.z + 0xC00 < moby->m_Position.z + props->unk_0x0)) {
-            g_Spyro.m_ControlFlags = 0x80000000;
-            g_Spyro.m_DamageFlags |= 0x800;
-            g_Spyro.m_portalEndPos.z = moby->m_Position.z + props->unk_0x0;
-            g_Spyro.m_mobyInUseBySpyro = moby;
-            VecCopy(&g_Spyro.unk_0x17c, &moby->m_Position);
-            if (props->unk_0x8 & 1) {
-              g_Spyro.m_ControlFlags |= 0x8000;
-            } else {
-              D_80078668.m_Coords.azimuth = (0x80 - moby->m_Rotation.z) * 16 & 0xFFF;
-              D_80078668.m_Coords.elevation = D_8006C934.m_Coords.elevation;
-              D_80078668.m_Coords.radius = D_8006C934.m_Coords.radius;
-              D_80078668.m_Offset.azimuth = D_8006C934.m_Offset.azimuth;
-              D_80078668.m_Offset.elevation = D_8006C934.m_Offset.elevation;
-              D_80078668.m_Offset.radius = D_8006C934.m_Offset.radius;
-              g_Spyro.unk_0x21c = &g_Spyro.m_Position;
-              g_Spyro.unk_0x220 = &D_80078668;
-              g_Spyro.m_ControlFlags |= 0x200;
-            }
-            props->m_Timer = 120;
-          } else if ((props->unk_0x8 & ~0x1) == 4 && props->m_Timer && TimerTick(&props->m_Timer, sizeof(props->m_Timer))) {
-            props->unk_0x8 = props->unk_0x8 & ~0x4 | 0x2;
+#if defined(HAS_METAL_CHEST) || defined(HAS_LOCKED_CHEST) || defined(HAS_MOBY_401)
+    case MOBYCLASS_METAL_CHEST_FRAG_1: { // Some fragment 1
+      MobyFragmentPhysicsProps *physicsProps = moby->m_Props;
+      int i;
+
+      if (physicsProps->m_Lifetime != 0) {
+        if (moby->m_WasDrawn) {
+          Vector3D fragmentDustPos;
+
+          /* Movement and Rotation (No Bouncing) */
+          moby->m_Position.x += physicsProps->m_VelocityX;
+          moby->m_Position.y += physicsProps->m_VelocityY;
+          physicsProps->m_VelocityZ -= 6;
+          if (physicsProps->m_VelocityZ < -0x80)
+            physicsProps->m_VelocityZ = -0x80;
+          moby->m_Position.z += physicsProps->m_VelocityZ;
+
+          moby->m_Rotation.x += physicsProps->m_AngularVelocityX;
+          moby->m_Rotation.y += physicsProps->m_AngularVelocityY;
+          moby->m_Rotation.z += physicsProps->m_AngularVelocityZ;
+
+          fragmentDustPos.x = (rand() & 0xFE) - 127;
+          fragmentDustPos.y = (rand() & 0xFE) - 127;
+          fragmentDustPos.z = (rand() & 0xFE) - 64;
+          VecAdd(&fragmentDustPos, &fragmentDustPos, &moby->m_Position);
+          D_800758E4(1, 0x42, &fragmentDustPos, (void *)1);
+          physicsProps->m_Lifetime--;
+        } else {
+          if (moby->m_WasDrawn) {
+            D_800758E4(8, 0x46, &moby->m_Position, (void *)0x10);
           }
-        } else if (props->m_Timer == 0) {
-          if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x1000) {
-            if (ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x400) {
-              props->m_Timer = 180;
-            }
-          }
-        } else if (TimerTick(&props->m_Timer, sizeof(props->m_Timer))) {
-          props->unk_0x8 = props->unk_0x8 & ~0x2 | 0x4;
+          func_80052568(moby);
         }
+      } else {
+        func_80052568(moby);
       }
       break;
     }
+    case MOBYCLASS_METAL_CHEST_FRAG_2:
+    case MOBYCLASS_METAL_CHEST_FRAG_3: {
+      int i;
+      int dot;
+      MobyFragmentPhysicsProps *physicsProps = moby->m_Props;
 
-    case 323: {
+      if (physicsProps->m_Lifetime > 0 && moby->m_WasDrawn) {
+        if (func_8004BE4C(&moby->m_Position, 0x100, 0x100)) {
+
+          func_80017330(&g_CollisionNormal, 0x1000);
+          dot = (physicsProps->m_VelocityX * g_CollisionNormal.x + physicsProps->m_VelocityY * g_CollisionNormal.y + physicsProps->m_VelocityZ * g_CollisionNormal.z) >> 11;
+          // TODO: Permuter hack
+          i = dot;
+          if (dot < 0) {
+            VecScaleToLength(&g_CollisionNormal, 0x1000, (i >> 2) - (dot));
+            physicsProps->m_VelocityX += g_CollisionNormal.x;
+            physicsProps->m_VelocityY += g_CollisionNormal.y;
+            physicsProps->m_VelocityZ += g_CollisionNormal.z;
+          }
+        }
+
+        /* Movement and Rotation */
+        moby->m_Position.x += physicsProps->m_VelocityX;
+        moby->m_Position.y += physicsProps->m_VelocityY;
+        physicsProps->m_VelocityZ -= 6;
+        if (physicsProps->m_VelocityZ < -0x80)
+          physicsProps->m_VelocityZ = -0x80;
+        moby->m_Position.z += physicsProps->m_VelocityZ;
+
+        moby->m_Rotation.x += physicsProps->m_AngularVelocityX;
+        moby->m_Rotation.y += physicsProps->m_AngularVelocityY;
+        moby->m_Rotation.z += physicsProps->m_AngularVelocityZ;
+
+        /* Spawn 3 dust particles */
+        for (i = 0; i < 3; i++) {
+          Vector3D vec_110;
+
+          // TODO: Permuter hack
+          i++;
+          i--;
+          vec_110.x = (rand() & 0xFE) - 127;
+          vec_110.y = (rand() & 0xFE) - 127;
+          vec_110.z = (rand() & 0xFE) - 64;
+          VecAdd(&vec_110, &vec_110, &moby->m_Position);
+          D_800758E4(1, 0x42, &vec_110, (void *)1);
+        }
+        physicsProps->m_Lifetime--;
+      } else {
+        if (moby->m_WasDrawn) {
+          D_800758E4(8, 0x46, &moby->m_Position, (void *)0x10);
+        }
+        func_80052568(moby);
+      }
+      break;
+    }
+#endif
+
+    case MOBYCLASS_FODDER_RESPAWN: { // Fodder Respawn
       struct {
-        int unk_0x0;
-        int m_Timer;
-        int unk_0x8;
-      } *props = moby->m_Props;
+        int m_TargetClass;     /* 0x00 - which class to respawn */
+        int m_RespawnTimer;    /* 0x04 - countdown */
+        int m_RespawnInterval; /* 0x08 - reset value */
+      } *respProps = moby->m_Props;
       VecCopy(&moby->m_Position, &g_Spyro.m_Position);
-      if (TimerTick(&props->m_Timer, sizeof(props->m_Timer)) != 0) {
-        Moby *lvlMoby;
-        props->m_Timer = props->unk_0x8;
-        for (lvlMoby = g_LevelMobys; lvlMoby != g_DynMobys; ++lvlMoby) {
-          if (lvlMoby->m_Class == props->unk_0x0 && lvlMoby->m_State > 0x7F && OctDistance(&g_Spyro.m_Position, lvlMoby->m_Props) < 0x6000) {
-            VecCopy(&lvlMoby->m_Position, lvlMoby->m_Props);
-            func_800526A8(lvlMoby);
-            lvlMoby->m_DamageFlags = 0;
-            lvlMoby->m_State = 0;
-            lvlMoby->m_AnimationState.m_FrameProgress = 0;
-            lvlMoby->m_DroppedFlag &= 0x7F;
-            lvlMoby->m_AnimationState.m_Animation = 0;
-            lvlMoby->m_AnimationState.m_NextAnimation = 0;
-            lvlMoby->m_AnimationState.m_Frame = 0;
-            lvlMoby->m_AnimationState.m_NextFrame = 1;
-            lvlMoby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[0]->m_ProgressPerTick;
+
+      if (TimerTick(&respProps->m_RespawnTimer, 4) != 0) {
+        Moby *m;
+        respProps->m_RespawnTimer = respProps->m_RespawnInterval;
+
+        for (m = g_LevelMobys; m < g_DynMobys; m++) {
+          if (m->m_Class == respProps->m_TargetClass && m->m_State >= 0x80 && OctDistance(&g_Spyro.m_Position, (Vector3D *)m->m_Props) > 24576) {
+            /* Respawn it */
+            VecCopy(&m->m_Position, (Vector3D *)m->m_Props);
+            func_800526A8(m);
+            m->m_DamageFlags = 0;
+            m->m_State = 0;
+            m->m_DroppedFlag &= 0x7F;
+            MOBY_ANIM_RESET(m, 0);
           }
         }
       }
       break;
     }
 
-    case 331: { //checkpoint pad?
+#ifdef HAS_DRAGON
+    case 331: { // Dragon pad
       switch (moby->m_State) {
       case 0: {
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) <= 0xA00)
+        if (DISTANCE_TO_SPYRO(moby) > 2560) {
           moby->m_State = 1;
+        }
         break;
       }
+
       case 1: {
-        if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x380 && ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x200) {
+        if (DISTANCE_TO_SPYRO(moby) < 896 && ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 512) {
+
+          // Save checkpoint
           CheckpointSave(moby, moby->m_Rotation.z);
           moby->m_State = 2;
           moby->m_AnimationState.m_Animation = 1;
@@ -2421,304 +3443,35 @@ void func_level_10_8007D9C8(void) {
         }
         break;
       }
+
       case 2: {
         moby->m_Substate += g_DeltaTime;
-        if (moby->m_Substate >= 48) {
+
+        if (moby->m_Substate >= 0x30) {
           moby->m_State = 0;
           moby->m_AnimationState.m_Animation = 0;
         }
         break;
       }
       }
-      break;
-    }
-
-    case 336:
-    case 342: {
-      if (moby->m_AnimationState.m_AnimationFlags & 0x2) {
-        moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[moby->m_AnimationState.m_NextAnimation]->m_ProgressPerTick + RandRange(-4, 4);
-      }
-      if (moby->m_DamageFlags & 0x10000U && moby->m_AnimationState.m_NextAnimation == 0) {
-        if (moby->m_AnimationState.m_Animation != 1) {
-          D_80075794 = 0;
-          moby->m_AnimationState.m_FrameProgress = 0;
-          moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[1]->m_ProgressPerTick;
-          moby->m_AnimationState.m_Animation = 1;
-          moby->m_AnimationState.m_NextAnimation = 1;
-          moby->m_AnimationState.m_Frame = 0;
-          moby->m_AnimationState.m_NextFrame = 1;
-        }
-      } else if (moby->m_AnimationState.m_NextAnimation == 1) {
-        func_800529E4(moby, UPDATE_PROP_COLLISION);
-        if (D_80075794 && moby->m_AnimationState.m_Animation != 2) {
-          D_80075794 = 0;
-          moby->m_AnimationState.m_FrameProgress = 0;
-          moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[1]->m_ProgressPerTick;
-          moby->m_AnimationState.m_Animation = 1;
-          moby->m_AnimationState.m_NextAnimation = 1;
-          moby->m_AnimationState.m_Frame = 0;
-          moby->m_AnimationState.m_NextFrame = 1;
-        }
-      }
-      break;
-    }
-
-    case 339: {
-      Moby339Props *props = moby->m_Props;
-
-      if (moby->m_DamageFlags & (0x80000 | 0x20000 | 0x10000) && moby->m_State < 4) {
-        if (props->unk_0x10 < 0) {
-          int i;
-          for (i = 0; props->unk_0x14 >= 0; ++i) {
-            Moby *target = &g_LevelMobys[props->unk_0x14];
-            if (g_LevelMobys[props->unk_0x14].m_State < 0x80) {
-              VecCopy(&target->m_Position, &moby->m_Position);
-              setXYZ(&props->vec_0x18[i],
-                moby->m_Position.x + (Cos(i * 0x555) >> 2),
-                moby->m_Position.y + (Sin(i * 0x555) >> 2),
-                moby->m_Position.z
-              );
-              func_8003ABC0(target, 2, 0, &props->vec_0x18[i]);
-              func_8003B7C0(target);
-              func_80052568(target);
-            }
-            props->unk_0x14 = ((Moby339Props*)target->m_Props)->unk_0x0;
-          }
-          setXYZ(&props->vec_0x18[i],
-                moby->m_Position.x + (Cos(i * 0x555) >> 2),
-                moby->m_Position.y + (Sin(i * 0x555) >> 2),
-                moby->m_Position.z
-              );
-          func_8003ABC0(moby, 2, 0, &props->vec_0x18[i]);
-          func_8003B7C0(moby);
-          props->m_Timer = 280;
-
-          props->unk_0x0 = func_80038178(Atan2(moby->m_Position.x - g_Spyro.m_Position.x, moby->m_Position.y - g_Spyro.m_Position.y, 0), g_Spyro.m_bodyRotation.z, 32, 64);
-          moby->m_State = 5;
-          moby->m_AnimationState.m_FrameProgress = 0;
-          moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[5]->m_ProgressPerTick;
-          moby->m_AnimationState.m_Animation = 5;
-          moby->m_AnimationState.m_NextAnimation = 5;
-          moby->m_AnimationState.m_Frame = 0;
-          moby->m_AnimationState.m_NextFrame = 1;
-        } else {
-          do {
-            if (g_LevelMobys[props->unk_0x10].m_State >= 0x80)
-              break;
-            props->unk_0x10 = *(int*)g_LevelMobys[props->unk_0x10].m_Props;//todo
-          } while (props->unk_0x10 >= 0);
-
-          if (props->unk_0x10 >= 0) {
-            Moby *target = &g_LevelMobys[props->unk_0x10];
-            VecCopy(&target->m_Position, &moby->m_Position);
-            func_8003ABC0(target, 0x1, 0, nullptr);
-            func_8003B7C0(target);
-            props->unk_0x10 = *(int*)target->m_Props;
-            func_80052568(target);
-            moby->m_DamageFlags = 0;
-            MOBY_SWITCH_ANIM_STATE(4)
-          }
-        }
-      } else {
-        switch (moby->m_State) {
-        case 0: {
-          if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x1400 &&
-              ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) < 0x400) {
-            MOBY_SWITCH_ANIM_STATE(1)
-          } else if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) < 0x2800) {
-            RotateMobyToSpyro(moby, 8, 0x10, 1);
-          }
-          break;
-        }
-        case 1: {
-          RotateMobyToSpyro(moby, 8, 0x10, 1);
-          if (D_80075794) {
-            MOBY_SWITCH_ANIM_STATE(2)
-          }
-          break;
-        }
-        case 2:
-        case 3:
-        case 4: {
-          int uv16;
-          if (moby->m_State == 4) {
-            moby->m_DamageFlags = 0;
-          }
-
-          if (OctDistance(&moby->m_Position, &props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position) < 0x400) {
-            if (OctDistance(&moby->m_Position, &g_Spyro.m_Position) >= 0x1400 ||
-                ABS2(moby->m_Position.z - moby->m_FloorDistance - g_Spyro.m_Position.z) >= 0x800) {
-              MOBY_SWITCH_ANIM_STATE(0)
-              break;
-            } else {
-              int spyroAngleToMoby = Atan2(g_Spyro.m_Position.x - moby->m_Position.x, g_Spyro.m_Position.y - moby->m_Position.y, 0);
-              int nextNode = (props->m_Path->m_CurrentNode + 1) % props->m_Path->m_NodeCount;
-              int lastNode = (props->m_Path->m_CurrentNode + (props->m_Path->m_NodeCount - 1)) % props->m_Path->m_NodeCount;
-              int nextNodeAngleToMoby =
-                  Atan2(props->m_Path->m_Nodes[nextNode].m_Position.x - moby->m_Position.x, props->m_Path->m_Nodes[nextNode].m_Position.y - moby->m_Position.y, 0);
-              int lastNodeAngleToMoby =
-                  Atan2(props->m_Path->m_Nodes[lastNode].m_Position.x - moby->m_Position.x, props->m_Path->m_Nodes[lastNode].m_Position.y - moby->m_Position.y, 0);
-              int uv16;
-
-              if (func_80017908(spyroAngleToMoby, nextNodeAngleToMoby) < func_80017908(spyroAngleToMoby, lastNodeAngleToMoby))
-                props->m_Path->m_CurrentNode = lastNode;
-              else
-                props->m_Path->m_CurrentNode = nextNode;
-            }
-          }
-
-          uv16 = Atan2(props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position.x - moby->m_Position.x,
-                         props->m_Path->m_Nodes[props->m_Path->m_CurrentNode].m_Position.y - moby->m_Position.y, 0) -
-                       moby->m_Rotation.z &
-                   0xff;
-          if (uv16 > 128)
-            uv16 -= 256;
-          moby->m_Rotation.z += (uv16 < -8 ? -8 : (uv16 > 8 ? 8 : uv16));
-          if (ABS(uv16) < 32) {
-            func_80039398(moby, moby->m_State == 4 ? 210 : 96, 512, 512, 39);
-          }
-
-          if (D_80075794) {
-            if (moby->m_State == 2) {
-              moby->m_State = 3;
-              moby->m_AnimationState.m_FrameProgress = 0;
-              moby->m_AnimationState.m_PerFrameProgress = g_Models[moby->m_Class]->m_Animations[3]->m_ProgressPerTick;
-              moby->m_AnimationState.m_Animation = 3;
-              moby->m_AnimationState.m_NextAnimation = 3;
-              moby->m_AnimationState.m_Frame = 0;
-              moby->m_AnimationState.m_NextFrame = 1;
-            } else {
-              MOBY_SWITCH_ANIM_STATE(2)
-            }
-          }
-          break;
-        }
-        case 5: {
-          func_800529E4(moby, UPDATE_PROP_COLLISION);
-          if (D_80075794) {
-            func_800529E4(moby, UPDATE_PROP_ROTMATRIX);
-            func_800385BC(moby, 32); //play poof and sparks?
-            func_80052568(moby);
-          } else {
-            MoveMobyWithGravity(moby, &props->m_Timer, props->unk_0x0/*speed*/, 0, 12, 0);
-          }
-          break;
-        }
-        }
-      }
-      break;
-    }
-
-    case 350: {
-      struct {
-        int m_EnvID;
-        int m_Timer;
-        int m_Flag;
-      } *props = moby->m_Props;
-
-      if (!props->m_Flag) {
-        if (g_VisitedFlags[5]) {
-          func_8002B390(props->m_EnvID, 0xFC, 0); //change env anim flags
-          func_8002B444(props->m_EnvID, 0x77, 0); //set env anim frame
-          moby->m_State = 99;
-        }
-        props->m_Flag = 1;
-      }
-      switch (moby->m_State) {
-      case 0: {
-        if (moby->m_Substate == 31) {
-          moby->m_State = 5;
-        }
-        break;
-      }
-      case 5: {
-        func_8002B390(props->m_EnvID, 0xFC, 0); //change env anim flags
-        moby->m_State = 10;
-        props->m_Timer = 30;
-        moby->m_SoundDistance = 0;
-        PlaySound(g_Spu.m_SoundTable->sound_0x41, moby, 8, &moby->m_SoundChannel);
-        break;
-      }
-      case 10: {
-        if (func_8002B3F4(props->m_EnvID) & 2) {
-          moby->m_State = 99;
-        } else {
-          if (TimerTick(&props->m_Timer, sizeof(props->m_Timer))) {
-            moby->m_State = 11;
-            props->m_Timer = 30;
-          }
-        }
-        break;
-      }
-      case 11: {
-        if (func_8002B3F4(props->m_EnvID) & 2) {
-          moby->m_State = 99;
-        } else {
-          if (TimerTick(&props->m_Timer, sizeof(props->m_Timer))) {
-            moby->m_State = 10;
-            props->m_Timer = 30;
-          }
-        }
-        break;
-      }
-      case 99: {
-        func_800562A4(moby, 1); //stop all sounds made by moby
-        break;
-      }
-      }
 
       break;
     }
+#endif
 
-    case 391: {
-
-      struct {
-        int m_CollisionIndex;
-        Vector3D vec_0x4;
-      } *props = moby->m_Props;
-
-      if (props->m_CollisionIndex >= 0) {
-        Vector3D tripack[3];
-        ColTriUnpack(props->m_CollisionIndex, tripack);
-        VecAdd(&tripack[0], &tripack[0], &tripack[1]);
-        VecAdd(&tripack[0], &tripack[0], &tripack[1]);
-        setXYZ(&tripack[0],
-          tripack[0].x / 3,
-          tripack[0].y / 3,
-          tripack[0].z / 3);
-        VecAdd(&moby->m_Position, &tripack[0], &props->vec_0x4);
-        if ((g_GameTick & 3) == 0) {
-          Vector3D vec;
-          setXYZ(&vec,
-            (COSINE_8(moby->m_Rotation.z) << 16) >> 21,
-            (SINE_8(moby->m_Rotation.z) << 16) >> 21,
-            32);
-          D_800758E4(1, 14, &moby->m_Position, &vec);
-        }
-      } else {
-        Vector3D vec;
-        setXYZ(&vec,
-          (COSINE_8(moby->m_Rotation.z) << 16) >> 17,
-          (SINE_8(moby->m_Rotation.z) << 16) >> 17,
-          0);
-        VecAdd(&vec, &vec, &moby->m_Position);
-        if (func_8004AE38(&vec, &moby->m_Position)) {
-          Vector3D tripack[3];
-          props->m_CollisionIndex = g_CollisionTriangleIndex;
-          ColTriUnpack(props->m_CollisionIndex, tripack);
-          VecAdd(&tripack[0], &tripack[0], &tripack[1]);
-          VecAdd(&tripack[0], &tripack[0], &tripack[1]);
-          setXYZ(&tripack[0],
-            tripack[0].x / 3,
-            tripack[0].y / 3,
-            tripack[0].z / 3);
-          VecSub(&props->vec_0x4, &moby->m_Position, &tripack[0]);
-        }
+#ifdef HAS_MOBY_405
+    case 405: // Water Bubbles (Blue)
+    case 477: // Water Splash (Blue)
+    {
+      // Die if our animation has finished.
+      if (D_80075794) {
+        func_80052568(moby);
       }
-
       break;
     }
+#endif
 
+#ifdef HAS_MOBY_398
     case 398: {
       struct {
         PathData *m_Path;       /* 0x00 */
@@ -2840,7 +3593,91 @@ void func_level_10_8007D9C8(void) {
       }
       break;
     }
-    case 416: { // Balloon
+#endif
+
+#ifdef HAS_MOBY_412
+    case 412: {
+      Moby412Props *props;
+      int angle;
+
+      props = (Moby412Props *)moby->m_Props;
+
+      if ((moby->m_DamageFlags & 0xb0000) && moby->m_State != 2) {
+        moby->m_DamageFlags = 0;
+
+        angle = ANGLE_TO(moby->m_Position, g_Spyro.m_Position);
+
+        props->m_KnockbackAngle = func_80038178(angle, g_Spyro.m_bodyRotation.z, 0x20, 0x40);
+
+        if (moby->m_DamageFlags & 0x10000) {
+          props->m_KnockbackTimer = 0x96;
+        } else {
+          props->m_KnockbackTimer = 0x12c;
+        }
+
+        func_8003ABC0(moby, 3, 0, 0);
+        func_8003B7C0(moby);
+
+        moby->m_State = 2;
+        if (moby->m_AnimationState.m_NextAnimation != 2) {
+          MOBY_ANIM_ADVANCE(moby, 2);
+        }
+        break;
+      }
+
+      func_80038458(moby);
+      func_800533D0(moby);
+
+      switch (moby->m_State) {
+      case 0:
+        if (TimerTick(&props->m_Timer, 4) != 0) {
+          moby->m_State = 1;
+          if (moby->m_AnimationState.m_NextAnimation != 1) {
+            MOBY_ANIM_ADVANCE(moby, 1);
+          }
+        } else {
+          func_80039AA8(moby, props);
+          func_800529E4(moby, 1);
+        }
+        break;
+
+      case 1:
+        func_80038458(moby);
+
+        if (D_80075794) {
+          props->m_Timer = RandRange(0x78, 0xf0);
+          moby->m_State = 0;
+
+          if (moby->m_AnimationState.m_NextAnimation != 0) {
+            MOBY_ANIM_ADVANCE(moby, 0);
+          }
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+
+      case 2:
+        MoveMobyWithGravity(moby, &props->m_KnockbackTimer, props->m_KnockbackAngle, 0, 0xc, 0);
+
+        if (D_80075794) {
+          func_800529E4(moby, 4);
+          func_800385BC(moby, 0x10);
+          func_80052568(moby);
+        } else {
+          func_800529E4(moby, 1);
+        }
+        break;
+
+      default:
+        func_800529E4(moby, 1);
+        break;
+      }
+      break;
+    }
+#endif
+
+#ifdef HAS_BALLOONIST
+    case MOBYCLASS_BALLOON: { // Balloon
       struct {
         int m_StartZ;
       } *balloonProps = moby->m_Props;
@@ -2855,51 +3692,168 @@ void func_level_10_8007D9C8(void) {
       moby->m_Substate += g_DeltaTime;
       break;
     }
+#endif
+
+#ifdef HAS_MOBY_421
     case 421: {
-      // todo
-      break;
-    }
-    case 405:   // Water Bubbles (Blue)
-    case 477: { // Water Splash (Blue)
-      // Die if our animation has finished.
-      if (D_80075794) {
+      Moby421Props *props;
+      Moby421Props **drop;
+      int shakeX;
+      int shakeY;
+      int i;
+
+      props = (Moby421Props *)moby->m_Props;
+
+      if (props->m_PlaceOnFloor == 1) {
+        func_80038458(moby);
+        func_800533D0(moby);
+      }
+
+      if (moby->m_State == 0) {
+        props->m_Timer += g_DeltaTime;
+
+        if (props->m_Timer >= 0x1e1) {
+          props->m_Timer = 0;
+
+          moby->m_Rotation.x = props->m_StoredRotX;
+          moby->m_Rotation.y = props->m_StoredRotY;
+          moby->m_Position.z = props->m_StoredPosZ;
+
+          moby->m_State = 1;
+          moby->m_AnimationState.m_FrameProgress = 8;
+          moby->m_AnimationState.m_PerFrameProgress = 8;
+          moby->m_AnimationState.m_NextAnimation = 1;
+
+          props->m_Child = g_SpawnMoby(0x1a6, moby);
+
+          props->m_Child->m_Rotation.x = moby->m_Rotation.x;
+          props->m_Child->m_Rotation.y = moby->m_Rotation.y;
+          props->m_Child->m_Rotation.z = moby->m_Rotation.z;
+          props->m_Child->m_AnimationState.m_PerFrameProgress = 0x10;
+          props->m_Child->m_UpdateDistance = 0;
+          props->m_Child->m_RenderRadius = 0;
+          props->m_Child->m_WasDrawn = 0;
+          props->m_Child->m_DepthOffset = 5;
+
+          func_8003851C(moby, 0, 0);
+        } else if (props->m_Timer >= 0x1a0) {
+          moby->m_Rotation.x = props->m_StoredRotX + D_8006E638[(props->m_Timer - 416) >> 1][0];
+          moby->m_Rotation.y = props->m_StoredRotY + D_8006E638[(props->m_Timer - 416) >> 1][1];
+          moby->m_Position.z = props->m_StoredPosZ + (ABS2(D_8006E638[(props->m_Timer - 416) >> 1][0]) + ABS2(D_8006E638[(props->m_Timer - 416) >> 1][1])) * 6;
+
+          if (moby->m_SoundChannel == 0x7f) {
+            func_8003851C(moby, 1, 0);
+          }
+        } else if (props->m_Timer >= 0x19c) {
+          props->m_StoredRotX = moby->m_Rotation.x;
+          props->m_StoredRotY = moby->m_Rotation.y;
+          props->m_StoredPosZ = moby->m_Position.z;
+
+          if (props->m_PlaceOnFloor == 1) {
+            props->m_Timer = 0;
+          }
+        }
+      } else {
+        if (moby->m_AnimationState.m_Animation == 1) {
+          props->m_Timer += g_DeltaTime;
+          props->m_Child->m_RenderRadius = 0x10;
+          props->m_Child->m_UpdateDistance = 0xff;
+        }
+
+        if (props->m_Timer >= 0xe6) {
+          func_80052568(props->m_Child);
+          props->m_Timer = rand() & 0xff;
+
+          moby->m_AnimationState.m_FrameProgress = 8;
+          moby->m_AnimationState.m_PerFrameProgress = 8;
+          moby->m_State = 0;
+          moby->m_AnimationState.m_NextAnimation = 0;
+
+          if (moby->m_SoundChannel == 0x7f) {
+            func_8003851C(moby, 3, 0);
+          }
+        }
+      }
+
+      if (moby->m_DamageFlags & 0xb0000) {
+        drop = func_8003ABC0(moby, 5, 0, 0);
+
+        if (props->m_PlaceOnFloor == 1) {
+          *((u_char *)(*drop) + 0x0e) = props->m_PlaceOnFloor;
+        }
+
+        moby->m_SoundDistance = 0x20;
+        func_8003851C(moby, 4, 0);
+
+        for (i = 0; i < 2; i++) {
+          if (g_DynMobyMax - g_DynMobyCount < 21) {
+            break;
+          }
+          g_SpawnMoby(0x1a7, moby);
+          g_SpawnMoby(0x1a8, moby);
+        }
+
+        for (i = 0; i < 6; i++) {
+          if (g_DynMobyMax - g_DynMobyCount < 21) {
+            break;
+          }
+          g_SpawnMoby(0x1a9, moby);
+        }
+
+        for (i = 0; i < 8; i++) {
+          Vector3D vec;
+          vec.x = (COSINE_8(i << 5) >> 8) * 3;
+          vec.y = (SINE_8(i << 5) >> 8) * 3;
+          vec.z = 0x18;
+          D_800758E4(1, 0, &moby->m_Position, &vec);
+        }
+
+        D_800758E4(0x10, 0x46, &moby->m_Position, (void *)0x18);
+
+        if (moby->m_State == 1) {
+          func_80052568(props->m_Child);
+        }
+
+        PlaySound(g_Models[moby->m_Class]->m_Sounds[2], moby, 8, moby->m_SoundChannel);
         func_80052568(moby);
       }
       break;
     }
-    case 76:
-    case 426:
-    case 427:
-    case 428:
-    case 429:
-    case 430:
-    case 431:
-    case 432:
-    case 433:
-    case 434:
-    case 435:
-    case 436:
-    case 437:
-    case 438:
-    case 439:
-    case 440:
-    case 441:
-    case 442:
-    case 443:
-    case 444:
-    case 445:
-    case 446:
-    case 447:
-    case 448:
-    case 449:
-    case 450: // Letters
-    case 451: {
+#endif
+
+    case MOBYCLASS_LETTER_APOSTROPHE:
+    case MOBYCLASS_LETTER_A:
+    case MOBYCLASS_LETTER_B:
+    case MOBYCLASS_LETTER_C:
+    case MOBYCLASS_LETTER_D:
+    case MOBYCLASS_LETTER_E:
+    case MOBYCLASS_LETTER_F:
+    case MOBYCLASS_LETTER_G:
+    case MOBYCLASS_LETTER_H:
+    case MOBYCLASS_LETTER_I:
+    case MOBYCLASS_LETTER_J:
+    case MOBYCLASS_LETTER_K:
+    case MOBYCLASS_LETTER_L:
+    case MOBYCLASS_LETTER_M:
+    case MOBYCLASS_LETTER_N:
+    case MOBYCLASS_LETTER_O:
+    case MOBYCLASS_LETTER_P:
+    case MOBYCLASS_LETTER_Q:
+    case MOBYCLASS_LETTER_R:
+    case MOBYCLASS_LETTER_S:
+    case MOBYCLASS_LETTER_T:
+    case MOBYCLASS_LETTER_U:
+    case MOBYCLASS_LETTER_V:
+    case MOBYCLASS_LETTER_W:
+    case MOBYCLASS_LETTER_X:
+    case MOBYCLASS_LETTER_Y:
+    case MOBYCLASS_LETTER_Z: { // Letters
       MobyLetterProps *letterProps = moby->m_Props;
 
       if (letterProps->m_Parent->m_State == 0 || letterProps->m_Parent->m_Substate != moby->m_State) {
         func_80052568(moby);
       } else if (letterProps->m_Parent->m_Class == 9) {
-        if (OctDistance(&letterProps->m_Parent->m_Position, &g_Spyro.m_Position) < 0x400) {
+        if (DISTANCE_TO_SPYRO(letterProps->m_Parent) < 0x400) {
           int oldval;
           oldval = COSINE_8(moby->m_Substate);
           moby->m_Substate += 8;
@@ -2913,7 +3867,7 @@ void func_level_10_8007D9C8(void) {
           Vector3D letterWaveOriginOffset;
 
           moby->m_Substate += 8;
-          anglespyro = Atan2(g_Spyro.m_Position.x - letterProps->m_Parent->m_Position.x, g_Spyro.m_Position.y - letterProps->m_Parent->m_Position.y, 0);
+          anglespyro = ANGLE_TO(g_Spyro.m_Position, letterProps->m_Parent->m_Position);
           letterForwardOffset.x = COSINE_8(anglespyro) * 3 >> 4;
           letterForwardOffset.y = SINE_8(anglespyro) * 3 >> 4;
           letterForwardOffset.z = 0;
@@ -2947,10 +3901,7 @@ void func_level_10_8007D9C8(void) {
         moby->m_Substate += 8;
         moby->m_Rotation.z = moby->m_FloorDistance + (COSINE_8(moby->m_Substate) * 3 >> 9);
       }
-      break;
-    }
+    } break;
     }
   }
 }
-
-#include "overlays/moby_spawn.inc.h"

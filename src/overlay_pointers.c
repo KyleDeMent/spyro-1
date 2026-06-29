@@ -538,7 +538,7 @@ void SetOverlayPointers(void) {
   case 12:
     g_Buffers.m_CopyBuf = func_level_12_80085594; // g_CopyBufferPointer
     g_SpawnMoby = SpawnMoby_level_12;             // g_SpawnMoby
-    g_UpdateMoby = func_level_12_8007AE40;        // g_UpdateMoby
+    g_UpdateMoby = UpdateMoby_level_12;        // g_UpdateMoby
     D_800758E4 = func_level_12_800844A0;          // g_SpawnParticle
     g_UpdateParticle = func_level_12_80083274;    // g_UpdateParticle
     // D_800757A0 = (int *)0x0;
@@ -990,7 +990,7 @@ void SetOverlayPointers(void) {
   case 60:
     g_Buffers.m_CopyBuf = func_level_60_80085CE0; // g_CopyBufferPointer
     g_SpawnMoby = func_level_60_80083568;         // g_SpawnMoby
-    g_UpdateMoby = func_level_60_8007D938;        // g_UpdateMoby
+    g_UpdateMoby = UpdateMoby_level_60;        // g_UpdateMoby
     D_800758E4 = func_level_60_80084EA0;          // g_SpawnParticle
     g_UpdateParticle = func_level_60_80083ED8;    // g_UpdateParticle
     D_800757A0 = Balloonist1_level_60;

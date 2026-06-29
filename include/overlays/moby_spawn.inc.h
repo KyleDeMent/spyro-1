@@ -248,12 +248,12 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
   }
 #endif
 
-#ifdef HAS_MOBY_194
+#ifdef HAS_WOODEN_CHEST
 #define HAS_ANY_CHEST_FRAGMENTS
   // Wooden chest fragments
-  case 255:
-  case 256:
-  case 257:
+  case MOBYCLASS_WOODEN_CHEST_FRAG_1:
+  case MOBYCLASS_WOODEN_CHEST_FRAG_2:
+  case MOBYCLASS_WOODEN_CHEST_FRAG_3:
 #endif
 
 #ifdef HAS_MOBY_329
@@ -264,11 +264,11 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
   case 69:
 #endif
 
-#if defined(HAS_MOBY_195) || defined(HAS_MOBY_174) || defined(HAS_MOBY_401)
+#if defined(HAS_METAL_CHEST) || defined(HAS_LOCKED_CHEST) || defined(HAS_MOBY_401)
 #define HAS_ANY_CHEST_FRAGMENTS
-  case 309: // Metal, locked and armored chest fragments
-  case 310:
-  case 311:
+  case MOBYCLASS_METAL_CHEST_FRAG_1: // Metal, locked and armored chest fragments
+  case MOBYCLASS_METAL_CHEST_FRAG_2:
+  case MOBYCLASS_METAL_CHEST_FRAG_3:
 #endif
 
 #ifdef HAS_MOBY_421
@@ -332,8 +332,8 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
     break;
   }
 #endif
-#ifdef HAS_MOBY_250
-  case 251: {   // Dragon fragment
+#ifdef HAS_DRAGON
+  case MOBYCLASS_CRYSTAL_DRAGON_FRAGMENT: {   // Dragon fragment
     Vector3D v; // Name from S2
     char pad[8];
     int randRes;

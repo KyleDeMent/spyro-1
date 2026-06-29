@@ -2,10 +2,10 @@
 
 #define LEVEL 11
 
-#define HAS_MOBY_194
+#define HAS_WOODEN_CHEST
 #define HAS_MOBY_234
-#define HAS_MOBY_250
-#define HAS_MOBY_195
+#define HAS_DRAGON
+#define HAS_METAL_CHEST
 #define HAS_MOBY_405
 #define HAS_MOBY_421
 

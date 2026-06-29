@@ -75,6 +75,9 @@ typedef struct {
 /// @brief: Create the environment
 void func_8002B9CC(void);
 
+/// @brief
+void func_8002B390(int pID, int pKeep, int pEnable);
+
 /// @brief Initializes environment animations
 void func_8002B4AC(void);
 

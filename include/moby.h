@@ -269,16 +269,26 @@ typedef enum {
   MOBYCLASS_GEM_10 = 86,
   MOBYCLASS_GEM_25 = 87,
 
+  MOBYCLASS_DRAGON_PAD_FAIRY = 110,
+
   MOBYCLASS_SPARX = 120, // Gets spawned in load scene
 
   MOBYCLASS_KEY = 173, // Both Hud and level key
   MOBYCLASS_LOCKED_CHEST = 174,
 
+  MOBYCLASS_BALLOONIST = 192,
+
   MOBYCLASS_WOODEN_CHEST = 194,
   MOBYCLASS_METAL_CHEST = 195,
 
+  MOBYCLASS_FODDER_RAT = 236,
+
   MOBYCLASS_CRYSTAL_DRAGON = 250,
   MOBYCLASS_CRYSTAL_DRAGON_FRAGMENT = 251,
+
+  MOBYCLASS_WOODEN_CHEST_FRAG_1 = 255,
+  MOBYCLASS_WOODEN_CHEST_FRAG_2 = 256,
+  MOBYCLASS_WOODEN_CHEST_FRAG_3 = 257,
 
   MOBYCLASS_NUMBER_0 = 260,
   MOBYCLASS_NUMBER_1,
@@ -298,9 +308,13 @@ typedef enum {
   MOBYCLASS_FLIGHT_CHEST = 299,
 
   MOBYCLASS_FLIGHT_PLANE = 308,
+  MOBYCLASS_METAL_CHEST_FRAG_1 = 309,
+  MOBYCLASS_METAL_CHEST_FRAG_2 = 310,
+  MOBYCLASS_METAL_CHEST_FRAG_3 = 311,
 
   MOBYCLASS_PLUS = 317,
   MOBYCLASS_CARET = 321,
+  MOBYCLASS_FODDER_RESPAWN = 323,
   MOBYCLASS_PERIOD = 327,
 
   MOBYCLASS_SPRING_CHEST = 329,
@@ -313,6 +327,8 @@ typedef enum {
 
   MOBYCLASS_FLIGHT_TRAIN = 407,
   MOBYCLASS_FLIGHT_WAGON = 408,
+
+  MOBYCLASS_BALLOON = 416,
 
   MOBYCLASS_LETTER_A = 426,
   MOBYCLASS_LETTER_B,
@@ -457,6 +473,76 @@ typedef struct {
 } Moby114Props;
 
 typedef struct {
+  int m_Angle;
+  int m_Timer;
+  int m_AttackLatchOrTimer;
+  int m_WaitTimer;
+  int m_TargetMobyIndex;
+} Moby115Props;
+
+typedef struct {
+  int m_UnlockId;
+} Moby157Props;
+
+typedef struct {
+  PathData *m_Path;
+  int m_Mode;
+  int m_Timer;
+  int m_KnockbackAngle;
+  int m_KnockbackTimer;
+  int m_KnockbackZVel;
+  int m_ActionPhase;
+  short m_RotVelX;
+  short m_RotVelY;
+  int m_ChasePhase;
+  int m_AttackState;
+  int m_LinkedMobyIndex;
+} Moby165Props;
+
+typedef struct {
+  PathData *m_Path;
+  int m_Mode;
+  int m_CloseEnough;
+  int m_UseWideDistance;
+  int m_Timer;
+} Moby166Props;
+
+typedef struct {
+  int m_KeyMobyIndex;
+  int m_Timer;
+  int m_StoredRotX;
+  int m_StoredRotY;
+  int m_StoredPosZ;
+  int m_FlameHeat;
+} MobyLockedChestProps;
+
+typedef struct {
+  int unk_0x0;
+  int m_Timer;
+  PathData* m_Path;
+  int unk_0xC;
+  int unk_0x10;
+  int unk_0x14;
+  Vector3D vec_0x18[1];
+} Moby339Props;
+
+typedef struct {
+  int unk_0x00[8];
+  int m_Timer;
+  int m_KnockbackAngle;
+  int m_KnockbackTimer;
+} Moby412Props;
+
+typedef struct {
+  Moby *m_Child;
+  int m_Timer;
+  int m_StoredRotX;
+  int m_StoredRotY;
+  int m_StoredPosZ;
+  int m_PlaceOnFloor;
+} Moby421Props;
+
+typedef struct {
   short unk_0x00;
   short unk_0x02;
   short unk_0x04;
@@ -599,11 +685,10 @@ typedef struct {
   int m_RespawnInterval; /* 0x08 - reset value */
 } MobyRespawnerProps;
 typedef struct {
-  PathData *m_Path;       /* 0x00 */
-  Vector3D m_FlyInOffset; /* 0x04 - 0x10 */
-  int m_TargetLevelId;    /* 0x10 - which level to enter */
-  int m_FlyInPresetIdx;   /* 0x14 - which fly-in preset */
-  int unk_0x18;
+  int unk_0x00;
+  int m_ParticleTimer;
+  int unk_0x08;
+  int m_HeightLimit;
 } MobyExitVortexProps;
 typedef struct {
   int m_Timer;     /* 0x00: Remaining lifetime frames */

@@ -1,14 +1,21 @@
-#include "common.h"
+#include "moby.h"
 
 #define LEVEL 12
 
-#define HAS_MOBY_194
-#define HAS_MOBY_250
-#define HAS_MOBY_195
+#define HAS_EXIT_VORTEX
+#define HAS_MOBY_115
+#define HAS_MOBY_129
+#define HAS_MOBY_157
+#define HAS_MOBY_165
+#define HAS_MOBY_166
+#define HAS_WOODEN_CHEST
+#define HAS_DRAGON
+#define HAS_LOCKED_CHEST
 #define HAS_MOBY_405
+#define HAS_MOBY_412
 #define HAS_MOBY_421
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_12", func_level_12_8007AE40);
+#include "overlays/moby_update.inc.h"
 
 #include "overlays/moby_spawn.inc.h"
 
