@@ -3,6 +3,7 @@
 #define LEVEL 60
 
 #define HAS_PORTAL
+#define HAS_MOBY_13
 #define HAS_WOODEN_CHEST
 #define HAS_METAL_CHEST
 #define HAS_BALLOONIST

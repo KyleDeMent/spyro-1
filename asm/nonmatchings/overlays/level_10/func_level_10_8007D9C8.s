@@ -101,8 +101,8 @@ glabel func_level_10_8007D9C8
 /* 7F57B4 8007D9EC 9C01B1AF */  sw         $s1, 0x19C($sp)
 /* 7F57B8 8007D9F0 FB47010C */  jal        func_80051FEC
 /* 7F57BC 8007D9F4 9801B0AF */   sw        $s0, 0x198($sp)
-/* 7F57C0 8007D9F8 0780103C */  lui        $s0, %hi(D_8006FCF4 + 0x400)
-/* 7F57C4 8007D9FC F4001026 */  addiu      $s0, $s0, %lo(D_8006FCF4 + 0x400)
+/* 7F57C0 8007D9F8 0780103C */  lui        $s0, %hi(g_SonyImage + 0x400)
+/* 7F57C4 8007D9FC F4001026 */  addiu      $s0, $s0, %lo(g_SonyImage + 0x400)
 /* 7F57C8 8007DA00 21200002 */  addu       $a0, $s0, $zero
 /* 7F57CC 8007DA04 B048010C */  jal        func_800522C0
 /* 7F57D0 8007DA08 21280000 */   addu      $a1, $zero, $zero
@@ -119,8 +119,8 @@ glabel func_level_10_8007D9C8
 /* 7F57F8 8007DA30 B048010C */  jal        func_800522C0
 /* 7F57FC 8007DA34 21200002 */   addu      $a0, $s0, $zero
 .Llevel_10_8007DA38:
-/* 7F5800 8007DA38 07800A3C */  lui        $t2, %hi(D_8006FCF4 + 0x400)
-/* 7F5804 8007DA3C F4004A25 */  addiu      $t2, $t2, %lo(D_8006FCF4 + 0x400)
+/* 7F5800 8007DA38 07800A3C */  lui        $t2, %hi(g_SonyImage + 0x400)
+/* 7F5804 8007DA3C F4004A25 */  addiu      $t2, $t2, %lo(g_SonyImage + 0x400)
 /* 7F5808 8007DA40 0000538D */  lw         $s3, 0x0($t2)
 /* 7F580C 8007DA44 04004A25 */  addiu      $t2, $t2, 0x4
 /* 7F5810 8007DA48 531F6012 */  beqz       $s3, .Llevel_10_80085798
@@ -473,8 +473,8 @@ glabel func_level_10_8007D9C8
 /* 7F5D00 8007DF38 FF000224 */  addiu      $v0, $zero, 0xFF
 /* 7F5D04 8007DF3C 31176210 */  beq        $v1, $v0, .Llevel_10_80083C04
 /* 7F5D08 8007DF40 00000000 */   nop
-/* 7F5D0C 8007DF44 0780103C */  lui        $s0, %hi(D_8006FCF4 + 0x400)
-/* 7F5D10 8007DF48 F4001026 */  addiu      $s0, $s0, %lo(D_8006FCF4 + 0x400)
+/* 7F5D0C 8007DF44 0780103C */  lui        $s0, %hi(g_SonyImage + 0x400)
+/* 7F5D10 8007DF48 F4001026 */  addiu      $s0, $s0, %lo(g_SonyImage + 0x400)
 /* 7F5D14 8007DF4C E9F70108 */  j          .Llevel_10_8007DFA4
 /* 7F5D18 8007DF50 00000000 */   nop
 .Llevel_10_8007DF54:

@@ -3,6 +3,7 @@
 #define LEVEL 12
 
 #define HAS_EXIT_VORTEX
+#define HAS_MOBY_13
 #define HAS_MOBY_115
 #define HAS_MOBY_129
 #define HAS_MOBY_157
