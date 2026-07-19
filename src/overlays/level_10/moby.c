@@ -2,13 +2,23 @@
 
 #define LEVEL 10
 
-#define HAS_MOBY_194
-#define HAS_MOBY_250
-#define HAS_MOBY_398
-#define HAS_MOBY_405
-#define HAS_MOBY_421
+#define HAS_PORTAL
+#define HAS_SHEEP_FODDER
+#define HAS_WATERFALL
+#define HAS_WHIRLWIND
+#define HAS_WOODEN_CHEST
+#define HAS_DRAGON
+#define HAS_PORTAL_PATH
+#define HAS_WATER
+#define HAS_EXTRA_LIFE_CHEST
+#define HAS_SOUND
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_10", func_level_10_8007D9C8);
+#define HAS_SCARED_GNORC_ENEMY
+#define HAS_GNORC_GEM_THIEF_ENEMY
+
+// #define DECOMP_NAME func_level_10_8007D9C8
+
+#include "overlays/moby_update.inc.h"
 
 #include "overlays/moby_spawn.inc.h"
 

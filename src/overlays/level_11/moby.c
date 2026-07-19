@@ -2,14 +2,31 @@
 
 #define LEVEL 11
 
-#define HAS_MOBY_194
-#define HAS_MOBY_234
-#define HAS_MOBY_250
-#define HAS_MOBY_195
-#define HAS_MOBY_405
-#define HAS_MOBY_421
+#define HAS_WHIRLWIND
+#define HAS_EXIT_VORTEX
+#define HAS_GEM_SPAWNER
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_11", func_level_11_8007DA78);
+#define HAS_SHEEP_FODDER
+#define HAS_BARRIER_EFFECT
+#define HAS_DRAGON
+#define HAS_WATER
+#define HAS_SOUND
+#define HAS_BALLOONIST
+
+#define HAS_WOODEN_CHEST
+#define HAS_METAL_CHEST
+#define HAS_LOCKED_CHEST
+#define HAS_EXTRA_LIFE_CHEST
+
+#define HAS_RAM_ENEMY
+#define HAS_SHEPHERD_ENEMY
+
+#define HAS_EGG_THIEF
+#define HAS_STONE_HILL_TREES
+
+// #define DECOMP_NAME func_level_11_8007DA78
+
+#include "overlays/moby_update.inc.h"
 
 #include "overlays/moby_spawn.inc.h"
 

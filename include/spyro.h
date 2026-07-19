@@ -3,6 +3,7 @@
 
 #include <sys/types.h>
 
+#include <camera.h>
 #include <common.h>
 #include <libgte.h>
 #include <matrix.h>
@@ -234,7 +235,7 @@ typedef struct {
   int unk_0x214;
   int m_fallingState; // Not sure
   Vector3D *unk_0x21c;
-  int unk_0x220;
+  SphericalCoordsOffset *unk_0x220;
 
   // Used for the cannon, and whirlwinds, camera related
   Moby *m_mobyInUseBySpyro;

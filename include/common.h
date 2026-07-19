@@ -46,6 +46,15 @@
 #define MIN(a, b) ((b) < (a) ? (b) : (a))
 
 #define CLAMP(x, min, max) ((x) < (min) ? (min) : ((x) > (max) ? (max) : (x)))
+#define CLAMP_VAR(x, min, max)                                                 \
+  {                                                                            \
+    if ((x) < (min)) {                                                         \
+      (x) = (min);                                                             \
+    }                                                                          \
+    if ((x) > (max)) {                                                         \
+      (x) = (max);                                                             \
+    }                                                                          \
+  }
 
 typedef enum {
   GS_Playing = 0,

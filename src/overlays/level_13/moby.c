@@ -2,17 +2,29 @@
 
 #define LEVEL 13
 
-#define HAS_MOBY_194
-#define HAS_MOBY_234
-#define HAS_MOBY_250
-#define HAS_MOBY_329
-#define HAS_MOBY_392
-#define HAS_MOBY_195
-#define HAS_MOBY_405
-#define HAS_MOBY_421
+#define HAS_EXIT_VORTEX
+
+#define HAS_WOODEN_CHEST
+#define HAS_METAL_CHEST
+#define HAS_SPRING_CHEST
+#define HAS_FAN_CHEST
+#define HAS_EXTRA_LIFE_CHEST
+#define HAS_SOUND
+#define HAS_BARRIER_EFFECT
+#define HAS_DRAGON
+#define HAS_WATER
 #define HAS_MOBY_502
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_13", func_level_13_8007DA54);
+#define HAS_BULL_ENEMY
+#define HAS_MATADOR_ENEMY
+
+#define HAS_CHICKEN_FODDER
+
+#define HAS_EGG_THIEF
+
+// #define DECOMP_NAME func_level_13_8007DA54
+
+#include "overlays/moby_update.inc.h"
 
 #include "overlays/moby_spawn.inc.h"
 

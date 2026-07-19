@@ -486,7 +486,7 @@ dlabel D_800758DC
 dlabel D_800758E0
 /* 660B8 800758E0 */ .space 0x04
 
-dlabel D_800758E4
+dlabel g_SpawnParticle
 /* 660BC 800758E4 */ .space 0x04
 
 dlabel g_LifeOrbCount

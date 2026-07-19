@@ -3,6 +3,10 @@
 
 #include "moby.h"
 
+void func_80037E98(Moby *pMoby);
+
+#define TIMER_TICK(timer) func_80037F90(&(timer), sizeof((timer)))
+
 /// @brief Function that ticks a timer
 /// @param pTimer The timer to update
 /// @param pTimerType The type of timer, equal to the size of the type
@@ -21,8 +25,34 @@ int func_80038074(int p1, int p2);
 /// @return The normalized difference
 int func_800381BC(int p1, int p2);
 
+int func_80038250(Vector3D *pPoint);
+
+/// @brief Looks for the floor below the Moby
+int func_80038340(Moby *pMoby);
+
 /// @brief Plays a sound from a Moby
 void func_8003851C(Moby *pMoby, int pSoundIndex, u_char *pChannel);
+
+/// @brief Find the path node furthest away from Spyro
+int func_80038BB0(PathData *pPathData);
+
+/// @brief Checks if a point is within a rectangle
+int func_80038C4C(Vector3D *point, Vector3D *rect);
+
+/// @brief Rotate moby to face Spyro
+int RotateMobyToSpyro(Moby *pMoby, int rotSpeed, int withinAngle,
+                      int continueRotation);
+
+/// @brief Rotate moby to face an angle
+int RotateMobyToAngle(Moby *pMoby, int targetAngle, int rotSpeed,
+                      int withinAngle, int continueRotation);
+
+int func_80039398(Moby *pMoby, int distance, int floorOffset, int radius,
+                  int flags);
+
+/// @brief Updates moby movement with timed horizontal motion and gravity.
+int MoveMobyWithGravity(Moby *pMoby, int *pTimer, int pSpeed, int *pZVelocity,
+                        int pTimerDecrement, int pGravity);
 
 /**
  * @brief Moves a moby along a 3D path with rotation toward waypoints

@@ -1844,8 +1844,8 @@ void LoadLevel(int pArg) {
     D_80075870 = 0; // Unused Var
     D_80075874 = 0; // Unused Var
 
-    D_80075838 = 0; // Saved into save file, unused var 1
-    D_8007583C = 0; // Saved into save file, unused var 2
+    D_80075838[0] = 0; // Saved into save file, unused var 1
+    D_80075838[1] = 0; // Saved into save file, unused var 2
 
     D_80075670 = 0; // Unused Var
     D_80075674 = 0; // Unused Var

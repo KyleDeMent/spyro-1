@@ -2,13 +2,24 @@
 
 #define LEVEL 14
 
-#define HAS_MOBY_194
-#define HAS_MOBY_234
-#define HAS_MOBY_250
-#define HAS_MOBY_195
-#define HAS_MOBY_507
+#define HAS_EXIT_VORTEX
+#define HAS_GEM_SPAWNER
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_14", func_level_14_8007AF94);
+#define HAS_WOODEN_CHEST
+#define HAS_METAL_CHEST
+
+#define HAS_BARRIER_EFFECT
+#define HAS_DRAGON
+
+#define HAS_TOASTY_ENEMY
+#define HAS_DOG_ENEMY //also includes the shepherd guy for the dog
+
+#define HAS_LAVA
+#define HAS_SOUND
+
+//#define DECOMP_NAME func_level_14_8007AF94
+
+#include "overlays/moby_update.inc.h"
 
 #include "overlays/moby_spawn.inc.h"
 

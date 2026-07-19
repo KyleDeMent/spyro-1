@@ -1004,8 +1004,8 @@ glabel func_level_60_8007D938
 /* 51E6CA8 8007E6E0 0C000524 */  addiu      $a1, $zero, 0xC
 /* 51E6CAC 8007E6E4 21306002 */  addu       $a2, $s3, $zero
 /* 51E6CB0 8007E6E8 6000073C */  lui        $a3, (0x602080 >> 16)
-/* 51E6CB4 8007E6EC 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E6CB8 8007E6F0 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E6CB4 8007E6EC 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E6CB8 8007E6F0 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E6CBC 8007E6F4 00000000 */  nop
 /* 51E6CC0 8007E6F8 09F84000 */  jalr       $v0
 /* 51E6CC4 8007E6FC 8020E734 */   ori       $a3, $a3, (0x602080 & 0xFFFF)
@@ -1332,8 +1332,8 @@ glabel func_level_60_8007D938
 /* 51E719C 8007EBD4 10000424 */  addiu      $a0, $zero, 0x10
 /* 51E71A0 8007EBD8 4D000524 */  addiu      $a1, $zero, 0x4D
 /* 51E71A4 8007EBDC 21300002 */  addu       $a2, $s0, $zero
-/* 51E71A8 8007EBE0 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E71AC 8007EBE4 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E71A8 8007EBE0 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E71AC 8007EBE4 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E71B0 8007EBE8 00000000 */  nop
 /* 51E71B4 8007EBEC 09F84000 */  jalr       $v0
 /* 51E71B8 8007EBF0 21380000 */   addu      $a3, $zero, $zero
@@ -1486,8 +1486,8 @@ glabel func_level_60_8007D938
 /* 51E73F8 8007EE30 01000524 */  addiu      $a1, $zero, 0x1
 /* 51E73FC 8007EE34 0C006626 */  addiu      $a2, $s3, 0xC
 /* 51E7400 8007EE38 6800A727 */  addiu      $a3, $sp, 0x68
-/* 51E7404 8007EE3C 0780033C */  lui        $v1, %hi(D_800758E4)
-/* 51E7408 8007EE40 E458638C */  lw         $v1, %lo(D_800758E4)($v1)
+/* 51E7404 8007EE3C 0780033C */  lui        $v1, %hi(g_SpawnParticle)
+/* 51E7408 8007EE40 E458638C */  lw         $v1, %lo(g_SpawnParticle)($v1)
 /* 51E740C 8007EE44 03004230 */  andi       $v0, $v0, 0x3
 /* 51E7410 8007EE48 6C00A2AF */  sw         $v0, 0x6C($sp)
 /* 51E7414 8007EE4C 14000224 */  addiu      $v0, $zero, 0x14
@@ -2365,16 +2365,16 @@ glabel func_level_60_8007D938
 /* 51E80F8 8007FB30 46000524 */  addiu      $a1, $zero, 0x46
 /* 51E80FC 8007FB34 0C007026 */  addiu      $s0, $s3, 0xC
 /* 51E8100 8007FB38 21300002 */  addu       $a2, $s0, $zero
-/* 51E8104 8007FB3C 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E8108 8007FB40 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E8104 8007FB3C 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E8108 8007FB40 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E810C 8007FB44 00000000 */  nop
 /* 51E8110 8007FB48 09F84000 */  jalr       $v0
 /* 51E8114 8007FB4C 08000724 */   addiu     $a3, $zero, 0x8
 /* 51E8118 8007FB50 10000424 */  addiu      $a0, $zero, 0x10
 /* 51E811C 8007FB54 46000524 */  addiu      $a1, $zero, 0x46
 /* 51E8120 8007FB58 21300002 */  addu       $a2, $s0, $zero
-/* 51E8124 8007FB5C 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E8128 8007FB60 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E8124 8007FB5C 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E8128 8007FB60 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E812C 8007FB64 00000000 */  nop
 /* 51E8130 8007FB68 09F84000 */  jalr       $v0
 /* 51E8134 8007FB6C 10000724 */   addiu     $a3, $zero, 0x10
@@ -2521,8 +2521,8 @@ glabel func_level_60_8007D938
 /* 51E8340 8007FD78 480062A2 */  sb         $v0, 0x48($s3)
 /* 51E8344 8007FD7C 60000224 */  addiu      $v0, $zero, 0x60
 /* 51E8348 8007FD80 570062A2 */  sb         $v0, 0x57($s3)
-/* 51E834C 8007FD84 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E8350 8007FD88 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E834C 8007FD84 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E8350 8007FD88 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E8354 8007FD8C 00000000 */  nop
 /* 51E8358 8007FD90 09F84000 */  jalr       $v0
 /* 51E835C 8007FD94 0C000724 */   addiu     $a3, $zero, 0xC
@@ -2915,8 +2915,8 @@ glabel func_level_60_8007D938
 /* 51E88F8 80080330 500060A2 */  sb         $zero, 0x50($s3)
 /* 51E88FC 80080334 510060A2 */  sb         $zero, 0x51($s3)
 /* 51E8900 80080338 48007EA2 */  sb         $fp, 0x48($s3)
-/* 51E8904 8008033C 0780033C */  lui        $v1, %hi(D_800758E4)
-/* 51E8908 80080340 E458638C */  lw         $v1, %lo(D_800758E4)($v1)
+/* 51E8904 8008033C 0780033C */  lui        $v1, %hi(g_SpawnParticle)
+/* 51E8908 80080340 E458638C */  lw         $v1, %lo(g_SpawnParticle)($v1)
 /* 51E890C 80080344 10000224 */  addiu      $v0, $zero, 0x10
 /* 51E8910 80080348 09F86000 */  jalr       $v1
 /* 51E8914 8008034C 080082AE */   sw        $v0, 0x8($s4)
@@ -2949,8 +2949,8 @@ glabel func_level_60_8007D938
 /* 51E897C 800803B4 02000424 */  addiu      $a0, $zero, 0x2
 /* 51E8980 800803B8 42000524 */  addiu      $a1, $zero, 0x42
 /* 51E8984 800803BC 21300002 */  addu       $a2, $s0, $zero
-/* 51E8988 800803C0 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E898C 800803C4 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E8988 800803C0 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E898C 800803C4 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E8990 800803C8 00000000 */  nop
 /* 51E8994 800803CC 09F84000 */  jalr       $v0
 /* 51E8998 800803D0 21380000 */   addu      $a3, $zero, $zero
@@ -2968,8 +2968,8 @@ glabel func_level_60_8007D938
 /* 51E89C8 80080400 02000424 */  addiu      $a0, $zero, 0x2
 /* 51E89CC 80080404 42000524 */  addiu      $a1, $zero, 0x42
 /* 51E89D0 80080408 21300002 */  addu       $a2, $s0, $zero
-/* 51E89D4 8008040C 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E89D8 80080410 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E89D4 8008040C 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E89D8 80080410 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E89DC 80080414 00000000 */  nop
 /* 51E89E0 80080418 09F84000 */  jalr       $v0
 /* 51E89E4 8008041C 21380000 */   addu      $a3, $zero, $zero
@@ -3394,8 +3394,8 @@ glabel func_level_60_8007D938
 /* 51E9008 80080A40 21082200 */  addu       $at, $at, $v0
 /* 51E900C 80080A44 30E3278C */  lw         $a3, %lo(D_8006E330)($at)
 .Llevel_60_80080A48:
-/* 51E9010 80080A48 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E9014 80080A4C E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E9010 80080A48 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E9014 80080A4C E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E9018 80080A50 00000000 */  nop
 /* 51E901C 80080A54 09F84000 */  jalr       $v0
 /* 51E9020 80080A58 21306002 */   addu      $a2, $s3, $zero
@@ -3785,8 +3785,8 @@ glabel func_level_60_8007D938
 /* 51E95B4 80080FEC 0C000524 */  addiu      $a1, $zero, 0xC
 /* 51E95B8 80080FF0 21306002 */  addu       $a2, $s3, $zero
 /* 51E95BC 80080FF4 21380002 */  addu       $a3, $s0, $zero
-/* 51E95C0 80080FF8 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E95C4 80080FFC E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E95C0 80080FF8 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E95C4 80080FFC E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E95C8 80081000 00000000 */  nop
 /* 51E95CC 80081004 09F84000 */  jalr       $v0
 /* 51E95D0 80081008 01003126 */   addiu     $s1, $s1, 0x1
@@ -4041,16 +4041,16 @@ glabel func_level_60_8007D938
 /* 51E9980 800813B8 02000524 */  addiu      $a1, $zero, 0x2
 /* 51E9984 800813BC 0C007026 */  addiu      $s0, $s3, 0xC
 /* 51E9988 800813C0 21300002 */  addu       $a2, $s0, $zero
-/* 51E998C 800813C4 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E9990 800813C8 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E998C 800813C4 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E9990 800813C8 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E9994 800813CC 00000000 */  nop
 /* 51E9998 800813D0 09F84000 */  jalr       $v0
 /* 51E999C 800813D4 21380000 */   addu      $a3, $zero, $zero
 /* 51E99A0 800813D8 10000424 */  addiu      $a0, $zero, 0x10
 /* 51E99A4 800813DC 46000524 */  addiu      $a1, $zero, 0x46
 /* 51E99A8 800813E0 21300002 */  addu       $a2, $s0, $zero
-/* 51E99AC 800813E4 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E99B0 800813E8 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E99AC 800813E4 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E99B0 800813E8 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E99B4 800813EC 00000000 */  nop
 /* 51E99B8 800813F0 09F84000 */  jalr       $v0
 /* 51E99BC 800813F4 20000724 */   addiu     $a3, $zero, 0x20
@@ -4201,8 +4201,8 @@ glabel func_level_60_8007D938
 /* 51E9BD8 80081610 10000424 */  addiu      $a0, $zero, 0x10
 /* 51E9BDC 80081614 46000524 */  addiu      $a1, $zero, 0x46
 /* 51E9BE0 80081618 0C006626 */  addiu      $a2, $s3, 0xC
-/* 51E9BE4 8008161C 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51E9BE8 80081620 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51E9BE4 8008161C 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51E9BE8 80081620 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51E9BEC 80081624 00000000 */  nop
 /* 51E9BF0 80081628 09F84000 */  jalr       $v0
 /* 51E9BF4 8008162C 18000724 */   addiu     $a3, $zero, 0x18
@@ -5033,8 +5033,8 @@ glabel func_level_60_8007D938
 .Llevel_60_80082248:
 /* 51EA810 80082248 47000524 */  addiu      $a1, $zero, 0x47
 /* 51EA814 8008224C 0C006626 */  addiu      $a2, $s3, 0xC
-/* 51EA818 80082250 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51EA81C 80082254 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51EA818 80082250 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51EA81C 80082254 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51EA820 80082258 00000000 */  nop
 /* 51EA824 8008225C 09F84000 */  jalr       $v0
 /* 51EA828 80082260 21380000 */   addu      $a3, $zero, $zero
@@ -5402,8 +5402,8 @@ glabel func_level_60_8007D938
 /* 51EAD58 80082790 01000424 */  addiu      $a0, $zero, 0x1
 /* 51EAD5C 80082794 42000524 */  addiu      $a1, $zero, 0x42
 /* 51EAD60 80082798 21300002 */  addu       $a2, $s0, $zero
-/* 51EAD64 8008279C 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51EAD68 800827A0 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51EAD64 8008279C 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51EAD68 800827A0 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51EAD6C 800827A4 00000000 */  nop
 /* 51EAD70 800827A8 09F84000 */  jalr       $v0
 /* 51EAD74 800827AC 01000724 */   addiu     $a3, $zero, 0x1
@@ -5536,8 +5536,8 @@ glabel func_level_60_8007D938
 /* 51EAF60 80082998 01000424 */  addiu      $a0, $zero, 0x1
 /* 51EAF64 8008299C 42000524 */  addiu      $a1, $zero, 0x42
 /* 51EAF68 800829A0 21304002 */  addu       $a2, $s2, $zero
-/* 51EAF6C 800829A4 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51EAF70 800829A8 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51EAF6C 800829A4 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51EAF70 800829A8 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51EAF74 800829AC 00000000 */  nop
 /* 51EAF78 800829B0 09F84000 */  jalr       $v0
 /* 51EAF7C 800829B4 01000724 */   addiu     $a3, $zero, 0x1
@@ -5560,8 +5560,8 @@ glabel func_level_60_8007D938
 .Llevel_60_800829EC:
 /* 51EAFB4 800829EC 46000524 */  addiu      $a1, $zero, 0x46
 /* 51EAFB8 800829F0 0C006626 */  addiu      $a2, $s3, 0xC
-/* 51EAFBC 800829F4 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 51EAFC0 800829F8 E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 51EAFBC 800829F4 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 51EAFC0 800829F8 E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 51EAFC4 800829FC 00000000 */  nop
 /* 51EAFC8 80082A00 09F84000 */  jalr       $v0
 /* 51EAFCC 80082A04 10000724 */   addiu     $a3, $zero, 0x10

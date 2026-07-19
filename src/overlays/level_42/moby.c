@@ -1,6 +1,27 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_42", func_level_42_8007AFBC);
+#define LEVEL 42
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_42", func_level_42_80084718);
+#define HAS_WOODEN_CHEST
+#define HAS_METAL_CHEST
+#define HAS_SPRING_CHEST
+#define HAS_FAN_CHEST
+#define HAS_EXTRA_LIFE_CHEST
 
+#define HAS_EXIT_VORTEX
+#define HAS_DRAGON
+#define HAS_CHICKEN_CAGE
+
+#define HAS_FRAG_WATER_SPLASH
+#define HAS_WATER
+
+#define HAS_BOAR_ENEMY
+#define HAS_GNORC_DUDE_ENEMY
+#define HAS_ATTACK_FROG_ENEMY
+#define HAS_KILLER_TREE_ENEMY
+
+#define HAS_TURKEY_FODDER
+
+#include "overlays/moby_update.inc.h"
+
+#include "overlays/moby_spawn.inc.h"

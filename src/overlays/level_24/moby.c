@@ -1,6 +1,26 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_24", func_level_24_8007AEB8);
+#define LEVEL 24
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_24", func_level_24_800845F0);
+#define HAS_WOODEN_CHEST
+#define HAS_METAL_CHEST
+#define HAS_SPRING_CHEST
+#define HAS_LOCKED_CHEST
 
+#define HAS_EXIT_VORTEX
+#define HAS_GEM_SPAWNER
+#define HAS_SOUND
+#define HAS_WHIRLWIND
+
+#define HAS_DRAGON
+#define HAS_LAMPPOST
+
+#define HAS_KAMIKAZE_ENEMY
+#define HAS_DR_SHEMP_ENEMY
+#define HAS_FAT_LADY_ENEMY
+
+#define HAS_PURPLE_LAVA
+
+#include "overlays/moby_update.inc.h"
+
+#include "overlays/moby_spawn.inc.h"

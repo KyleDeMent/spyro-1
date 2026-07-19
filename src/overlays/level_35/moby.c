@@ -1,6 +1,13 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_35", func_level_35_8007CFB4);
+#define LEVEL 35
 
-INCLUDE_ASM("asm/nonmatchings/overlays/level_35", func_level_35_80081F0C);
+#define HAS_FLIGHT_PLANES
+#define HAS_FLIGHT_CHESTS
+#define HAS_FLIGHT_RINGS
+#define HAS_FLIGHT_ARCHES
+#define HAS_WATER
 
+#include "overlays/moby_update.inc.h"
+
+#include "overlays/moby_spawn.inc.h"

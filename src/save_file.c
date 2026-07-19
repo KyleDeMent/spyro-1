@@ -46,8 +46,8 @@ int SaveLoad(SaveFile *pSaveFile) {
 
   saveFilePtr = (char *)pSaveFile;
 
-  D_80075838 = pSaveFile->m_UnusedByte1;
-  D_8007583C = pSaveFile->m_UnusedByte2;
+  D_80075838[0] = pSaveFile->m_UnusedByte1;
+  D_80075838[1] = pSaveFile->m_UnusedByte2;
 
   g_SpyroLifeCount = pSaveFile->m_ExtraLifeCount;
 
@@ -113,8 +113,8 @@ void SaveCreate(SaveFile *pSaveFile) {
 
   saveFilePtr = (u_char *)pSaveFile; // ????? Why here???
 
-  pSaveFile->m_UnusedByte1 = D_80075838;
-  pSaveFile->m_UnusedByte2 = D_8007583C;
+  pSaveFile->m_UnusedByte1 = D_80075838[0];
+  pSaveFile->m_UnusedByte2 = D_80075838[1];
   pSaveFile->m_ExtraLifeCount = g_SpyroLifeCount;
 
   Memcpy(pSaveFile->m_Flight.m_CourseRecords, g_FlightCourseRecords,

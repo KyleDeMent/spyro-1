@@ -208,8 +208,8 @@ void func_80012604(void) {
   g_LifeOrbCount = 0;         // Life orb count
   D_8007580C = -1;            // Health before entering flight level
 
-  D_80075838 = 0; // Unused var 1
-  D_8007583C = 0; // Unused var 2
+  D_80075838[0] = 0; // Unused var 1
+  D_80075838[1] = 0; // Unused var 2
 
   Memset(&g_Checkpoint, 0, sizeof(g_Checkpoint));
 

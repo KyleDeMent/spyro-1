@@ -29,4 +29,6 @@ extern struct {
   Moby *m_BalloonMoby;
 } D_800777E8;
 
+extern unsigned char D_800758D2;
+
 #endif

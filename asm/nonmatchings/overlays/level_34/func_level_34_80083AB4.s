@@ -410,8 +410,8 @@ glabel func_level_34_80083AB4
 /* 31FE664 8008409C 3C0063A2 */  sb         $v1, 0x3C($s3)
 /* 31FE668 800840A0 3D0063A2 */  sb         $v1, 0x3D($s3)
 /* 31FE66C 800840A4 410062A2 */  sb         $v0, 0x41($s3)
-/* 31FE670 800840A8 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 31FE674 800840AC E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 31FE670 800840A8 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 31FE674 800840AC E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 31FE678 800840B0 00000000 */  nop
 /* 31FE67C 800840B4 09F84000 */  jalr       $v0
 /* 31FE680 800840B8 10000724 */   addiu     $a3, $zero, 0x10

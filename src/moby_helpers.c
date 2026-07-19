@@ -373,7 +373,7 @@ int func_80038AFC(PathData *pPathData, int *pNodeIndexOut) {
 }
 
 /// @brief Find the path node furthest away from Spyro
-int func_80038BB0(PathData *pPathData, int *pNodeIndexOut) {
+int func_80038BB0(PathData *pPathData) {
   int furthestNodeDistance = 0;
   int furthestNodeIndex;
   int i;
@@ -1604,9 +1604,9 @@ Moby *func_8003ABC0(Moby *pMoby, int pSpawnMode, Vector3D *pStartPosition,
                 g_Spyro.m_Position.z) < 0x400)) {
         VecCopy(&spawnedMoby->m_Position, &pMoby->m_Position);
         spawnedMoby->m_Position.z += 256;
-        VecCopy(&dropProps->m_InitPos, &spawnedMoby->m_Position);
+        VecCopy(&dropProps->m_VelocityOrPickupPos, &spawnedMoby->m_Position);
+        dropProps->m_RotX = rand() & 0xE;
         dropProps->m_RotY = rand() & 0xE;
-        dropProps->m_RotZ = rand() & 0xE;
         dropProps->m_RotationTicks = rand() & 0xE;
         spawnedMoby->m_Substate = 3;
         spawnedMoby->m_UpdateDistance = 0xFF;
@@ -1621,7 +1621,7 @@ Moby *func_8003ABC0(Moby *pMoby, int pSpawnMode, Vector3D *pStartPosition,
   } else if (pSpawnMode == 5) {
     VecCopy(&spawnedMoby->m_Position, &pMoby->m_Position);
     spawnedMoby->m_Position.z += 256;
-    VecNull(&dropProps->m_InitPos);
+    VecNull(&dropProps->m_VelocityOrPickupPos);
     return spawnedMoby;
   }
 
@@ -1658,7 +1658,7 @@ Moby *func_8003ABC0(Moby *pMoby, int pSpawnMode, Vector3D *pStartPosition,
   VecSub(&targetPosition, &targetPosition, &startPosition);
   func_800177F8(&targetPosition, &targetPosition, flightFrames);
   targetPosition.z = initialZVelocity;
-  VecCopy(&dropProps->m_InitPos, &targetPosition);
+  VecCopy(&dropProps->m_VelocityOrPickupPos, &targetPosition);
   dropProps->m_SpawnState = 1;
 
   return spawnedMoby;
@@ -1952,7 +1952,7 @@ void CollectItem(Moby *pMoby) {
   func_800529E4(pMoby, UPDATE_PROP_ROTMATRIX);
 
   // particle spawn
-  (*D_800758E4)(6, 0xC, pMoby,
+  (*g_SpawnParticle)(6, 0xC, pMoby,
                 D_8006E44C[12 + (pMoby->m_Class - MOBYCLASS_GEM_1)]);
 
   if (pMoby->m_Class == MOBYCLASS_GEM_1)
@@ -2307,11 +2307,11 @@ void UpdateMobyDragonFragment(Moby *pMoby) {
       particleParams[0] = rand() & 3;
       particleParams[1] = rand() & 3;
       particleParams[2] = 0x14;
-      (*D_800758E4)(1, 1, &pMoby->m_Position, (int)particleParams);
+      (*g_SpawnParticle)(1, 1, &pMoby->m_Position, (int)particleParams);
     }
   } else {
     // Fragment finished - spawn end particles and deactivate
-    (*D_800758E4)(3, 0x46, &pMoby->m_Position, 0x10);
+    (*g_SpawnParticle)(3, 0x46, &pMoby->m_Position, 0x10);
     func_80052568(pMoby);
   }
 }

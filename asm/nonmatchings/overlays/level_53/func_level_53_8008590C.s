@@ -347,8 +347,8 @@ glabel func_level_53_8008590C
 /* 4B6BBD4 80085E0C 3C0063A2 */  sb         $v1, 0x3C($s3)
 /* 4B6BBD8 80085E10 3D0063A2 */  sb         $v1, 0x3D($s3)
 /* 4B6BBDC 80085E14 410062A2 */  sb         $v0, 0x41($s3)
-/* 4B6BBE0 80085E18 0780023C */  lui        $v0, %hi(D_800758E4)
-/* 4B6BBE4 80085E1C E458428C */  lw         $v0, %lo(D_800758E4)($v0)
+/* 4B6BBE0 80085E18 0780023C */  lui        $v0, %hi(g_SpawnParticle)
+/* 4B6BBE4 80085E1C E458428C */  lw         $v0, %lo(g_SpawnParticle)($v0)
 /* 4B6BBE8 80085E20 00000000 */  nop
 /* 4B6BBEC 80085E24 09F84000 */  jalr       $v0
 /* 4B6BBF0 80085E28 10000724 */   addiu     $a3, $zero, 0x10
