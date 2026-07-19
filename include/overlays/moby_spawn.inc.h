@@ -38,14 +38,14 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
 
     func_8003A720(moby); // Reset the Moby first
 
-    lifeOrbProps->m_InitPos.x = 0;
-    lifeOrbProps->m_InitPos.y = 0;
-    lifeOrbProps->m_InitPos.z = 140;
+    lifeOrbProps->m_VelocityOrPickupPos.x = 0;
+    lifeOrbProps->m_VelocityOrPickupPos.y = 0;
+    lifeOrbProps->m_VelocityOrPickupPos.z = 140;
     lifeOrbProps->m_SpawnState = 0;
     lifeOrbProps->m_Ticks = 0;
-    lifeOrbProps->m_RotX = 3;
+    lifeOrbProps->m_BounceCount = 3;
+    lifeOrbProps->m_RotX = 0;
     lifeOrbProps->m_RotY = 0;
-    lifeOrbProps->m_RotZ = 0;
     lifeOrbProps->m_RotationTicks = 0;
     lifeOrbProps->m_SparkleHandle = -1;
 
@@ -79,11 +79,11 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
     VecCopy(&moby->m_Position, &pParent->m_Position);
 
     moby->m_Position.z += 512;
-    VecCopy(&butterflyProps->unk_0x04, &moby->m_Position);
+    VecCopy(&butterflyProps->m_AnchorPosition, &moby->m_Position);
 
-    butterflyProps->unk_0x13 = 0;
-    butterflyProps->unk_0x12 = 0;
-    butterflyProps->unk_0x14 = 1800;
+    butterflyProps->m_VerticalSpeedTimer = 0;
+    butterflyProps->m_TurnRetargetTimer = 0;
+    butterflyProps->m_unk_14 = 1800;
     break;
   }
 #ifdef HAS_MOBY_17
@@ -104,7 +104,7 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
     func_800526A8(moby); // Update collision
     props = (Moby17Props *)moby->m_Props;
     VecCopy(&props->unk_0x00, &v);
-    props->unk_0x0C = 0x50;
+    props->m_Timer = 0x50;
     break;
   }
 #endif
@@ -123,9 +123,9 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
     break;
   }
 #ifdef HAS_MOBY_78
-  case 78: {             // Flight Train Barrel
-    func_8003A720(moby); // Reset the Moby first
-    func_800526A8(moby); // Update collision
+  case MOBYCLASS_FLIGHT_TRAIN_BARREL: { // Flight Train Barrel
+    func_8003A720(moby);                // Reset the Moby first
+    func_800526A8(moby);                // Update collision
     break;
   }
 #endif
@@ -140,23 +140,23 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
 
     func_8003A720(moby); // Reset the Moby first
 
-    gemProps->m_InitPos.x = 0;
-    gemProps->m_InitPos.y = 0;
-    gemProps->m_InitPos.z = 140; // Uh
+    gemProps->m_VelocityOrPickupPos.x = 0;
+    gemProps->m_VelocityOrPickupPos.y = 0;
+    gemProps->m_VelocityOrPickupPos.z = 140; // Uh
 
     gemProps->m_SpawnState = 0;
     gemProps->m_Ticks = 0;
 
+    gemProps->m_RotX = 0;
     gemProps->m_RotY = 0;
-    gemProps->m_RotZ = 0;
 
     gemProps->m_RotationTicks = 0;
 
     // Not sure about that
-    if (pParent->m_Class == 13) {
-      gemProps->m_RotX = 2;
+    if (pParent->m_Class == MOBYCLASS_GEM_SPAWNER) {
+      gemProps->m_BounceCount = 2;
     } else {
-      gemProps->m_RotX = 3;
+      gemProps->m_BounceCount = 3;
     }
 
     gemProps->m_SparkleHandle = -1; // Unset the sparkle handle
@@ -214,7 +214,7 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
     break;
   }
 
-  case 120: { // Sparx
+  case MOBYCLASS_SPARX: { // Sparx
     MobySparxProps *sparxProps = (MobySparxProps *)moby->m_Props;
 
     func_8003A720(moby); // Reset the Moby first
@@ -222,12 +222,12 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
 
     moby->m_Substate = 0;
 
-    sparxProps->unk_0x00 = 0;
-    sparxProps->unk_0x08 = 0;
-    sparxProps->unk_0x06 = 0;
-    sparxProps->unk_0x04 = 0;
+    sparxProps->m_Timer = 0;
+    sparxProps->m_IdleOffset.z = 0;
+    sparxProps->m_IdleOffset.y = 0;
+    sparxProps->m_IdleOffset.x = 0;
     sparxProps->glow = 0;
-    sparxProps->unk_0x10 = 0;
+    sparxProps->m_MobyPickingUp = nullptr;
 
     if (pParent) {
       VecCopy(&moby->m_Position, &pParent->m_Position);
@@ -248,34 +248,36 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
   }
 #endif
 
-#ifdef HAS_MOBY_194
+#ifdef HAS_WOODEN_CHEST
 #define HAS_ANY_CHEST_FRAGMENTS
   // Wooden chest fragments
-  case 255:
-  case 256:
-  case 257:
+  case MOBYCLASS_WOODEN_CHEST_FRAG_1:
+  case MOBYCLASS_WOODEN_CHEST_FRAG_2:
+  case MOBYCLASS_WOODEN_CHEST_FRAG_3:
 #endif
 
-#ifdef HAS_MOBY_329
+#ifdef HAS_SPRING_CHEST
 #define HAS_ANY_CHEST_FRAGMENTS
   // Spring chest fragments
-  case 67:
-  case 68:
-  case 69:
+  case MOBYCLASS_SPRING_CHEST_FRAG_1:
+  case MOBYCLASS_SPRING_CHEST_FRAG_2:
+  case MOBYCLASS_SPRING_CHEST_FRAG_3:
 #endif
 
-#if defined(HAS_MOBY_195) || defined(HAS_MOBY_174) || defined(HAS_MOBY_401)
+#if defined(HAS_METAL_CHEST) || defined(HAS_LOCKED_CHEST) ||                   \
+    defined(HAS_ARMORED_CHEST)
 #define HAS_ANY_CHEST_FRAGMENTS
-  case 309: // Metal, locked and armored chest fragments
-  case 310:
-  case 311:
+  case MOBYCLASS_METAL_CHEST_FRAG_1: // Metal, locked and armored chest
+                                     // fragments
+  case MOBYCLASS_METAL_CHEST_FRAG_2:
+  case MOBYCLASS_METAL_CHEST_FRAG_3:
 #endif
 
-#ifdef HAS_MOBY_421
+#ifdef HAS_EXTRA_LIFE_CHEST
 #define HAS_ANY_CHEST_FRAGMENTS
-  case 423: // Extra life chest piece 1
-  case 424: // Extra life chest piece 2
-  case 425: // Extra life chest piece 3
+  case MOBYCLASS_EXTRA_LIFE_FRAG_1: // Extra life chest piece 1
+  case MOBYCLASS_EXTRA_LIFE_FRAG_2: // Extra life chest piece 2
+  case MOBYCLASS_EXTRA_LIFE_FRAG_3: // Extra life chest piece 3
 #endif
 
 #ifdef HAS_MOBY_299
@@ -332,9 +334,9 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
     break;
   }
 #endif
-#ifdef HAS_MOBY_250
-  case 251: {   // Dragon fragment
-    Vector3D v; // Name from S2
+#ifdef HAS_DRAGON
+  case MOBYCLASS_CRYSTAL_DRAGON_FRAGMENT: { // Dragon fragment
+    Vector3D v;                             // Name from S2
     char pad[8];
     int randRes;
 
@@ -540,8 +542,8 @@ Moby *NAME_OVERLAY_FUNCTION(SpawnMoby)(int pClass, Moby *pParent) {
   case MOBYCLASS_NUMBER_7:
   case MOBYCLASS_NUMBER_8:
   case MOBYCLASS_NUMBER_9:
-  case 277: // Text Slash
-  case 327: // Hud .
+  case MOBYCLASS_SLASH:  // Text Slash
+  case MOBYCLASS_PERIOD: // Hud .
   {
     MobyNumberProps *textProps = moby->m_Props;
 

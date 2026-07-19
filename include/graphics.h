@@ -65,10 +65,10 @@ extern TracerPoint *g_TracerLists[4];
 
 typedef struct {
   int unk_0x00;
-  int* unk_0x04;
+  int* m_VertexTable;
   Vector3D* MobyPos;
   Color GlowColor;
-  int unk_0x010;
+  int m_Radius;
   Vector3D PosOffset;
   int unk_0x20;
 } Glow;

@@ -2,11 +2,11 @@
 
 #define LEVEL 12
 
-#define HAS_MOBY_194
-#define HAS_MOBY_250
-#define HAS_MOBY_195
+#define HAS_WOODEN_CHEST
+#define HAS_DRAGON
+#define HAS_METAL_CHEST
 #define HAS_MOBY_405
-#define HAS_MOBY_421
+#define HAS_EXTRA_LIFE_CHEST
 
 INCLUDE_ASM("asm/nonmatchings/overlays/level_12", func_level_12_8007AE40);
 
