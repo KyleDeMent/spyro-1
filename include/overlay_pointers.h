@@ -42,11 +42,13 @@ extern int (*D_800758C4)(int pTimer, Vector3D* pPos, int pColor); // g_DrawTime
     o(12) \
     o(13) \
     o(14) \
-    o(15)
+    o(15) \
+    o(60)
 
 
 #define o(level) \
-    Moby *NAME_OVERLAY_FUNCTION_LEVEL(SpawnMoby, level)(int pClass, Moby *pParent);
+  Moby *NAME_OVERLAY_FUNCTION_LEVEL(SpawnMoby, level)(int pClass, Moby *pParent); \
+  void NAME_OVERLAY_FUNCTION_LEVEL(UpdateMoby, level)(void);
 
 #define FOR_FLIGHTS(f)\
     f(15) \

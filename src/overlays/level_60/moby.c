@@ -12,6 +12,8 @@
 #define HAS_MOBY_398
 #define HAS_MOBY_405
 
+// #define DECOMP_NAME func_level_60_8007AE40
+
 #include "overlays/moby_update.inc.h"
 
 INCLUDE_ASM("asm/nonmatchings/overlays/level_60", func_level_60_80083568);

@@ -275,9 +275,19 @@ typedef enum {
   MOBYCLASS_GEM_25 = 87,
 
   MOBYCLASS_DRAGON_PAD_FAIRY = 110,
-  MOBYCLASS_SCARED_GREEN_GNORC = 114,
+
+  MOBYCLASS_GNORC_SCARED = 114, // Artisans - scared gnorc
+
+  MOBYCLASS_GNORC_WARRIOR = 115, // Dark Hollow - Big guy with club
 
   MOBYCLASS_SPARX = 120, // Gets spawned in load scene
+
+  MOBYCLASS_DARKHOLLOW_LAMP = 129,
+
+  MOBYCLASS_DARKHOLLOW_FIRE = 157,
+
+  MOBYCLASS_GNORC_SOLDIER = 165, // Little gnorc with sword and shield
+  MOBYCLASS_GNORC_SENTRY = 166, // Big gnorc you gotta flame from the back in Dark Hollow
 
   MOBYCLASS_KEY = 173, // Both Hud and level key
   MOBYCLASS_LOCKED_CHEST = 174,
@@ -330,6 +340,10 @@ typedef enum {
 
   MOBYCLASS_SPRING_CHEST = 329,
 
+  MOBYCLASS_DRAGON_PAD = 331,
+
+  MOBYCLASS_GNORC_BANDIT = 339, // The guy in Artisans that you have to hit 3 times
+
   MOBYCLASS_FLIGHT_GATE = 353,
 
   MOBYCLASS_FLIGHT_TRAIN_WHEELS = 362,
@@ -338,6 +352,8 @@ typedef enum {
 
   MOBYCLASS_FLIGHT_TRAIN = 407,
   MOBYCLASS_FLIGHT_WAGON = 408,
+
+  MOBYCLASS_FODDER_FROG = 412,
 
   MOBYCLASS_BALLOON = 416,
 
